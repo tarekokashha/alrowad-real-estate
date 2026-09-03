@@ -12,6 +12,8 @@ next-env.d.ts
 !.env.example
 
 # payload
+# payload-types.ts is generated but IS committed: it makes the repo build
+# straight after a clone without running generate:types first.
 alrowad.db
 alrowad.db-*
 public/uploads/
@@ -22,3 +24,4 @@ public/uploads/
 # os
 .DS_Store
 Thumbs.db
+.vercel
