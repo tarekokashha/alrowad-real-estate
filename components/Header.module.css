@@ -1,0 +1,129 @@
+.header {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 26px var(--page-pad);
+  color: var(--paper);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--paper);
+  /* Reserved at its final size from first paint. The wordmark lands here. */
+  min-height: 30px;
+}
+.brand:hover { color: var(--paper); }
+
+.wordmark {
+  font-family: var(--ar-display);
+  font-size: 27px;
+  line-height: 1;
+  padding-bottom: 3px;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 2.2vw, 34px);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.link { color: var(--paper); }
+.link:hover { color: #e4d6c2; }
+
+.divider {
+  width: 1px;
+  height: 16px;
+  background: rgba(244, 241, 234, 0.28);
+}
+
+.phone {
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--paper);
+  font-variant-numeric: tabular-nums;
+}
+
+.whatsapp { color: var(--action-on-night); }
+.whatsapp:hover { color: var(--paper); }
+
+.lang {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: rgba(244, 241, 234, 0.65);
+  letter-spacing: 0.08em;
+}
+.lang:hover { color: var(--paper); }
+
+@media (max-width: 1100px) {
+  .link:nth-of-type(n + 4) { display: none; }
+}
+@media (max-width: 820px) {
+  .header { padding: 18px var(--page-pad); gap: 16px; }
+  .nav { gap: 16px; font-size: 14px; }
+  .link, .divider { display: none; }
+}
+
+/* The header arrives with the hero, on the same stagger. Without JS the
+   attribute is never set, so the nav is simply there from first paint. */
+:global([data-entrance="play"]) .brand,
+:global([data-entrance="play"]) .nav > * {
+  opacity: 0;
+  animation: headerSettle var(--d-element) var(--arrival) both;
+}
+:global([data-entrance="play"]) .brand { animation-delay: 4.2s; }
+:global([data-entrance="play"]) .nav > *:nth-child(1) { animation-delay: 4.26s; }
+:global([data-entrance="play"]) .nav > *:nth-child(2) { animation-delay: 4.32s; }
+:global([data-entrance="play"]) .nav > *:nth-child(3) { animation-delay: 4.38s; }
+:global([data-entrance="play"]) .nav > *:nth-child(4) { animation-delay: 4.44s; }
+:global([data-entrance="play"]) .nav > *:nth-child(5) { animation-delay: 4.5s; }
+:global([data-entrance="play"]) .nav > *:nth-child(n + 6) { animation-delay: 4.56s; }
+
+@keyframes headerSettle {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :global([data-entrance="play"]) .brand,
+  :global([data-entrance="play"]) .nav > * {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* ---- Light variant: the sticky bar on every interior page --------------- */
+
+.light {
+  position: sticky;
+  color: var(--ink);
+  background: rgba(244, 241, 234, 0.92);
+  backdrop-filter: saturate(140%) blur(10px);
+  border-block-end: 1px solid var(--hairline);
+  padding-block: 18px;
+}
+.light .brand,
+.light .link,
+.light .phone { color: var(--ink); }
+.light .link:hover { color: var(--bronze); }
+.light .divider { background: var(--hairline); }
+.light .whatsapp { color: var(--action); }
+.light .whatsapp:hover { color: var(--bronze); }
+.light .lang { color: var(--structure); }
+.light .lang:hover { color: var(--ink); }
+
+/* The interior header never joins the entrance choreography — it belongs to
+   a page the visitor navigated to deliberately. */
+:global([data-entrance="play"]) .light .brand,
+:global([data-entrance="play"]) .light .nav > * {
+  animation: none;
+  opacity: 1;
+}

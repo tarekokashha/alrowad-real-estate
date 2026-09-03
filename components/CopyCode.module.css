@@ -1,0 +1,20 @@
+.btn {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 12px;
+  background: none;
+  border: 0;
+  border-block-end: 1px solid var(--hairline);
+  padding: 6px 0;
+  margin-block-start: 14px;
+  cursor: pointer;
+  color: var(--ink);
+  font-size: 14px;
+  min-height: 40px;
+}
+.btn:hover { border-block-end-color: var(--bronze); }
+.hint {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--bronze);
+}

@@ -1,0 +1,384 @@
+/* ---- Masthead ------------------------------------------------------------ */
+
+.masthead { padding-block: clamp(40px, 8vh, 84px) clamp(30px, 5vh, 56px); }
+.mastheadText { grid-column: 1 / span 7; }
+
+.h1 {
+  font-family: var(--ar-display);
+  font-size: clamp(2.2rem, 4.8vw, 4.4rem);
+  line-height: 1.3;
+  margin-block-start: 14px;
+}
+
+.lede {
+  margin-block-start: 22px;
+  max-width: 58ch;
+  color: var(--structure);
+}
+
+.contents {
+  grid-column: 9 / span 4;
+  align-self: end;
+  border-inline-start: 1px solid var(--hairline);
+  padding-inline-start: 22px;
+}
+.contentsTitle {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--structure);
+  margin-block-end: 14px;
+}
+.contents ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: toc;
+  display: grid;
+  gap: 9px;
+  font-size: 14px;
+}
+.contents li { counter-increment: toc; }
+.contents li::before {
+  content: counter(toc, decimal-leading-zero) " ";
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--bronze);
+}
+.contents a { color: var(--ink); }
+.contents a:hover { color: var(--bronze); }
+
+/* ---- Full-bleed aerial --------------------------------------------------- */
+
+.hero {
+  position: relative;
+  margin: 0;
+  aspect-ratio: 21 / 8;
+  min-height: 280px;
+  background: var(--paper-deep);
+}
+.hero :global(img) { object-fit: cover; }
+
+.heroCaption {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 28px;
+  padding: 14px var(--page-pad);
+  background: linear-gradient(to top, rgba(20, 19, 15, 0.72), transparent);
+  color: rgba(244, 241, 234, 0.82);
+  font-size: 11px;
+}
+
+/* ---- Sections ------------------------------------------------------------ */
+
+.section { padding-block: var(--sec-pad); }
+.sectionAlt {
+  background: var(--paper-deep);
+  padding-block: var(--sec-pad);
+}
+
+.h2 {
+  font-family: var(--ar-display);
+  font-size: clamp(1.8rem, 2.8vw, 2.8rem);
+  line-height: 1.34;
+}
+.h3 {
+  font-family: var(--ar-display);
+  font-size: clamp(1.3rem, 1.9vw, 1.7rem);
+  margin-block: 36px 16px;
+}
+
+.sectionLede {
+  margin-block-start: 18px;
+  max-width: 56ch;
+  color: var(--structure);
+}
+
+.footnote {
+  margin-block-start: 16px;
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--structure);
+  max-width: 62ch;
+}
+
+/* ---- Prose + numeric summary --------------------------------------------- */
+
+.prose {
+  grid-column: 1 / span 7;
+  display: grid;
+  gap: 22px;
+  max-width: 62ch;
+}
+.rule {
+  border-inline-start: 2px solid var(--bronze);
+  padding-inline-start: 20px;
+}
+
+.summary {
+  grid-column: 9 / span 4;
+  align-self: start;
+  border: 1px solid var(--hairline);
+  padding: 24px 22px;
+}
+.summaryTitle {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--structure);
+  margin-block-end: 18px;
+}
+.summaryList { display: grid; gap: 14px; }
+.summaryList > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 14px;
+  padding-block-end: 12px;
+  border-block-end: 1px solid var(--hairline);
+}
+.summaryList > div:last-child { border-block-end: none; padding-block-end: 0; }
+.summaryList dt { font-size: 13px; color: var(--structure); }
+.summaryList dd { margin: 0; font-size: 15px; color: var(--ink); }
+.summaryNote {
+  margin-block-start: 18px;
+  font-size: 11.5px;
+  line-height: 1.8;
+  color: var(--structure);
+}
+
+/* ---- Tables -------------------------------------------------------------- */
+
+.tableWrap { overflow-x: auto; }
+.table {
+  font-size: 15px;
+  margin-block-start: 26px;
+  min-width: 620px;
+}
+.accessTable .table { min-width: 0; margin-block-start: 0; }
+.table th, .table td {
+  text-align: start;
+  padding: 14px 18px 14px 0;
+  border-block-end: 1px solid var(--hairline);
+  font-weight: 400;
+  vertical-align: baseline;
+}
+.table thead th {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--structure);
+  border-block-end-color: var(--ink);
+  padding-block: 10px;
+  white-space: nowrap;
+}
+.table tbody th { color: var(--ink); }
+.table tbody td { color: var(--structure); }
+.table tbody tr:last-child th,
+.table tbody tr:last-child td { border-block-end: none; }
+
+/* ---- Housing districts ---------------------------------------------------- */
+
+.housingIntro { grid-column: 1 / span 5; }
+.districts { grid-column: 7 / span 6; margin: 0; }
+.district {
+  padding-block: 20px;
+  border-block-end: 1px solid var(--hairline);
+}
+.district:last-child { border-block-end: none; }
+.district dt {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  margin-block-end: 8px;
+}
+.districtName { font-size: 18px; color: var(--ink); }
+.districtPpm { font-size: 13px; color: var(--bronze); white-space: nowrap; }
+.district dd {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.85;
+  color: var(--structure);
+}
+
+/* ---- Price by type -------------------------------------------------------- */
+
+.priceIntro { grid-column: 1 / span 5; }
+.priceTable { grid-column: 7 / span 6; }
+
+.premium { margin: 0; display: grid; gap: 0; }
+.premium > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding-block: 12px;
+  border-block-end: 1px solid var(--hairline);
+}
+.premium > div:last-child { border-block-end: none; }
+.premium dt { font-size: 15px; }
+.premium dd { margin: 0; font-size: 15px; color: var(--bronze); }
+
+/* ---- Access --------------------------------------------------------------- */
+
+.accessIntro { grid-column: 1 / span 5; }
+.accessTable { grid-column: 7 / span 6; align-self: start; }
+.accessTable td { text-align: end; white-space: nowrap; }
+
+/* ---- Services ------------------------------------------------------------- */
+
+.services {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap-col);
+  margin-block-start: 34px;
+}
+.serviceTitle {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--bronze);
+  padding-block-end: 12px;
+  border-block-end: 1px solid var(--ink);
+  margin-block-end: 16px;
+}
+.serviceCol ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+  font-size: 15px;
+}
+
+/* ---- Cautions (night band) ------------------------------------------------ */
+
+.cautions {
+  background: var(--night);
+  color: var(--paper);
+  padding-block: var(--sec-pad-major);
+}
+.cautions .h2 { color: var(--paper); }
+.cautions .eyebrow { color: var(--bronze-on-night); }
+
+.cautionsIntro { grid-column: 1 / span 4; }
+.cautionsLede {
+  margin-block-start: 18px;
+  color: var(--paper-on-night);
+  max-width: 40ch;
+}
+
+.cautionList {
+  grid-column: 6 / span 7;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.cautionList li {
+  display: flex;
+  gap: 20px;
+  padding-block: 24px;
+  border-block-end: 1px solid rgba(244, 241, 234, 0.14);
+}
+.cautionList li:last-child { border-block-end: none; }
+.cautionNum {
+  font-size: 12px;
+  color: var(--bronze-on-night);
+  flex: none;
+  padding-block-start: 5px;
+}
+.cautionTitle {
+  font-size: 19px;
+  margin-block-end: 10px;
+  color: var(--paper);
+}
+.cautionList p {
+  color: var(--paper-on-night);
+  font-size: 15px;
+  line-height: 1.85;
+  max-width: 56ch;
+}
+
+/* ---- FAQ ------------------------------------------------------------------ */
+
+.faqHead { grid-column: 1 / span 4; }
+.faq { grid-column: 6 / span 7; display: grid; gap: 0; }
+.faqItem {
+  padding-block: 24px;
+  border-block-end: 1px solid var(--hairline);
+}
+.faqItem:first-child { padding-block-start: 0; }
+.faqItem:last-child { border-block-end: none; }
+.faqQ {
+  font-family: var(--ar-display);
+  font-size: 21px;
+  margin-block-end: 12px;
+}
+.faqItem p {
+  color: var(--structure);
+  font-size: 15.5px;
+  line-height: 1.9;
+  max-width: 62ch;
+}
+
+/* ---- Close ----------------------------------------------------------------- */
+
+.close {
+  background: var(--paper-deep);
+  padding-block: var(--sec-pad);
+  text-align: center;
+}
+.closeTitle {
+  font-family: var(--ar-display);
+  font-size: clamp(1.7rem, 2.6vw, 2.4rem);
+}
+.closeLede {
+  margin: 16px auto 0;
+  max-width: 46ch;
+  color: var(--structure);
+}
+.closeActions {
+  margin-block-start: 28px;
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.closeWa {
+  background: var(--action);
+  color: var(--paper);
+  border-radius: var(--radius);
+  padding: 14px 24px;
+  font-size: 15px;
+  font-weight: 500;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+}
+.closeWa:hover { background: #355c43; color: var(--paper); }
+.closeLink { color: var(--bronze); font-size: 15px; }
+
+/* ---- Responsive ------------------------------------------------------------ */
+
+@media (max-width: 1000px) {
+  .services { grid-template-columns: 1fr; gap: 32px; }
+}
+
+@media (max-width: 900px) {
+  .contents {
+    border-inline-start: none;
+    padding-inline-start: 0;
+    border-block-start: 1px solid var(--hairline);
+    padding-block-start: 22px;
+    margin-block-start: 28px;
+  }
+  .hero { aspect-ratio: 4 / 3; }
+  .summary { margin-block-start: 32px; }
+  .districts, .priceTable, .accessTable, .cautionList, .faq {
+    margin-block-start: 28px;
+  }
+}

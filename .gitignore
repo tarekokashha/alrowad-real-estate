@@ -1,0 +1,22 @@
+# dependencies
+node_modules/
+
+# next
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# env — never commit; contains DB URL, secret and admin password
+.env*
+!.env.example
+
+# payload
+alrowad.db
+alrowad.db-*
+public/uploads/
+payload-types.ts
+
+# os
+.DS_Store
+Thumbs.db

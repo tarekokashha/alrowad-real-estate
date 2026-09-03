@@ -1,0 +1,537 @@
+/* ==========================================================================
+   Homepage. Editorial density, asymmetric spans, no cards where a typeset
+   list will do. Content routinely spans 5 or 7 of 12 columns — never
+   always 12, which is what makes a grid read as designed.
+   ========================================================================== */
+
+/* ---- Hero content (rendered inside <Entrance>) --------------------------- */
+
+.heroH1 {
+  grid-column: span 8;
+  font-family: var(--ar-display);
+  font-size: clamp(2.6rem, 6.4vw, 7rem);
+  line-height: 1.32;
+  color: var(--paper);
+}
+
+.heroAside {
+  grid-column: span 4;
+  display: grid;
+  gap: 18px;
+  color: var(--paper-on-night);
+  font-size: var(--fs-body-2);
+  padding-block-end: 10px;
+}
+
+.heroFacts {
+  display: grid;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: rgba(244, 241, 234, 0.6);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Hero UI arrives after the camera settles, on the shared 60ms stagger.
+   Keyed on the attribute, never on a class React adds later: with no JS
+   the attribute is absent, no rule matches, and the text is simply visible.
+   Nothing is ever parked at opacity 0 waiting on JavaScript. */
+:global([data-entrance="play"]) .heroH1,
+:global([data-entrance="play"]) .heroAside {
+  opacity: 0;
+  animation: heroSettle var(--d-section) var(--arrival) both;
+}
+:global([data-entrance="play"]) .heroH1 {
+  animation-delay: 4.2s;
+}
+:global([data-entrance="play"]) .heroAside {
+  animation-delay: 4.26s;
+}
+
+@keyframes heroSettle {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- Trust line ---------------------------------------------------------- */
+
+.trust {
+  border-block-end: 1px solid var(--hairline);
+  padding-block: clamp(28px, 5vh, 48px);
+}
+
+.trustText {
+  font-size: clamp(1.05rem, 1.9vw, 1.45rem);
+  line-height: 1.75;
+  max-width: 62ch;
+}
+
+.trustLink {
+  white-space: nowrap;
+  box-shadow: inset 0 -1px 0 currentColor;
+}
+
+/* ---- Generic section ----------------------------------------------------- */
+
+.section {
+  padding-block: var(--sec-pad);
+}
+
+.h2 {
+  font-family: var(--ar-display);
+  font-size: clamp(1.9rem, 3vw, 3rem);
+  line-height: 1.34;
+  margin-block: 14px 0;
+}
+
+.h3 {
+  font-family: var(--ar-display);
+  font-size: clamp(1.8rem, 2.8vw, 2.9rem);
+  line-height: 1.36;
+  margin-block: 14px 0;
+}
+
+.lede {
+  margin-block-start: 20px;
+  color: var(--ink);
+  max-width: 54ch;
+}
+
+.footnote {
+  margin-block-start: 16px;
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--structure);
+  max-width: 62ch;
+}
+
+.dim {
+  color: var(--structure);
+}
+
+.inlineLink {
+  display: inline-block;
+  margin-block-start: 22px;
+  color: var(--bronze);
+  font-size: var(--fs-body-2);
+}
+.inlineLink:hover {
+  box-shadow: inset 0 -1px 0 currentColor;
+}
+
+/* ---- Price index --------------------------------------------------------- */
+
+.indexIntro {
+  grid-column: span 4;
+}
+
+.indexTable {
+  grid-column: span 8;
+}
+
+.indexMeta {
+  margin-block-start: 28px;
+  display: grid;
+  gap: 10px;
+  font-size: 12px;
+}
+.indexMeta > div {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+.indexMeta dt {
+  color: var(--structure);
+  min-width: 76px;
+}
+.indexMeta dd {
+  margin: 0;
+  color: var(--ink);
+}
+
+/* Bronze corner brackets. The cadastral language, carrying real data —
+   not a decorative frame. */
+.bracket {
+  position: relative;
+  padding: 20px 0 0;
+}
+.bracket::before,
+.bracket::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 0;
+}
+.bracket::before {
+  inset-inline-start: 0;
+  border-top: 1px solid var(--bronze);
+  border-inline-start: 1px solid var(--bronze);
+}
+.bracket::after {
+  inset-inline-end: 0;
+  border-top: 1px solid var(--bronze);
+  border-inline-end: 1px solid var(--bronze);
+}
+
+.table {
+  font-size: 15px;
+}
+.table th,
+.table td {
+  text-align: start;
+  padding: 14px 16px 14px 0;
+  border-block-end: 1px solid var(--hairline);
+  font-weight: 400;
+  vertical-align: baseline;
+}
+.table thead th {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--structure);
+  border-block-end-color: var(--ink);
+  padding-block: 10px;
+}
+.table tbody th {
+  color: var(--ink);
+}
+.table tbody tr:last-child th,
+.table tbody tr:last-child td {
+  border-block-end: none;
+}
+.qoq {
+  color: var(--bronze);
+}
+
+/* ---- Pillars ------------------------------------------------------------- */
+
+.pillars {
+  background: var(--paper-deep);
+  padding-block: var(--sec-pad-major);
+}
+
+.pillar {
+  padding-block: clamp(34px, 6vh, 62px);
+  border-block-end: 1px solid var(--hairline);
+  align-items: start;
+}
+.pillar:last-child {
+  border-block-end: none;
+  padding-block-end: 0;
+}
+
+.pillarText {
+  grid-column: 1 / span 5;
+}
+.pillarArtifact {
+  grid-column: 7 / span 6;
+}
+/* Alternating spans keep the rhythm from turning into a stack of identical rows. */
+.pillarFlip .pillarText {
+  grid-column: 8 / span 5;
+}
+.pillarFlip .pillarArtifact {
+  grid-column: 1 / span 6;
+  grid-row: 1;
+}
+
+.miniTable {
+  font-size: 15px;
+}
+.miniTable th,
+.miniTable td {
+  text-align: start;
+  padding: 12px 14px 12px 0;
+  border-block-end: 1px solid var(--hairline);
+  font-weight: 400;
+  vertical-align: baseline;
+}
+.miniTable tr:last-child th,
+.miniTable tr:last-child td {
+  border-block-end: none;
+}
+.miniTable tbody th {
+  color: var(--ink);
+  white-space: nowrap;
+}
+.miniTable td {
+  color: var(--structure);
+  white-space: nowrap;
+}
+/* The sale description is the one cell allowed to wrap. */
+.miniTable td.wrap {
+  white-space: normal;
+}
+
+/* ---- Featured units ------------------------------------------------------ */
+
+.sectionHead {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap-col);
+  align-items: end;
+  margin-block-end: clamp(32px, 5vh, 56px);
+}
+.sectionAside {
+  color: var(--structure);
+  font-size: var(--fs-body-2);
+  max-width: 42ch;
+  justify-self: end;
+}
+.sectionAside .inlineLink {
+  margin-block-start: 14px;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap-card);
+}
+
+.gridFoot {
+  margin-block-start: clamp(28px, 4vh, 44px);
+}
+
+/* ---- Scope (night band) --------------------------------------------------- */
+
+.scope {
+  background: var(--night);
+  color: var(--paper);
+  padding-block: var(--sec-pad-major);
+}
+.scope .h2 {
+  color: var(--paper);
+}
+.scope .eyebrow {
+  color: var(--bronze-on-night);
+}
+
+.scopeIntro {
+  grid-column: 1 / span 5;
+}
+.scopeCompounds {
+  grid-column: 7 / span 3;
+}
+.scopeDistricts {
+  grid-column: 10 / span 3;
+}
+
+.ledeOnNight {
+  margin-block-start: 20px;
+  color: var(--paper-on-night);
+  max-width: 46ch;
+}
+
+.inlineLinkNight {
+  display: inline-block;
+  margin-block-start: 22px;
+  color: var(--bronze-on-night);
+}
+.inlineLinkNight:hover {
+  color: var(--paper);
+}
+
+.scopeTitle {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: rgba(244, 241, 234, 0.5);
+  margin-block-end: 16px;
+  font-weight: 400;
+}
+
+.index {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 15px;
+}
+.index li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 11px;
+  border-block-end: 1px solid rgba(244, 241, 234, 0.12);
+}
+.index li:last-child {
+  border-block-end: none;
+}
+.index li span:last-child {
+  color: rgba(244, 241, 234, 0.45);
+  font-size: 13px;
+}
+
+/* ---- Testimonials --------------------------------------------------------- */
+
+.quote {
+  grid-column: 1 / span 5;
+  margin: 0;
+}
+.quote + .quote {
+  grid-column: 7 / span 5;
+}
+
+.quoteText {
+  font-family: var(--ar-display);
+  font-size: clamp(1.15rem, 1.9vw, 1.6rem);
+  line-height: 1.65;
+}
+
+.quote figcaption {
+  margin-block-start: 22px;
+  display: grid;
+  gap: 5px;
+}
+.quoteName {
+  font-size: 15px;
+  font-weight: 500;
+}
+.quoteDetail {
+  font-size: 12px;
+  color: var(--structure);
+}
+
+/* ---- Contact --------------------------------------------------------------- */
+
+.contact {
+  background: var(--paper-deep);
+  padding-block: var(--sec-pad-major);
+}
+.contactIntro {
+  grid-column: 1 / span 5;
+}
+.contactWhatsapp {
+  grid-column: 7 / span 3;
+}
+.contactOffice {
+  grid-column: 10 / span 3;
+}
+
+.contactTitle {
+  font-family: var(--ar-display);
+  font-size: 22px;
+  margin-block-end: 14px;
+}
+.contactMeta {
+  font-size: 14px;
+  color: var(--structure);
+  line-height: 1.7;
+}
+.contactNumber {
+  display: inline-block;
+  margin-block-start: 16px;
+  font-size: 18px;
+  color: var(--ink);
+  box-shadow: inset 0 -1px 0 var(--bronze);
+}
+.contactNumber:hover {
+  color: var(--bronze);
+}
+
+/* ---- Footer ----------------------------------------------------------------- */
+
+.footer {
+  background: var(--night);
+  color: var(--paper-on-night);
+  padding-block: clamp(48px, 8vh, 88px) 34px;
+  font-size: 14px;
+}
+.footer a {
+  color: var(--paper-on-night);
+}
+.footer a:hover {
+  color: var(--paper);
+}
+
+.footBrand {
+  grid-column: 1 / span 4;
+  display: grid;
+  gap: 6px;
+  align-content: start;
+}
+.footWordmark {
+  font-family: var(--ar-display);
+  font-size: 28px;
+  color: var(--paper);
+  line-height: 1;
+  margin-block-end: 10px;
+}
+.footPhone {
+  margin-block-start: 12px;
+  font-size: 15px;
+}
+
+.footCol {
+  grid-column: span 2;
+}
+.footColTitle {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(244, 241, 234, 0.45);
+  margin-block-end: 14px;
+}
+.footCol ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 9px;
+}
+
+.footRule {
+  border-top-color: rgba(244, 241, 234, 0.14);
+  margin-block: clamp(34px, 5vh, 56px) 20px;
+}
+
+.registry {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 26px;
+  font-size: 11px;
+  color: rgba(244, 241, 234, 0.42);
+}
+.copyright {
+  margin-inline-start: auto;
+}
+
+/* ---- Responsive -------------------------------------------------------------
+   Mobile is designed, not derived. Below 900px the 12-column grid collapses
+   and the card grid steps 3 → 2 → 1. Section padding stays in vh. */
+
+@media (max-width: 1100px) {
+  .cardGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .heroH1,
+  .heroAside {
+    grid-column: 1 / -1;
+  }
+  .heroH1 {
+    font-size: clamp(2.2rem, 10vw, 3.4rem);
+  }
+  .sectionHead {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .sectionAside {
+    justify-self: start;
+  }
+  .pillarFlip .pillarArtifact {
+    grid-row: auto;
+  }
+  .pillar {
+    gap: 28px;
+  }
+  .cardGrid {
+    grid-template-columns: 1fr;
+  }
+  .registry {
+    gap: 8px 18px;
+  }
+  .copyright {
+    margin-inline-start: 0;
+  }
+}

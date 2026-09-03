@@ -1,0 +1,245 @@
+.masthead { padding-block: clamp(40px, 8vh, 84px) clamp(26px, 4vh, 46px); }
+.mastheadText { grid-column: 1 / span 7; }
+
+.h1 {
+  font-family: var(--ar-display);
+  font-size: clamp(2rem, 4.2vw, 4rem);
+  line-height: 1.3;
+  margin-block-start: 14px;
+}
+.lede { margin-block-start: 22px; max-width: 56ch; color: var(--structure); }
+
+.claims {
+  grid-column: 9 / span 4;
+  align-self: end;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 15px;
+}
+.claims li {
+  padding-block: 11px;
+  border-block-end: 1px solid var(--hairline);
+}
+.claimNote {
+  border-block-end: none !important;
+  font-size: 12.5px;
+  color: var(--structure);
+  line-height: 1.8;
+  padding-block-start: 14px !important;
+}
+
+/* ---- Office ---- */
+
+.office { padding-block-end: clamp(30px, 5vh, 56px); }
+.officeGrid {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: 12px;
+}
+.officeLead, .officeSide {
+  position: relative;
+  margin: 0;
+  border-radius: var(--radius-img);
+  overflow: hidden;
+  background: var(--paper-deep);
+}
+.officeLead { aspect-ratio: 3 / 2; }
+.officeSide { aspect-ratio: 4 / 5; }
+.officeLead :global(img), .officeSide :global(img) { object-fit: cover; }
+
+.officeCaption {
+  margin-block-start: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 28px;
+  font-size: 11px;
+  color: var(--structure);
+}
+
+/* ---- Sections ---- */
+
+.section { padding-block: var(--sec-pad); }
+.sectionAlt { background: var(--paper-deep); padding-block: var(--sec-pad); }
+
+.h2 {
+  font-family: var(--ar-display);
+  font-size: clamp(1.8rem, 2.8vw, 2.6rem);
+  line-height: 1.34;
+}
+.sectionLede {
+  margin-block-start: 18px;
+  max-width: 58ch;
+  color: var(--structure);
+}
+
+.prose { grid-column: 1 / span 7; display: grid; gap: 20px; }
+.prose p { color: var(--structure); max-width: 60ch; }
+.prose .h2 { color: var(--ink); margin-block-end: 4px; }
+.ruleP {
+  border-inline-start: 2px solid var(--bronze);
+  padding-inline-start: 20px;
+  color: var(--ink) !important;
+}
+
+.ops {
+  grid-column: 9 / span 4;
+  align-self: start;
+  border: 1px solid var(--hairline);
+  padding: 24px 22px;
+}
+.opsTitle {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--structure);
+  margin-block-end: 16px;
+}
+.opsList { display: grid; gap: 12px; margin: 0; }
+.opsList > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 14px;
+  padding-block-end: 11px;
+  border-block-end: 1px solid var(--hairline);
+}
+.opsList > div:last-child { border-block-end: none; padding-block-end: 0; }
+.opsList dt { font-size: 13px; color: var(--structure); }
+.opsList dd { margin: 0; font-size: 15px; color: var(--ink); }
+.opsNote { margin-block-start: 16px; font-size: 11.5px; color: var(--structure); }
+
+/* ---- Desks ---- */
+
+.team {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--gap-col);
+  margin-block-start: 38px;
+}
+.desk {
+  border-block-start: 1px solid var(--ink);
+  padding-block-start: 18px;
+}
+.deskRole { font-size: 10.5px; color: var(--bronze); }
+.deskTitle {
+  font-family: var(--ar-display);
+  font-size: 20px;
+  line-height: 1.4;
+  margin-block: 10px 12px;
+}
+.deskNote {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--structure);
+}
+.deskPhone {
+  display: inline-block;
+  margin-block-start: 16px;
+  font-size: 14px;
+  color: var(--ink);
+  box-shadow: inset 0 -1px 0 var(--hairline);
+}
+.deskPhone:hover { color: var(--bronze); }
+
+/* ---- Credentials (night) ---- */
+
+.credentials {
+  background: var(--night);
+  color: var(--paper);
+  padding-block: var(--sec-pad-major);
+  scroll-margin-top: 90px;
+}
+.credentials .eyebrow { color: var(--bronze-on-night); }
+
+.credIntro { grid-column: 1 / span 5; }
+.h2Night {
+  font-family: var(--ar-display);
+  font-size: clamp(1.7rem, 2.6vw, 2.4rem);
+  line-height: 1.34;
+  color: var(--paper);
+  margin-block-start: 12px;
+}
+.credLede {
+  margin-block-start: 18px;
+  color: var(--paper-on-night);
+  max-width: 44ch;
+  font-size: 15px;
+}
+
+.credTable {
+  grid-column: 7 / span 6;
+  font-size: 15px;
+}
+.credTable th, .credTable td {
+  text-align: start;
+  padding: 13px 18px 13px 0;
+  border-block-end: 1px solid rgba(244, 241, 234, 0.14);
+  font-weight: 400;
+  vertical-align: baseline;
+}
+.credTable th { color: rgba(244, 241, 234, 0.6); width: 45%; }
+.credTable td { color: var(--paper); }
+.credTable tr:last-child th,
+.credTable tr:last-child td { border-block-end: none; }
+
+.credNote {
+  grid-column: 7 / span 6;
+  margin-block-start: 18px;
+  font-size: 12px;
+  color: rgba(244, 241, 234, 0.55);
+}
+
+/* ---- Visit ---- */
+
+.visit {
+  background: var(--paper-deep);
+  padding-block: var(--sec-pad);
+}
+.visitText { grid-column: 1 / span 6; }
+.visitWa {
+  display: inline-flex;
+  align-items: center;
+  margin-block-start: 26px;
+  background: var(--action);
+  color: var(--paper);
+  border-radius: var(--radius);
+  padding: 14px 24px;
+  font-size: 15px;
+  font-weight: 500;
+  min-height: 48px;
+}
+.visitWa:hover { background: #355c43; color: var(--paper); }
+
+.visitInfo {
+  grid-column: 8 / span 5;
+  align-self: start;
+  margin: 0;
+  display: grid;
+  gap: 0;
+}
+.visitInfo > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding-block: 14px;
+  border-block-end: 1px solid var(--hairline);
+}
+.visitInfo > div:last-child { border-block-end: none; }
+.visitInfo dt { font-size: 13px; color: var(--structure); }
+.visitInfo dd { margin: 0; font-size: 15px; color: var(--ink); }
+
+/* ---- Responsive ---- */
+
+@media (max-width: 1100px) {
+  .team { grid-template-columns: repeat(2, 1fr); gap: 30px var(--gap-col); }
+}
+
+@media (max-width: 900px) {
+  .claims { align-self: start; margin-block-start: 28px; }
+  .officeGrid { grid-template-columns: 1fr; }
+  .officeSide { aspect-ratio: 3 / 2; }
+  .ops, .credTable, .visitInfo { margin-block-start: 30px; }
+  .team { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,79 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  /* No border, no shadow. Elevation is expressed with a hairline where a
+     boundary is genuinely needed — not stamped on every block. */
+}
+
+.media {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: var(--radius-img);
+  background: var(--paper-deep);
+}
+
+.img {
+  object-fit: cover;
+  transition: transform 700ms var(--settle);
+}
+.card:hover .img { transform: scale(1.04); }
+
+.body {
+  padding-block-start: 18px;
+  display: grid;
+  gap: 7px;
+  text-align: start;
+}
+
+.code {
+  font-size: 11px;
+  color: var(--bronze);
+  letter-spacing: 0.04em;
+}
+
+.legal {
+  font-size: 13px;
+  color: var(--structure);
+}
+
+.title {
+  font-family: var(--ar-display);
+  font-size: 25px;
+  line-height: 1.4;
+  /* Forced to two lines so prices and legal-status rows share one baseline
+     across the row. Ragged card heights are what make a grid look assembled. */
+  min-height: 2.8em;
+  margin-block-start: 2px;
+}
+.title a { color: var(--ink); }
+.title a:hover {
+  color: var(--ink);
+  box-shadow: inset 0 -1px 0 var(--bronze);
+}
+
+.price {
+  font-size: 20px;
+  font-weight: 500;
+  margin-block-start: 4px;
+}
+
+.metrics {
+  font-size: 13px;
+  color: var(--structure);
+}
+
+.spec {
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.checked {
+  font-size: 11px;
+  color: var(--structure);
+  padding-block-start: 4px;
+}
+
+:global([lang="en"]) .title { font-family: var(--la-display); line-height: 1.18; }
+:global([lang="en"]) .media { aspect-ratio: 3 / 2; }

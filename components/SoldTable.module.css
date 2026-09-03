@@ -1,0 +1,95 @@
+.bar {
+  position: sticky;
+  top: 74px;
+  z-index: 40;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 22px 34px;
+  padding-block: 16px;
+  margin-block-end: 26px;
+  background: rgba(244, 241, 234, 0.94);
+  backdrop-filter: blur(10px);
+  border-block-end: 1px solid var(--ink);
+}
+
+.group { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+.legend {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--structure);
+  flex: none;
+}
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.chip {
+  background: transparent;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  padding: 6px 11px;
+  font-size: 13px;
+  color: var(--ink);
+  cursor: pointer;
+  min-height: 38px;
+  transition: background var(--d-micro) var(--settle),
+              border-color var(--d-micro) var(--settle),
+              color var(--d-micro) var(--settle);
+}
+.chip:hover { border-color: var(--structure); }
+.on { background: var(--bronze); border-color: var(--bronze); color: var(--paper); }
+
+.barEnd {
+  margin-inline-start: auto;
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+.count { font-size: 13px; color: var(--structure); }
+.clear {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--bronze);
+  cursor: pointer;
+}
+
+.wrap { overflow-x: auto; }
+
+.table { font-size: 14.5px; min-width: 900px; }
+.table th, .table td {
+  text-align: start;
+  padding: 13px 16px 13px 0;
+  border-block-end: 1px solid var(--hairline);
+  font-weight: 400;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.table thead th {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--structure);
+  border-block-end-color: var(--ink);
+  padding-block: 10px;
+}
+.table tbody th { color: var(--bronze); font-size: 12px; }
+.table tbody td { color: var(--ink); }
+.legal { color: var(--structure) !important; }
+.table tbody tr:last-child th,
+.table tbody tr:last-child td { border-block-end: none; }
+
+.empty { padding-block: clamp(40px, 8vh, 90px); }
+.empty h3 {
+  font-family: var(--ar-display);
+  font-size: clamp(1.4rem, 2.2vw, 2rem);
+  margin-block-end: 10px;
+}
+.empty p { color: var(--structure); }
+
+@media (max-width: 900px) {
+  .bar { position: static; gap: 16px; }
+  .barEnd { margin-inline-start: 0; }
+}

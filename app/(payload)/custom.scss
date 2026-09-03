@@ -1,0 +1,15 @@
+/* Admin chrome, tuned to the brand so the panel does not feel like a
+   different product from the site it edits. */
+:root {
+  --theme-elevation-0: #f4f1ea;
+  --theme-success-500: #3e6b4f;
+}
+
+/* Amiri for the wordmark in the admin chrome. The admin has its own root
+   layout, so the site's font links do not reach it. */
+@import url("https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap");
+
+.payload-settings__language,
+body {
+  font-family: "IBM Plex Sans Arabic", system-ui, sans-serif;
+}

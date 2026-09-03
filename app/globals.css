@@ -1,0 +1,287 @@
+/* ==========================================================================
+   الرواد — design tokens
+   Single source of truth. Nothing in the codebase hard-codes a colour,
+   a curve or a duration; everything reads from here.
+   ========================================================================== */
+
+:root {
+  /* ---- Colour: "Limestone & Bronze" ---------------------------------- */
+  --paper: #f4f1ea;
+  --paper-deep: #ebe6dc;
+  --ink: #1b1a17;
+  --structure: #6e6a5f;
+  --hairline: #d6d0c4;
+  --bronze: #9a6b3f;
+  --bronze-deep: #7a5230;
+  --action: #3e6b4f;
+  --night: #14130f;
+  --bronze-on-night: #b98b5c;
+  --paper-on-night: rgba(244, 241, 234, 0.78);
+  --action-on-night: #a8c4b0;
+
+  /* ---- Motion: two curves, three durations, one stagger -------------- */
+  --arrival: cubic-bezier(0.16, 1, 0.3, 1);
+  --settle: cubic-bezier(0.33, 1, 0.68, 1);
+  --d-micro: 200ms;
+  --d-element: 400ms;
+  --d-section: 800ms;
+  --stagger: 60ms;
+
+  /* ---- Type families ------------------------------------------------- */
+  --ar-display: "Amiri", "Times New Roman", serif;
+  --ar-text: "IBM Plex Sans Arabic", system-ui, sans-serif;
+  --la-display: "Newsreader", Georgia, serif;
+  --la-text: "IBM Plex Sans", system-ui, sans-serif;
+  /* Font fallback resolves per glyph: IBM Plex Mono carries no Arabic, so
+     naming the Arabic text face next means digits render monospaced and any
+     Arabic word in the same element renders in the proper reading face —
+     instead of dropping to a generic system monospace that has no relation
+     to the rest of the page. */
+  --mono: "IBM Plex Mono", "IBM Plex Sans Arabic", ui-monospace, Menlo,
+    Consolas, monospace;
+
+  /* ---- Layout -------------------------------------------------------- */
+  --page-pad: clamp(20px, 4vw, 64px);
+  --maxw: 1440px;
+  --maxw-wide: 1560px;
+  --gap-col: clamp(24px, 4vw, 56px);
+  --gap-card: clamp(20px, 3vw, 44px);
+  --sec-pad: clamp(50px, 11vh, 120px);
+  --sec-pad-major: clamp(60px, 14vh, 160px);
+  --radius: 2px;
+  --radius-img: 3px;
+
+  /* ---- Type sizes. Arabic runs larger and looser than Latin. --------- */
+  --fs-body: 17px;
+  --lh-body: 1.55;
+  --fs-body-2: 16px;
+  --lh-display: 1.04;
+  --lh-h2: 1.08;
+}
+
+/* Arabic needs 5–15% more size and 15–20% more leading than Latin at the
+   same nominal step. This is the token switch, not an eyeballed override. */
+:root:lang(ar),
+[lang="ar"] {
+  --fs-body: 19px;
+  --lh-body: 1.8;
+  --fs-body-2: 17px;
+  --lh-display: 1.32;
+  --lh-h2: 1.34;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+}
+
+body {
+  color: var(--ink);
+  font-family: var(--la-text);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  /* Arabic is cursive — synthesised bold smears the teeth of س ش ب ت ن
+     into an unreadable band. Real weights only, everywhere. */
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-wrap: pretty;
+  overflow-x: hidden;
+}
+
+[lang="ar"] body,
+body:lang(ar) {
+  font-family: var(--ar-text);
+}
+
+/* Tracking on Arabic either breaks the cursive joins or inserts gaps a
+   native reader parses as word boundaries. Never, with no exceptions —
+   including the eyebrow labels and buttons where designers reflexively add it. */
+:lang(ar) {
+  letter-spacing: 0;
+}
+
+/* Justification produces rivers in Arabic: browsers cannot do kashida. */
+:lang(ar) p,
+:lang(ar) li {
+  text-align: start;
+}
+
+a {
+  color: var(--bronze);
+  text-decoration: none;
+  transition: color var(--d-micro) var(--settle);
+}
+a:hover {
+  color: var(--bronze-deep);
+}
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--bronze);
+  outline-offset: 3px;
+  border-radius: var(--radius);
+}
+
+::selection {
+  background: var(--bronze);
+  color: var(--paper);
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-weight: 400;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+/* ==========================================================================
+   Utilities
+   ========================================================================== */
+
+.shell {
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--page-pad);
+}
+.shell-wide {
+  max-width: var(--maxw-wide);
+  margin-inline: auto;
+  padding-inline: var(--page-pad);
+}
+
+.grid12 {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--gap-col);
+}
+@media (max-width: 900px) {
+  .grid12 {
+    grid-template-columns: 1fr;
+  }
+  .grid12 > * {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+/* Eyebrow labels. Arabic has no uppercase, so the Latin treatment
+   (uppercase + tracking) has no Arabic equivalent — it is re-solved with
+   colour and the mono face instead. */
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--bronze);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  display: block;
+}
+:lang(ar) .eyebrow {
+  font-size: 12px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.mono {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Units read as words. Never monospaced — see <Measure>. */
+.measure-unit {
+  font-family: var(--ar-text);
+}
+:lang(en) .measure-unit {
+  font-family: var(--la-text);
+}
+
+.rule {
+  border: 0;
+  border-top: 1px solid var(--hairline);
+  margin: 0;
+}
+
+/* The single global texture. It unifies AI-generated photography shot at
+   different times of day, which is the whole reason it is here. Static —
+   animating a full-viewport layer repaints every frame. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  inset-inline-start: -9999px;
+  top: 0;
+  z-index: 10000;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 12px 18px;
+}
+.skip-link:focus {
+  inset-inline-start: 0;
+}
+
+/* ==========================================================================
+   Motion preferences
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

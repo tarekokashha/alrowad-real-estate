@@ -1,0 +1,33 @@
+.masthead {
+  padding-block: clamp(40px, 8vh, 84px) clamp(30px, 5vh, 54px);
+}
+
+.mastheadText { grid-column: 1 / span 7; }
+
+.h1 {
+  font-family: var(--ar-display);
+  font-size: clamp(2.2rem, 4.8vw, 4.4rem);
+  line-height: 1.3;
+  margin-block-start: 14px;
+}
+
+.lede {
+  margin-block-start: 20px;
+  max-width: 50ch;
+  color: var(--structure);
+}
+
+.mastheadMeta {
+  grid-column: 10 / span 3;
+  align-self: end;
+  display: grid;
+  gap: 12px;
+  font-size: 11px;
+}
+.mastheadMeta > div { display: grid; gap: 4px; }
+.mastheadMeta dt { color: var(--structure); }
+.mastheadMeta dd { margin: 0; color: var(--ink); font-size: 13px; }
+
+@media (max-width: 900px) {
+  .mastheadMeta { align-self: start; margin-block-start: 26px; }
+}

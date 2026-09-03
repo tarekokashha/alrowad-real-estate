@@ -1,0 +1,293 @@
+/* ---- «اعرف قسطك» — the affordability search ----------------------------- */
+
+.afford {
+  background: var(--paper-deep);
+  padding-block: clamp(44px, 8vh, 84px);
+  border-block-end: 1px solid var(--hairline);
+}
+
+.affordIntro {
+  grid-column: 1 / span 5;
+}
+
+.affordH2 {
+  font-family: var(--ar-display);
+  font-size: clamp(1.7rem, 2.6vw, 2.5rem);
+  line-height: 1.34;
+  margin-block-start: 12px;
+}
+
+.affordLede {
+  margin-block-start: 16px;
+  max-width: 46ch;
+}
+
+.affordForm {
+  grid-column: 7 / span 6;
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 18px;
+  align-items: end;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+.field label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--structure);
+}
+.field input {
+  font: inherit;
+  font-family: var(--mono);
+  font-size: 18px;
+  background: transparent;
+  border: 0;
+  border-block-end: 1px solid var(--ink);
+  padding: 8px 2px;
+  color: var(--ink);
+  border-radius: 0;
+  min-height: 44px;
+}
+.field input::placeholder {
+  color: var(--hairline);
+}
+
+.affordBtn {
+  background: var(--bronze);
+  color: var(--paper);
+  border: 1px solid var(--bronze);
+  border-radius: var(--radius);
+  padding: 13px 22px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  min-height: 48px;
+  transition: background var(--d-micro) var(--settle);
+}
+.affordBtn:hover:not(:disabled) {
+  background: var(--bronze-deep);
+  border-color: var(--bronze-deep);
+}
+.affordBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.affordNote {
+  grid-column: 7 / span 6;
+  margin-block-start: 18px;
+  font-size: 13px;
+  line-height: 1.85;
+  color: var(--structure);
+}
+
+/* ---- Filter rail + results grid ------------------------------------------ */
+
+.body {
+  padding-block: var(--sec-pad);
+}
+
+.rail {
+  grid-column: 1 / span 3;
+  align-self: start;
+  position: sticky;
+  top: 92px;
+}
+
+.railHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-block-end: 14px;
+  border-block-end: 1px solid var(--ink);
+  margin-block-end: 24px;
+}
+.railTitle {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--ink);
+}
+.clear {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--bronze);
+  cursor: pointer;
+}
+.clear:hover {
+  color: var(--bronze-deep);
+}
+
+.group {
+  border: 0;
+  margin: 0 0 24px;
+  padding: 0;
+}
+.legend {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--structure);
+  margin-block-end: 11px;
+  padding: 0;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.chip {
+  background: transparent;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  padding: 7px 12px;
+  font-size: 13px;
+  color: var(--ink);
+  cursor: pointer;
+  /* WCAG 2.2 puts the floor at 24px; a thumb on a mid-range Android needs
+     more than the floor, so tap targets here are 40px+. */
+  min-height: 40px;
+  transition:
+    background var(--d-micro) var(--settle),
+    border-color var(--d-micro) var(--settle),
+    color var(--d-micro) var(--settle);
+}
+.chip:hover {
+  border-color: var(--structure);
+}
+.chipOn {
+  background: var(--bronze);
+  border-color: var(--bronze);
+  color: var(--paper);
+}
+
+.rangeBlock {
+  margin-block-start: 30px;
+}
+.range {
+  width: 100%;
+  accent-color: var(--bronze);
+  margin-block: 12px 6px;
+  min-height: 32px;
+}
+.rangeEnds {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--structure);
+}
+
+.results {
+  grid-column: 4 / span 9;
+}
+
+.resultsHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  padding-block-end: 16px;
+  border-block-end: 1px solid var(--ink);
+  margin-block-end: clamp(24px, 4vh, 40px);
+}
+.count {
+  font-size: 15px;
+}
+.sortWrap {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.sortLabel {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--structure);
+}
+.sort {
+  font: inherit;
+  font-size: 14px;
+  background: transparent;
+  border: 0;
+  border-block-end: 1px solid var(--hairline);
+  color: var(--ink);
+  padding: 6px 2px;
+  min-height: 40px;
+  cursor: pointer;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap-card);
+}
+.cell {
+  display: flex;
+  flex-direction: column;
+}
+
+/* The written plan, printed on the card when the affordability search runs.
+   This is the answer to the question the buyer actually asked. */
+.plan {
+  margin-block-start: 12px;
+  padding-block-start: 12px;
+  border-block-start: 1px solid var(--bronze);
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--bronze-deep);
+}
+
+.empty {
+  padding-block: clamp(40px, 8vh, 90px);
+  max-width: 46ch;
+}
+.emptyTitle {
+  font-family: var(--ar-display);
+  font-size: clamp(1.4rem, 2.2vw, 2rem);
+  margin-block-end: 12px;
+}
+.emptyCta {
+  display: inline-block;
+  margin-block-start: 20px;
+  color: var(--bronze);
+}
+
+/* ---- Responsive ----------------------------------------------------------
+   The rail becomes a normal block above the grid rather than a sticky column;
+   a sticky sidebar on a 412px screen is just lost space. */
+
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .affordForm {
+    grid-template-columns: 1fr 1fr;
+  }
+  .affordBtn {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 900px) {
+  .rail {
+    position: static;
+    margin-block-end: 36px;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .affordForm {
+    grid-template-columns: 1fr;
+  }
+  .resultsHead {
+    flex-wrap: wrap;
+  }
+}
