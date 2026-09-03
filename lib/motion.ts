@@ -84,7 +84,6 @@ export const ENTRANCE_SHOTS: EntranceShot[] = [
 ];
 
 /** The session key. Version-stamped so a redesign can re-show the entrance. */
-export const ENTRANCE_SESSION_KEY = "elrowad.intro.v1";
 
 /**
  * Every condition under which the entrance must NOT run.
@@ -94,6 +93,10 @@ export const ENTRANCE_SESSION_KEY = "elrowad.intro.v1";
  * that matters most here: Egyptian property leads arrive as WhatsApp links to
  * a specific unit, and someone sent a 2.8M EGP duplex does not want a
  * 4.5-second gate before they can see it.
+ *
+ * Note there is no "already seen it" condition. The sequence replays on every
+ * full page load of the homepage — a refresh that showed a motionless hero
+ * read as a frozen page.
  */
 export function shouldSkipEntrance(pathname: string): boolean {
   if (typeof window === "undefined") return false;
@@ -109,28 +112,10 @@ export function shouldSkipEntrance(pathname: string): boolean {
     }
   ).connection;
   if (conn?.saveData === true) return true;
-  if (conn?.effectiveType && ["slow-2g", "2g", "3g"].includes(conn.effectiveType))
+  if (conn?.effectiveType && ["slow-2g", "2g"].includes(conn.effectiveType))
     return true;
 
   return false;
 }
 
-/** True when the visitor has already seen the entrance in this session. */
-export function entranceAlreadyPlayed(): boolean {
-  if (typeof window === "undefined") return false;
-  try {
-    return window.sessionStorage.getItem(ENTRANCE_SESSION_KEY) === "1";
-  } catch {
-    // Private mode, blocked storage: treat as unseen rather than throwing.
-    return false;
-  }
-}
 
-export function markEntrancePlayed(): void {
-  if (typeof window === "undefined") return;
-  try {
-    window.sessionStorage.setItem(ENTRANCE_SESSION_KEY, "1");
-  } catch {
-    /* storage unavailable — the entrance simply replays next load */
-  }
-}

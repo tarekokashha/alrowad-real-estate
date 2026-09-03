@@ -15,7 +15,9 @@ next-env.d.ts
 alrowad.db
 alrowad.db-*
 public/uploads/
-payload-types.ts
+# payload-types.ts is a BUILD INPUT, not an artefact: components/admin/Welcome.tsx
+# imports it, so a clean checkout without it fails `next build` with TS2307.
+# Regenerate with `npm run generate:types` after changing any collection.
 
 # os
 .DS_Store

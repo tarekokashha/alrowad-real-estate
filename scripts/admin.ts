@@ -1,4 +1,7 @@
 import { getPayload } from "payload";
+import { createInterface } from "node:readline";
+import { randomBytes } from "node:crypto";
+import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import config from "../payload.config";
 
 /**
@@ -6,40 +9,81 @@ import config from "../payload.config";
  *
  *   npm run admin
  *
- * Reads ADMIN_EMAIL and ADMIN_PASSWORD from .env — which is gitignored, so
- * the password never enters the repository. If the account already exists the
- * password is reset instead, so this doubles as "I forgot my password".
+ * Asks for the email and password in the terminal — the password is typed
+ * once, hidden while typing, used, and never written anywhere. It does not go
+ * into a file, into git, or into any transcript.
  *
- * The password is deliberately NOT hard-coded anywhere in this project. A
- * panel that holds buyers' names and phone numbers should not have its
- * credentials sitting in version control or in a chat transcript.
+ * If ADMIN_EMAIL / ADMIN_PASSWORD happen to be set in .env those are used
+ * instead, which is what CI or a scripted redeploy needs.
+ *
+ * Running it on an account that already exists RESETS the password, so this
+ * is also the "forgot my password" path.
  */
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-async function main() {
-  const email = (process.env.ADMIN_EMAIL || "").trim();
-  const password = process.env.ADMIN_PASSWORD || "";
-  const name = (process.env.ADMIN_NAME || "مدير الموقع").trim();
+function ask(question: string, { hidden = false } = {}): Promise<string> {
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
 
-  const die = (msg: string) => {
-    console.error(`\n✗ ${msg}\n`);
-    console.error("  افتح ملف .env واكتب فيه:\n");
-    console.error("    ADMIN_EMAIL=admin@alrowadrealestate.com");
-    console.error("    ADMIN_PASSWORD=<كلمة المرور اللي تختارها>\n");
-    console.error("  وبعدين شغّل:  npm run admin\n");
-    process.exit(1);
-  };
-
-  if (!email) die("ADMIN_EMAIL مش مكتوب في ملف .env");
-  if (!EMAIL_RE.test(email)) {
-    die(
-      `«${email}» مش بريد إلكتروني صالح.\n` +
-        "  لازم يكون فيه @ ونطاق، مثال: admin@alrowadrealestate.com",
-    );
+  if (hidden) {
+    // Swallow the echoed characters so the password never appears on screen
+    // or in the shell's scrollback.
+    const out = process.stdout as NodeJS.WriteStream & { _writeToOutput?: unknown };
+    const rlAny = rl as unknown as { _writeToOutput: (s: string) => void; output: NodeJS.WriteStream };
+    rlAny._writeToOutput = function (s: string) {
+      if (s.includes(question)) rlAny.output.write(question);
+      else rlAny.output.write("*");
+    };
+    void out;
   }
-  if (!password) die("ADMIN_PASSWORD مش مكتوب في ملف .env");
-  if (password.length < 8) die("كلمة المرور لازم تكون ٨ حروف على الأقل.");
+
+  return new Promise((resolve) => {
+    rl.question(question, (answer) => {
+      if (hidden) process.stdout.write("\n");
+      rl.close();
+      resolve(answer.trim());
+    });
+  });
+}
+
+/** Payload refuses to start without a signing secret. Generate one on first
+ *  run rather than shipping a default that somebody forgets to change. */
+function ensureSecret() {
+  const envPath = ".env";
+  if (process.env.PAYLOAD_SECRET && process.env.PAYLOAD_SECRET !== "dev-only-secret-change-before-deploy") {
+    return;
+  }
+  const secret = randomBytes(32).toString("base64");
+  let body = existsSync(envPath) ? readFileSync(envPath, "utf8") : "";
+  body = body.replace(/^PAYLOAD_SECRET=.*$/m, `PAYLOAD_SECRET=${secret}`);
+  if (!/^PAYLOAD_SECRET=/m.test(body)) body += `\nPAYLOAD_SECRET=${secret}\n`;
+  writeFileSync(envPath, body, "utf8");
+  process.env.PAYLOAD_SECRET = secret;
+  console.log("✓ اتولّد PAYLOAD_SECRET جديد واتحفظ في .env");
+}
+
+async function main() {
+  ensureSecret();
+
+  let email = (process.env.ADMIN_EMAIL || "").trim();
+  let password = process.env.ADMIN_PASSWORD || "";
+
+  if (!email || !password) {
+    console.log("\n──────────────────────────────────────────────");
+    console.log("  حساب مدير لوحة التحكم");
+    console.log("──────────────────────────────────────────────\n");
+  }
+
+  while (!EMAIL_RE.test(email)) {
+    if (email) console.log(`  ✗ «${email}» مش بريد صالح — لازم يكون فيه @ ونطاق.\n`);
+    email = await ask("  البريد الإلكتروني: ");
+    if (!email) email = "admin@alrowadrealestate.com";
+  }
+
+  while (password.length < 8) {
+    if (password) console.log("  ✗ كلمة المرور لازم ٨ حروف على الأقل.\n");
+    password = await ask("  كلمة المرور (مش هتظهر وانت بتكتب): ", { hidden: true });
+  }
 
   const payload = await getPayload({ config });
 
@@ -53,13 +97,18 @@ async function main() {
     await payload.update({
       collection: "users",
       id: existing.docs[0].id,
-      data: { password, name, role: "admin" },
+      data: { password, name: process.env.ADMIN_NAME || "مدير الموقع", role: "admin" },
     });
     console.log(`\n✓ اتغيّرت كلمة مرور ${email}`);
   } else {
     await payload.create({
       collection: "users",
-      data: { email, password, name, role: "admin" },
+      data: {
+        email,
+        password,
+        name: process.env.ADMIN_NAME || "مدير الموقع",
+        role: "admin",
+      },
     });
     console.log(`\n✓ اتعمل حساب المدير: ${email}`);
   }
