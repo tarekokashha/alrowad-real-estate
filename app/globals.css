@@ -27,6 +27,17 @@
   --d-section: 800ms;
   --stagger: 60ms;
 
+  /* The length of the entrance take. Mirrors ENTRANCE_MS in lib/motion.ts,
+     which is the clip's true duration (97 frames at 24fps). Re-cut the clip
+     and this is the only number in the stylesheets that changes. */
+  --entrance-take: 4040ms;
+  /* The instant the flying wordmark lands in the header slot — 93.3% of the
+     take, matching the wordmarkFly keyframes in Entrance.module.css.
+     Everything that settles after the camera (the header brand, the nav, the
+     hero H1 and its aside) is this plus a multiple of --stagger, so nine
+     delays across three stylesheets cannot drift apart. */
+  --entrance-settle: calc(var(--entrance-take) * 0.933);
+
   /* ---- Type families ------------------------------------------------- */
   --ar-display: "Amiri", "Times New Roman", serif;
   --ar-text: "IBM Plex Sans Arabic", system-ui, sans-serif;

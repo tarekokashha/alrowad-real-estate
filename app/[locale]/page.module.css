@@ -32,7 +32,10 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Hero UI arrives after the camera settles, on the shared 60ms stagger.
+/* Hero UI arrives after the camera settles, on the shared 60ms stagger,
+   anchored to --entrance-settle so it tracks the length of the take rather
+   than a number typed once against an older cut.
+
    Keyed on the attribute, never on a class React adds later: with no JS
    the attribute is absent, no rule matches, and the text is simply visible.
    Nothing is ever parked at opacity 0 waiting on JavaScript. */
@@ -42,10 +45,10 @@
   animation: heroSettle var(--d-section) var(--arrival) both;
 }
 :global([data-entrance="play"]) .heroH1 {
-  animation-delay: 4.2s;
+  animation-delay: var(--entrance-settle);
 }
 :global([data-entrance="play"]) .heroAside {
-  animation-delay: 4.26s;
+  animation-delay: calc(var(--entrance-settle) + 1 * var(--stagger));
 }
 
 @keyframes heroSettle {

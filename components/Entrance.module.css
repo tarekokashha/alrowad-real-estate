@@ -1,11 +1,15 @@
 /* ==========================================================================
-   The entrance sequence — 4.5s, four stills, one continuous camera move.
+   The entrance — one continuous take, 4.04s, silent.
 
-   Percentages are derived from the millisecond timings in lib/motion.ts
-   (shot boundaries at 1200 / 2200 / 3200 of 4500ms = 26.7% / 48.9% / 71.1%).
-   Every join is an overlapping 420ms cross-dissolve with BOTH layers still
-   moving through it — that overlap is what makes four stills read as one
-   camera move rather than a slideshow.
+   This replaced a four-still cross-dissolve. There are no shot boundaries
+   left to derive percentages from: the camera move is inside the file, and
+   the only thing this stylesheet still times against it is the wordmark
+   flight, whose duration comes from ENTRANCE_MS in lib/motion.ts.
+
+   Two layers, swapped by opacity alone:
+     .still  the clip's last frame — the settled hero, and the whole hero in
+             every skip case
+     .video  the take, on top, holding that same last frame when it ends
    ========================================================================== */
 
 .hero {
@@ -23,106 +27,80 @@
   z-index: 0;
 }
 
-.layer {
+/* Both layers occupy the same box and are swapped by opacity, never by
+   `display` — dropping the <video> out of layout would tear it down and
+   restart the take from frame 0. */
+.still,
+.video {
   position: absolute;
   inset: 0;
-  opacity: 0;
-  will-change: transform, opacity;
-}
-
-.layer img {
   width: 100%;
   height: 100%;
+  /* Footage must never be mirrored under [dir="rtl"]: mirroring flips
+     signage and stair handedness inside the frame, and Egyptian viewers
+     notice. object-fit is the only transform either layer gets. */
   object-fit: cover;
-  /* Photographs must never be mirrored: mirroring flips signage and stair
-     handedness inside the frame, and Egyptian viewers notice. */
-  transform: none;
+  object-position: center;
 }
 
-/* The first shot is the poster. It is painted at t=0, it is the LCP
-   element, and it stays visible if every animation is skipped. */
-.layer4 {
+/* The default state is the settled frame, alone — which is what a crawler, a
+   scripting-off reader, a reduced-motion visitor, a save-data visitor and
+   anyone deep-linked to a unit page sees. The take is the enhancement. */
+.still {
   opacity: 1;
 }
-
-.scrim {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(
-    to bottom,
-    rgba(20, 19, 15, 0.5) 0%,
-    rgba(20, 19, 15, 0.1) 32%,
-    rgba(20, 19, 15, 0.08) 55%,
-    rgba(20, 19, 15, 0.74) 100%
-  );
+.video {
+  opacity: 0;
+  /* Only ever used on the way out, when the skip button flips the attribute
+     and this dissolves away to reveal the still already sitting beneath it
+     at full opacity. */
+  transition: opacity 300ms var(--settle);
 }
 
 /* ---- Playing state ------------------------------------------------------
-   Animations are attached only when the component decides the entrance may
-   run. In every skip case the markup is identical and simply sits at its
-   final state, so a crawler and a slow-connection visitor get the same
-   complete page. */
+   Attached only when <EntranceGate> decided, before first paint, that the
+   take may run. In every skip case the markup is identical and simply rests
+   at its final frame. */
 
-:global([data-entrance="play"]) .layer1 {
+:global([data-entrance="play"]) .still {
+  opacity: 0;
+}
+
+/* Once the take has ended, the still is brought back up UNDERNEATH the
+   video's held final frame. They are the same pixels, so nothing appears to
+   happen; this exists only so the hero survives a browser that blanks a
+   finished <video> rather than holding its last frame. */
+:global([data-entrance="play"]) .still.stillSettled {
   opacity: 1;
-  animation: shot1 4500ms linear both;
-}
-:global([data-entrance="play"]) .layer2 {
-  animation: shot2 4500ms linear both;
-}
-:global([data-entrance="play"]) .layer3 {
-  animation: shot3 4500ms var(--settle) both;
-}
-:global([data-entrance="play"]) .layer4 {
-  animation: shot4 4500ms var(--settle) both;
 }
 
-@keyframes shot1 {
-  0% { opacity: 1; transform: scale(1) translateY(0); }
-  26.7% { opacity: 1; transform: scale(1.048) translateY(-0.6%); }
-  36% { opacity: 0; transform: scale(1.065) translateY(-1.2%); }
-  100% { opacity: 0; transform: scale(1.065) translateY(-1.2%); }
+:global([data-entrance="play"]) .video {
+  opacity: 1;
+  /* Fade up from --night instead of cutting to the poster. The clip opens on
+     a near-black gate at night, so this reads as the shot fading in — and it
+     spends the poster's load time rather than flashing through it. */
+  animation: takeIn 520ms var(--settle) both;
 }
 
-@keyframes shot2 {
-  0%, 17.4% { opacity: 0; transform: scale(1.095) translateY(0.8%); }
-  26.7% { opacity: 1; transform: scale(1.07) translateY(0.2%); }
-  48.9% { opacity: 1; transform: scale(1.02) translateY(-1.2%); }
-  58.2% { opacity: 0; transform: scale(1) translateY(-2%); }
-  100% { opacity: 0; transform: scale(1) translateY(-2%); }
-}
-
-@keyframes shot3 {
-  0%, 39.6% { opacity: 0; transform: scale(1.015) translateY(3.8%); }
-  48.9% { opacity: 1; transform: scale(1.035) translateY(1.4%); }
-  71.1% { opacity: 1; transform: scale(1.07) translateY(-3%); }
-  80.4% { opacity: 0; transform: scale(1.075) translateY(-3.6%); }
-  100% { opacity: 0; transform: scale(1.075) translateY(-3.6%); }
-}
-
-@keyframes shot4 {
-  0%, 61.8% {
+@keyframes takeIn {
+  from {
     opacity: 0;
-    transform: scale(1.07) translateY(1.6%);
-    filter: brightness(0.4) saturate(0.8);
   }
-  71.1% { opacity: 1; }
-  86.7% { filter: brightness(1) saturate(1.02); }
-  100% {
+  to {
     opacity: 1;
-    transform: scale(1) translateY(0);
-    filter: brightness(1) saturate(1.02);
   }
 }
-
-/* When the entrance does not play, shot 4 is the resting hero. */
 
 
 /* ---- The flying logotype ------------------------------------------------
    Text only, no mark (client decision). It leaves the hero centre and lands
    in the header slot, which is reserved at its final size from first paint —
-   otherwise this ships layout shift on every visit. */
+   otherwise this ships layout shift on every visit.
+
+   The flight runs the full length of the take (--entrance-take, which
+   mirrors ENTRANCE_MS), so it holds through the approach and clears the
+   frame exactly as the camera comes out into the courtyard. The 93.3% mark
+   below is where it lands, and --entrance-settle is derived from it. */
 
 .wordmark {
   position: absolute;
@@ -143,7 +121,7 @@
 }
 :global([data-entrance="play"]) .wordmark {
   opacity: 1;
-  animation: wordmarkFly 4500ms var(--arrival) both;
+  animation: wordmarkFly var(--entrance-take) var(--arrival) both;
 }
 
 @keyframes wordmarkFly {
@@ -240,8 +218,9 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Everything in the hero UI arrives on the shared 60ms stagger, after the
-   camera has settled. */
+/* The hero H1 and aside arrive on the shared stagger once the camera has
+   settled. Those rules live with the copy they animate, in
+   app/[locale]/page.module.css, anchored to --entrance-settle. */
 
 
 @media (max-width: 900px) {
@@ -258,8 +237,13 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .layer,
+  /* <EntranceGate> already returns "skip" here, so the clip is never even
+     fetched. This is the belt to that braces, for a preference toggled
+     after load. */
+  .still,
+  .video,
   .wordmark {
     animation: none !important;
+    transition: none !important;
   }
 }

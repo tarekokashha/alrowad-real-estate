@@ -31,59 +31,42 @@ export const STAGGER = 60;
 export const PARALLAX = { foreground: 1.0, mid: 0.94, background: 0.88 } as const;
 
 /* -------------------------------------------------------------------------
-   The entrance sequence — 4.5s, four stills, one continuous camera move.
-   Timings are the source of truth; the CSS keyframes are generated from
-   these percentages so the two can never drift apart.
+   The entrance — one continuous take, 4.04s, silent.
+
+   This replaced a four-still cross-dissolve sequence. A real camera move
+   through the gate says the thing the stills were only implying, and it
+   says it in one shot, so there are no joins left to get wrong.
+
+   ENTRANCE_MS is the clip's true length (97 frames at 24fps). It is the
+   source of truth for anything timed against the shot — the wordmark flight
+   in Entrance.module.css is expressed as percentages of it, so the two can
+   never drift apart.
+
+   The track is muxed without an audio stream, not merely muted: a hero that
+   can make noise is a hero that will eventually make noise on someone's
+   phone in a meeting.
    ------------------------------------------------------------------------- */
 
-export const ENTRANCE_MS = 4500;
+export const ENTRANCE_MS = 4040;
 
-export type EntranceShot = {
-  key: string;
-  /** Arabic name of the movement. */
-  name: string;
-  src: string;
-  alt: string;
-  start: number;
-  end: number;
-};
-
-export const ENTRANCE_SHOTS: EntranceShot[] = [
-  {
-    key: "arcade",
-    name: "الوصول",
-    src: "/img/arcade-night.webp",
-    alt: "ممر مقنطر مضاء ليلًا داخل كمبوند سكني بحدائق أكتوبر",
-    start: 0,
-    end: 1200,
-  },
-  {
-    key: "gate",
-    name: "العبور",
-    src: "/img/gate-night.webp",
-    alt: "بوابة كمبوند سكني من الحجر الجيري مضاءة ليلًا",
-    start: 1200,
-    end: 2200,
-  },
-  {
-    key: "aerial",
-    name: "الصعود",
-    src: "/img/aerial-sunset.webp",
-    alt: "منظر جوي مرتفع فوق فناء الكمبوند وقت الزرقة، وأضواء المدينة في الأفق",
-    start: 2200,
-    end: 3200,
-  },
-  {
-    key: "courtyard",
-    name: "الانكشاف",
-    src: "/img/courtyard-dusk.webp",
-    alt: "منظر جوي واسع لحدائق أكتوبر وقت الذهبي — مبانٍ من الحجر الجيري وشوارع مشجّرة وهضبة الصحراء في الأفق",
-    start: 3200,
-    end: 4500,
-  },
-];
-
-/** The session key. Version-stamped so a redesign can re-show the entrance. */
+export const ENTRANCE_VIDEO = {
+  /** VP9 first — roughly half the bytes of the H.264 at the same quality. */
+  webm: "/video/entrance.webm",
+  /** H.264 baseline of last resort; every browser that exists plays it. */
+  mp4: "/video/entrance.mp4",
+  /** Frame 0. The <video> poster, so the take never opens on black. */
+  poster: "/img/entrance-poster.webp",
+  /**
+   * Frame 96 — the last one. This is the settled hero: it is what a crawler,
+   * a reduced-motion visitor, a save-data visitor and a deep link all get,
+   * and it is the LCP element in every one of those cases. Because it is cut
+   * from the clip itself rather than art-directed separately, the moment the
+   * take ends there is nothing to cross-fade to.
+   */
+  still: "/img/entrance-still.webp",
+  width: 864,
+  height: 496,
+} as const;
 
 /**
  * Every condition under which the entrance must NOT run.
@@ -92,9 +75,9 @@ export const ENTRANCE_SHOTS: EntranceShot[] = [
  * best-case performance. The path check is the one people forget and the one
  * that matters most here: Egyptian property leads arrive as WhatsApp links to
  * a specific unit, and someone sent a 2.8M EGP duplex does not want a
- * 4.5-second gate before they can see it.
+ * four-second gate before they can see it.
  *
- * Note there is no "already seen it" condition. The sequence replays on every
+ * Note there is no "already seen it" condition. The take replays on every
  * full page load of the homepage — a refresh that showed a motionless hero
  * read as a frozen page.
  */
