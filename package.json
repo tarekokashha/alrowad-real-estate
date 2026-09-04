@@ -16,7 +16,8 @@
     "admin": "node --env-file=.env --no-deprecation --import tsx scripts/admin.ts",
     "harden:db": "node scripts/harden-db.mjs",
     "vercel:env": "node scripts/push-env.mjs",
-    "cms:check": "node --env-file=.env --no-deprecation --import tsx scripts/verify-cms.ts"
+    "cms:check": "node --env-file=.env --no-deprecation --import tsx scripts/verify-cms.ts",
+    "storage:check": "node scripts/check-storage.mjs"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.88.0",
