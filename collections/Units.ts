@@ -1,5 +1,28 @@
 import type { CollectionConfig } from "payload";
 import { APIError } from "payload";
+import { revalidatePath } from "next/cache";
+
+/**
+ * Rebuild the pages a unit appears on.
+ *
+ * Wrapped because revalidatePath needs a Next.js request context and this
+ * collection is also written to from the seed script, which has none. A
+ * failure there is expected and harmless — the seed is followed by a build
+ * anyway — so it must not take the write down with it.
+ */
+function revalidateUnit(doc: { code?: string } | undefined) {
+  const code = doc?.code?.toLowerCase();
+  try {
+    for (const locale of ["ar", "en"]) {
+      revalidatePath(`/${locale}`);
+      revalidatePath(`/${locale}/properties`);
+      revalidatePath(`/${locale}/sold`);
+      if (code) revalidatePath(`/${locale}/properties/${code}`);
+    }
+  } catch {
+    // Outside a request context. Nothing to invalidate.
+  }
+}
 
 /**
  * الوحدات — the unit collection.
@@ -83,6 +106,13 @@ export const Units: CollectionConfig = {
         return doc;
       },
     ],
+    // Without this the client edits a price, the panel says "saved", and the
+    // public page keeps showing the old figure until the next deploy — which
+    // is exactly the "the site does not listen to me" experience the panel
+    // exists to prevent. The pages are statically generated, so they have to
+    // be told.
+    afterChange: [({ doc }) => revalidateUnit(doc)],
+    afterDelete: [({ doc }) => revalidateUnit(doc)],
   },
 
   fields: [

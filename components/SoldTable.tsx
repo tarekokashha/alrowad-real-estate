@@ -1,20 +1,26 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { SOLD, SOLD_YEARS, SOLD_AREAS } from "@/lib/sold";
+import { soldFacetsFor, type SoldRecord } from "@/lib/sold";
 import { formatNumber } from "@/lib/format";
 import s from "./SoldTable.module.css";
 
-export default function SoldTable() {
+/** `records` come from the server so the archive reflects the CMS. */
+export default function SoldTable({ records }: { records: SoldRecord[] }) {
+  const { years: SOLD_YEARS, areas: SOLD_AREAS } = useMemo(
+    () => soldFacetsFor(records),
+    [records],
+  );
+
   const [year, setYear] = useState<number | null>(null);
   const [area, setArea] = useState<string | null>(null);
 
   const rows = useMemo(
     () =>
-      SOLD.filter(
+      records.filter(
         (r) => (year === null || r.year === year) && (area === null || r.areaAr === area),
       ),
-    [year, area],
+    [records, year, area],
   );
 
   const active = year !== null || area !== null;

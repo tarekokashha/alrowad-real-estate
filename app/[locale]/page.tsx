@@ -23,8 +23,18 @@ import {
   formatNumber,
   toEasternDigits,
 } from "@/lib/format";
-import { UNITS } from "@/lib/units";
+import { getUnits } from "@/lib/cms";
 import s from "./page.module.css";
+
+/**
+ * The unit pages are statically generated. A Payload hook revalidates them
+ * the moment the client saves, which is the fast path; this is the slow one,
+ * covering anything written straight to the database or a hook that failed.
+ * Five minutes is short enough that nothing looks broken and long enough
+ * that the database is not queried on every request.
+ */
+export const revalidate = 300;
+
 
 export default async function HomePage({
   params,
@@ -32,6 +42,7 @@ export default async function HomePage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  const units = await getUnits();
 
   return (
     <>
@@ -277,7 +288,7 @@ export default async function HomePage({
             </div>
 
             <div className={s.cardGrid}>
-              {UNITS.slice(0, 3).map((unit, i) => (
+              {units.slice(0, 3).map((unit, i) => (
                 <PropertyCard
                   key={unit.code}
                   unit={unit}

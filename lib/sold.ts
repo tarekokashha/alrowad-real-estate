@@ -75,6 +75,15 @@ export const SOLD_SUMMARY_2026 = {
 export const SOLD_YEARS = [...new Set(SOLD.map((r) => r.year))].sort((a, b) => b - a);
 export const SOLD_AREAS = [...new Set(SOLD.map((r) => r.areaAr))];
 
+/** The same derivation over whichever records are on screen — see
+ *  `facetsFor` in lib/units.ts for why the filters cannot be hard-coded. */
+export function soldFacetsFor(records: SoldRecord[]) {
+  return {
+    years: [...new Set(records.map((r) => r.year))].sort((a, b) => b - a),
+    areas: [...new Set(records.map((r) => r.areaAr))],
+  };
+}
+
 /** How buyers actually use the archive. Written as instructions, not as
  *  claims about our experience. */
 export const SOLD_USES = [

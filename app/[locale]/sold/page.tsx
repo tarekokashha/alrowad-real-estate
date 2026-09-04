@@ -3,9 +3,20 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import MobileActionBar from "@/components/MobileActionBar";
 import SoldTable from "@/components/SoldTable";
-import { SOLD, SOLD_TOTAL_SINCE_2011, SOLD_SUMMARY_2026, SOLD_USES } from "@/lib/sold";
+import { SOLD_TOTAL_SINCE_2011, SOLD_SUMMARY_2026, SOLD_USES } from "@/lib/sold";
+import { getSoldRecords } from "@/lib/cms";
 import { formatNumber } from "@/lib/format";
 import s from "./page.module.css";
+
+/**
+ * The unit pages are statically generated. A Payload hook revalidates them
+ * the moment the client saves, which is the fast path; this is the slow one,
+ * covering anything written straight to the database or a hook that failed.
+ * Five minutes is short enough that nothing looks broken and long enough
+ * that the database is not queried on every request.
+ */
+export const revalidate = 300;
+
 
 export const metadata: Metadata = {
   title: "سجل البيع — كل وحدة بعناها بتاريخها وسعرها | الرواد",
@@ -21,6 +32,7 @@ export default async function SoldPage({
 }) {
   const { locale } = await params;
   const S = SOLD_SUMMARY_2026;
+  const sold = await getSoldRecords();
 
   const summary = [
     { labelAr: "وحدات مبيعة", value: String(S.units) },
@@ -71,7 +83,7 @@ export default async function SoldPage({
 
         <section className={s.tableSection}>
           <div className="shell-wide">
-            <SoldTable />
+            <SoldTable records={sold} />
             <p className={s.disclosure}>
               الأسعار المنشورة هي القيمة المتعاقد عليها كما وردت في العقد، لا
               السعر المعلن قبل التفاوض. ننشر السجل بعد إتمام التعاقد فقط، ولا
@@ -135,7 +147,7 @@ export default async function SoldPage({
               contentUrl: `https://alrowadrealestate.com/${locale}/sold`,
               encodingFormat: "text/html",
             },
-            size: `${SOLD.length} سجلًا منشورًا`,
+            size: `${sold.length} سجلًا منشورًا`,
           }),
         }}
       />

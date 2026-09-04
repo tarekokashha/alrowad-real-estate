@@ -3,13 +3,7 @@
 import { useMemo, useState } from "react";
 import PropertyCard from "./PropertyCard";
 import {
-  UNITS,
-  AREAS,
-  TYPES,
-  LEGAL_VALUES,
-  FINISHINGS,
-  PRICE_MIN,
-  PRICE_MAX,
+  facetsFor,
   planFor,
   yearsLabel,
   unitsLabel,
@@ -31,7 +25,26 @@ function toggle<T>(list: T[], value: T): T[] {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
 }
 
-export default function Catalogue({ locale }: { locale: string }) {
+/**
+ * `units` arrives from the server rather than being imported, because the
+ * inventory now lives in the CMS and this component runs in the browser.
+ */
+export default function Catalogue({
+  locale,
+  units,
+}: {
+  locale: string;
+  units: Unit[];
+}) {
+  const {
+    areas: AREAS,
+    types: TYPES,
+    legals: LEGAL_VALUES,
+    finishings: FINISHINGS,
+    priceMin: PRICE_MIN,
+    priceMax: PRICE_MAX,
+  } = useMemo(() => facetsFor(units), [units]);
+
   const [areas, setAreas] = useState<string[]>([]);
   const [types, setTypes] = useState<string[]>([]);
   const [legals, setLegals] = useState<string[]>([]);
@@ -49,7 +62,7 @@ export default function Catalogue({ locale }: { locale: string }) {
   const affordActive = affordOn && depositNum > 0 && monthlyNum > 0;
 
   const results = useMemo(() => {
-    let out: (Unit & { plan?: ReturnType<typeof planFor> })[] = UNITS.filter((u) => {
+    let out: (Unit & { plan?: ReturnType<typeof planFor> })[] = units.filter((u) => {
       if (areas.length && !areas.includes(u.areaKey)) return false;
       if (types.length && !types.includes(u.type)) return false;
       if (legals.length && !legals.includes(u.legalStatus)) return false;
@@ -70,7 +83,7 @@ export default function Catalogue({ locale }: { locale: string }) {
     else if (sort === "perMetreAsc")
       sorted.sort((a, b) => a.price / a.size - b.price / b.size);
     return sorted;
-  }, [areas, types, legals, finishes, maxPrice, sort, affordActive, depositNum, monthlyNum]);
+  }, [units, areas, types, legals, finishes, maxPrice, sort, affordActive, depositNum, monthlyNum]);
 
   const clearAll = () => {
     setAreas([]);

@@ -8,7 +8,8 @@ import MobileActionBar from "@/components/MobileActionBar";
 import PropertyCard from "@/components/PropertyCard";
 import InstalmentCalculator from "@/components/InstalmentCalculator";
 import CopyCode from "@/components/CopyCode";
-import { UNITS, findUnit, yearsLabel } from "@/lib/units";
+import { yearsLabel } from "@/lib/units";
+import { getUnits, getUnit } from "@/lib/cms";
 import {
   detailFor,
   comparablesFor,
@@ -28,8 +29,19 @@ import {
 } from "@/lib/format";
 import s from "./page.module.css";
 
-export function generateStaticParams() {
-  return UNITS.map((u) => ({ code: u.code.toLowerCase() }));
+/**
+ * The unit pages are statically generated. A Payload hook revalidates them
+ * the moment the client saves, which is the fast path; this is the slow one,
+ * covering anything written straight to the database or a hook that failed.
+ * Five minutes is short enough that nothing looks broken and long enough
+ * that the database is not queried on every request.
+ */
+export const revalidate = 300;
+
+
+export async function generateStaticParams() {
+  // Built from the CMS, so a unit the client publishes gets its own page.
+  return (await getUnits()).map((u) => ({ code: u.code.toLowerCase() }));
 }
 
 export async function generateMetadata({
@@ -38,7 +50,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string; code: string }>;
 }): Promise<Metadata> {
   const { locale, code } = await params;
-  const u = findUnit(code);
+  const u = await getUnit(code);
   if (!u) return {};
 
   const title = `${u.titleAr} ${formatNumber(u.size)} م² — ${u.areaAr} | ${u.code}`;
@@ -62,11 +74,11 @@ export default async function UnitPage({
   params: Promise<{ locale: string; code: string }>;
 }) {
   const { locale, code } = await params;
-  const u = findUnit(code);
+  const u = await getUnit(code);
   if (!u) notFound();
 
   const d = detailFor(u);
-  const comps = comparablesFor(u);
+  const comps = comparablesFor(u, await getUnits());
   const perMetre = Math.round(u.price / u.size);
   const enquiry = unitEnquiry(u.code, `${u.titleAr} — ${u.areaAr}`, u.size);
 

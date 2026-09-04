@@ -291,6 +291,36 @@ export const FINISHINGS = [...new Set(UNITS.map((u) => u.finishing))];
 export const PRICE_MIN = Math.min(...UNITS.map((u) => u.price));
 export const PRICE_MAX = Math.max(...UNITS.map((u) => u.price));
 
+export type Facets = {
+  areas: string[];
+  types: UnitType[];
+  legals: LegalStatus[];
+  finishings: Finishing[];
+  priceMin: number;
+  priceMax: number;
+};
+
+/**
+ * The same derivation, applied to whichever list is actually on screen.
+ *
+ * Once the inventory comes from the CMS the filters have to come from it
+ * too. A filter offering "أشجار سيتي" when the client has no unit there
+ * returns an empty grid and reads as a broken site; one that omits a
+ * compound he does sell means those units cannot be found at all.
+ */
+export function facetsFor(units: Unit[]): Facets {
+  return {
+    areas: [...new Set(units.map((u) => u.areaKey))],
+    types: [...new Set(units.map((u) => u.type))],
+    legals: [...new Set(units.map((u) => u.legalStatus))],
+    finishings: [...new Set(units.map((u) => u.finishing))],
+    // Guarded: Math.min() of nothing is Infinity, which would render as a
+    // price slider with no bounds rather than an empty catalogue.
+    priceMin: units.length ? Math.min(...units.map((u) => u.price)) : 0,
+    priceMax: units.length ? Math.max(...units.map((u) => u.price)) : 0,
+  };
+}
+
 /* -------------------------------------------------------------------------
    «اعرف قسطك» — the reverse instalment search.
 

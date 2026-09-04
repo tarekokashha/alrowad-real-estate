@@ -90,6 +90,49 @@ export async function Welcome() {
         مسجّل. الجدول ده بيوريك لو في حاجة منهم محتاجة شغل النهاردة.
       </p>
 
+      {/* Which inventory the public site is actually serving.
+          The site falls back to the designer's example units while nothing is
+          published, and the two are never mixed — so this is the difference
+          between "my units are live" and "the visitors are seeing invented
+          prices", which is not something to leave anyone to work out. */}
+      {published.length === 0 ? (
+        <div
+          style={{
+            borderInlineStart: "2px solid #9a6b3f",
+            background: "var(--theme-elevation-50)",
+            padding: "1rem 1.15rem",
+            marginBottom: "1.4rem",
+          }}
+        >
+          <strong style={{ display: "block", marginBottom: ".35rem" }}>
+            الموقع لسه بيعرض وحدات المصمم، مش وحداتك
+          </strong>
+          <span style={{ fontSize: ".88rem", opacity: 0.78, lineHeight: 1.7 }}>
+            مفيش وحدة منشورة لحد دلوقتي، فالموقع بيعرض وحدات نموذجية بأسعار
+            متخيَّلة. أول ما تنشر وحدة واحدة، الوحدات النموذجية بتختفي كلها
+            على طول والموقع يبقى بتاعك. مفيش خلط بين الاتنين أبدًا — عشان
+            المشتري ميبقاش قدامه سعر حقيقي وسعر متخيَّل ومش عارف مين فيهم مين.{" "}
+            <Link href="/admin/collections/units?where[status][equals]=draft">
+              افتح المسودات
+            </Link>
+          </span>
+        </div>
+      ) : (
+        <div
+          style={{
+            borderInlineStart: "2px solid #3e6b4f",
+            background: "var(--theme-elevation-50)",
+            padding: "1rem 1.15rem",
+            marginBottom: "1.4rem",
+            fontSize: ".88rem",
+            lineHeight: 1.7,
+          }}
+        >
+          الموقع بيعرض وحداتك إنت — {published.length} وحدة منشورة. أي تعديل
+          بتحفظه هنا بيظهر على الموقع في ثواني.
+        </div>
+      )}
+
       <div
         style={{
           display: "grid",

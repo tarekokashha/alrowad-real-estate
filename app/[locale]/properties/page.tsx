@@ -4,8 +4,19 @@ import Footer from "@/components/Footer";
 import MobileActionBar from "@/components/MobileActionBar";
 import Catalogue from "@/components/Catalogue";
 import { COMPANY } from "@/lib/content";
-import { UNITS, CATALOGUE_REVIEWED_AR } from "@/lib/units";
+import { CATALOGUE_REVIEWED_AR } from "@/lib/units";
+import { getUnits } from "@/lib/cms";
 import s from "./page.module.css";
+
+/**
+ * The unit pages are statically generated. A Payload hook revalidates them
+ * the moment the client saves, which is the fast path; this is the slow one,
+ * covering anything written straight to the database or a hook that failed.
+ * Five minutes is short enough that nothing looks broken and long enough
+ * that the database is not queried on every request.
+ */
+export const revalidate = 300;
+
 
 export const metadata: Metadata = {
   title: "الوحدات المعروضة في حدائق أكتوبر — الرواد للتطوير العقاري",
@@ -25,6 +36,7 @@ export default async function PropertiesPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  const units = await getUnits();
 
   // ItemList makes the catalogue machine-readable as a set of offers rather
   // than an undifferentiated page of text.
@@ -32,8 +44,8 @@ export default async function PropertiesPage({
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: "الوحدات المعروضة — حدائق أكتوبر",
-    numberOfItems: UNITS.length,
-    itemListElement: UNITS.map((u, i) => ({
+    numberOfItems: units.length,
+    itemListElement: units.map((u, i) => ({
       "@type": "ListItem",
       position: i + 1,
       item: {
@@ -81,7 +93,7 @@ export default async function PropertiesPage({
           </div>
         </section>
 
-        <Catalogue locale={locale} />
+        <Catalogue locale={locale} units={units} />
       </main>
 
       <MobileActionBar enquiry="مهتم بوحدة من المعروض في حدائق أكتوبر" />

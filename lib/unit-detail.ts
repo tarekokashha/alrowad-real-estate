@@ -143,8 +143,15 @@ export function detailFor(u: Unit): UnitDetail {
 }
 
 /** Comparables: same price band, never the unit itself. */
-export function comparablesFor(u: Unit, n = 3): Unit[] {
-  return [...UNITS]
+/**
+ * `pool` is passed in rather than read from the module, because the
+ * comparables must be drawn from the inventory the visitor is actually
+ * looking at. Comparing a real published unit against the designer's
+ * examples would put invented prices on a page whose argument is that its
+ * prices are checkable.
+ */
+export function comparablesFor(u: Unit, pool: Unit[] = UNITS, n = 3): Unit[] {
+  return [...pool]
     .filter((x) => x.code !== u.code)
     .sort(
       (a, b) =>
