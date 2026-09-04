@@ -68,8 +68,21 @@ const client = new S3Client({
 });
 
 const Bucket = env.S3_BUCKET;
-const Key = `_healthcheck/${Date.now()}.txt`;
-const body = `alrowad storage check ${new Date().toISOString()}`;
+
+/**
+ * A 1x1 transparent PNG, 67 bytes.
+ *
+ * The media bucket only accepts image mime types — that restriction is
+ * deliberate, so nobody can quietly turn the property gallery into general
+ * file hosting. A plain text probe is therefore rejected by the bucket long
+ * after the credentials have already proved good, which reports a working
+ * setup as broken. The probe has to be the kind of thing the bucket is for.
+ */
+const PNG_1X1 =
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+const Key = `_healthcheck/${Date.now()}.png`;
+const body = Buffer.from(PNG_1X1, "base64");
+const ContentType = "image/png";
 
 console.log(`\n  المخزن   : ${Bucket}`);
 console.log(`  العنوان  : ${env.S3_ENDPOINT}`);
@@ -78,15 +91,15 @@ console.log(`  المفاتيح : موجودة\n`);
 let wrote = false;
 try {
   await client.send(
-    new PutObjectCommand({ Bucket, Key, Body: body, ContentType: "text/plain" }),
+    new PutObjectCommand({ Bucket, Key, Body: body, ContentType }),
   );
   wrote = true;
   console.log("  ✓ الرفع شغال");
 
   const got = await client.send(new GetObjectCommand({ Bucket, Key }));
-  const readBack = await got.Body.transformToString();
+  const readBack = Buffer.from(await got.Body.transformToByteArray());
 
-  if (readBack !== body) {
+  if (!readBack.equals(body)) {
     // Reading something other than what was written is worse than a failure
     // to write, because it means uploads appear to succeed and do not.
     console.error("  ✗ الملف رجع مختلف عن اللي اترفع — فيه حاجة غلط في الإعداد");
