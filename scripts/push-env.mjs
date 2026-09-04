@@ -29,6 +29,12 @@ const PUSH = [
 
 const NEVER_PUSH = ["ADMIN_EMAIL", "ADMIN_PASSWORD", "ADMIN_NAME"];
 const TARGETS = ["production", "development", "preview"];
+/**
+ * Preview variables are branch-scoped, and Vercel refuses to scope one to the
+ * production branch — `main` deploys to production, not to preview. So the
+ * shareable non-production build comes off its own branch.
+ */
+const PREVIEW_BRANCH = "staging";
 
 /**
  * shell:true is needed on Windows, where the npm-installed CLI is a .cmd shim
@@ -69,22 +75,34 @@ for (const key of PUSH) {
 
   const done = [];
   for (const target of TARGETS) {
-    vercel(["env", "rm", key, target, "--yes"]);
-    const res = vercel(["env", "add", key, target, "--yes"], value);
+    // Preview variables are branch-scoped. Without a branch argument the CLI
+    // stops to ask for one, and since stdin is already carrying the secret it
+    // never gets an answer — the command then fails with no error text at
+    // all, which is why this used to look like an unexplained skip.
+    const scope = target === "preview" ? [target, PREVIEW_BRANCH] : [target];
+
+    // `--yes` makes the CLI demand `--value` on the command line, which would
+    // put the secret in the process list. Passing the branch positionally
+    // satisfies it instead, and the value still arrives on stdin.
+    const confirm = target === "preview" ? [] : ["--yes"];
+
+    vercel(["env", "rm", key, ...scope, "--yes"]);
+    const res = vercel(["env", "add", key, ...scope, ...confirm], value);
 
     if (res.status === 0) {
       done.push(target);
       continue;
     }
 
-    // Production serves the live site, so a failure there is fatal. Preview
-    // is branch-scoped and the CLI is fussy about it; missing it only means
-    // pull-request previews run without a database, which is acceptable.
-    if (target === "production") {
-      console.error(`  x   ${key} FAILED on production`);
-      console.error((res.stderr || res.stdout || "").trim().slice(-500));
-      failed = true;
-    }
+    // Production serves the live site, so a failure there is fatal. A preview
+    // failure is not, but it is still reported: a preview deployment without
+    // a database looks built and then errors at request time, which is a
+    // confusing way to find out.
+    console.error(`  x   ${key.padEnd(22)} FAILED on ${target}`);
+    console.error(
+      "      " + (res.stderr || res.stdout || "(no output)").trim().slice(-400),
+    );
+    if (target === "production") failed = true;
   }
   if (done.length) console.log(`  ok  ${key.padEnd(22)} ${done.join(", ")}`);
 }
