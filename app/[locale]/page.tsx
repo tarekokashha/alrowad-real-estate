@@ -244,6 +244,11 @@ export default async function HomePage({
                 </Link>
               </div>
               <div className={s.pillarArtifact}>
+                {/* Four columns — code, description, price, date — do not fit
+                    a phone. Left to crush, "شقة 144 م² — أشجار سيتي" came
+                    apart into a five-line ladder. It keeps its width and the
+                    wrapper scrolls, same as the price index. */}
+                <div className={s.tableScroll}>
                 <table className={s.miniTable}>
                   <tbody>
                     {RECENT_SALES.map((sale) => (
@@ -260,6 +265,7 @@ export default async function HomePage({
                     ))}
                   </tbody>
                 </table>
+                </div>
               </div>
             </article>
           </div>

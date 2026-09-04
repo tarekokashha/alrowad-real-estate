@@ -89,8 +89,8 @@
   .legal { font-size: 14px; }
   .metrics { font-size: 14px; }
 
-  /* The forced two-line clamp exists to keep a desktop grid on one baseline.
-     In a single column there is no row to align to, and it just leaves a gap
-     under every short title. */
-  .title { min-height: 0; }
+  /* The two-line clamp keeps every card in a row on the same baseline. It was
+     dropped while the mobile grid was a single column and there was no row to
+     align to; now that cards sit two across it earns its place again. */
+  .title { font-size: 20px; }
 }

@@ -281,8 +281,13 @@
     position: static;
     margin-block-end: 36px;
   }
+  /* Two across. This is the page a buyer browses, and one card per screen
+     turns twelve units into twelve screens of scrolling — the card is nice
+     but nobody reaches the twelfth. Half width still fits the price on one
+     line at 360px. */
   .grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px 14px;
   }
   .affordForm {
     grid-template-columns: 1fr;

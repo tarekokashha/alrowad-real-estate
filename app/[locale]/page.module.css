@@ -541,8 +541,31 @@
   .pillar {
     gap: 28px;
   }
+
+  /* Two across, not one.
+     A full-width card puts a 4:5 image at 419px tall and pushes the section
+     to 2,728px — three cards that take four screens to scroll past, which is
+     how a catalogue stops being browsable. At half width the image is 201px,
+     the price still sets on one line with room to spare at 360px, and the
+     section drops to about 1,160px. Measured, not assumed. */
   .cardGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px 14px;
+  }
+
+  /* Two short lists that were stacked for no reason — the same mistake as the
+     footer. They are compound names and district names, a few words each, and
+     they belong beside each other. The intro above them is prose and stays
+     full width. */
+  .scope :global(.grid12) {
+    grid-template-columns: 1fr 1fr;
+  }
+  .scope .scopeCompounds,
+  .scope .scopeDistricts {
+    grid-column: span 1 !important;
+  }
+  .scope .scopeIntro {
+    grid-column: 1 / -1 !important;
   }
   .registry {
     gap: 8px 18px;
@@ -585,5 +608,25 @@
     display: inline-flex;
     align-items: center;
     min-height: 44px;
+  }
+}
+
+@media (max-width: 900px) {
+  /* The four-column sales table needs room its columns can actually occupy;
+     the scroller above provides it. Without the min-width the table would
+     still crush to fit and there would be nothing to scroll. */
+  .tableScroll .miniTable {
+    min-width: 430px;
+  }
+  /* The description is allowed to wrap on desktop because the column is wide
+     and wrapping is cheaper than a scrollbar. Inside the scroller that
+     trade-off inverts: there is horizontal room to spend, and a description
+     broken over three lines is what made this table unreadable. */
+  .tableScroll .miniTable td.wrap {
+    white-space: nowrap;
+  }
+  .miniTable th,
+  .miniTable td {
+    padding: 12px 12px 12px 0;
   }
 }
