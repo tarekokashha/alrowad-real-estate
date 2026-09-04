@@ -62,11 +62,53 @@ function ensureSecret() {
   console.log("✓ اتولّد PAYLOAD_SECRET جديد واتحفظ في .env");
 }
 
+/**
+ * `npm run admin -- --generate` — for when the account has to be created by
+ * someone who must not learn the password, which includes an assistant
+ * working in a transcript.
+ *
+ * A strong password is generated here, used, and written to a local file
+ * that .gitignore already excludes. It is never printed to the terminal, so
+ * it cannot end up in scrollback or in a conversation log — the only copy is
+ * on this machine, for the owner to read and then change.
+ */
+const CREDENTIAL_FILE = ".admin-password.tmp";
+
+function generatePassword() {
+  // base64url over 18 bytes: 24 characters, no ambiguous punctuation to
+  // retype, comfortably past anything worth brute-forcing.
+  return randomBytes(18).toString("base64url");
+}
+
+function writeCredentialFile(email: string, password: string) {
+  writeFileSync(
+    CREDENTIAL_FILE,
+    [
+      "حساب لوحة تحكم الرواد",
+      "",
+      `البريد:      ${email}`,
+      `كلمة المرور: ${password}`,
+      "",
+      "غيّر كلمة المرور من اللوحة أول ما تدخل، وبعدها امسح الملف ده.",
+      "الملف مستثنى من git، بس ده مش سبب تسيبه.",
+      "",
+    ].join("\n"),
+    "utf8",
+  );
+}
+
 async function main() {
   ensureSecret();
 
+  const generate = process.argv.includes("--generate");
+
   let email = (process.env.ADMIN_EMAIL || "").trim();
   let password = process.env.ADMIN_PASSWORD || "";
+
+  if (generate) {
+    if (!EMAIL_RE.test(email)) email = "admin@alrowadrealestate.com";
+    if (!password) password = generatePassword();
+  }
 
   if (!email || !password) {
     console.log("\n──────────────────────────────────────────────");
@@ -111,6 +153,12 @@ async function main() {
       },
     });
     console.log(`\n✓ اتعمل حساب المدير: ${email}`);
+  }
+
+  if (generate) {
+    writeCredentialFile(email, password);
+    console.log(`  كلمة المرور اتكتبت في: ${CREDENTIAL_FILE}`);
+    console.log("  افتح الملف، غيّر كلمة المرور من اللوحة، وبعدين امسحه.");
   }
 
   console.log("  ادخل من: http://localhost:3100/admin\n");
