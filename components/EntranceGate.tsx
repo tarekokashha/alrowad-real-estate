@@ -31,7 +31,7 @@ const SCRIPT = `
       // a specific unit, and someone sent a 2.8M EGP duplex does not want a
       // 4.5-second gate before they can see it.
       var p = location.pathname;
-      if (p !== "/" && p !== "/ar" && p !== "/en") return "skip";
+      if (p !== "/" && p !== "/ar") return "skip";
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return "skip";
       var c = navigator.connection;
       if (c) {

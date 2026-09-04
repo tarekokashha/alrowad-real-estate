@@ -2,23 +2,13 @@ import type { MetadataRoute } from "next";
 import { UNITS } from "@/lib/units";
 
 const BASE = "https://alrowadrealestate.com";
-const LOCALES = ["ar", "en"] as const;
 
 /**
- * Every URL carries hreflang alternates so ar-EG and en are understood as the
- * same page in two languages rather than as duplicates competing with each
- * other. x-default points at Arabic: it is the primary language and the
- * primary audience.
+ * One language, so no hreflang alternates. They were here when the site
+ * advertised an English locale; listing alternates for a language that no
+ * longer exists points Google at a redirect and invites it to keep the dead
+ * /en URLs in the index. The Arabic URL is now simply the only URL.
  */
-function alternates(path: string) {
-  return {
-    languages: {
-      "ar-EG": `${BASE}/ar${path}`,
-      en: `${BASE}/en${path}`,
-      "x-default": `${BASE}/ar${path}`,
-    },
-  };
-}
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPaths: { path: string; priority: number; freq: MetadataRoute.Sitemap[number]["changeFrequency"] }[] = [
@@ -32,24 +22,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const pages: MetadataRoute.Sitemap = [];
 
-  for (const locale of LOCALES) {
-    for (const p of staticPaths) {
-      pages.push({
-        url: `${BASE}/${locale}${p.path}`,
-        changeFrequency: p.freq,
-        priority: p.priority,
-        alternates: alternates(p.path),
-      });
-    }
-    for (const u of UNITS) {
-      const path = `/properties/${u.code.toLowerCase()}`;
-      pages.push({
-        url: `${BASE}/${locale}${path}`,
-        changeFrequency: "weekly",
-        priority: 0.8,
-        alternates: alternates(path),
-      });
-    }
+  for (const p of staticPaths) {
+    pages.push({
+      url: `${BASE}/ar${p.path}`,
+      changeFrequency: p.freq,
+      priority: p.priority,
+    });
+  }
+  for (const u of UNITS) {
+    pages.push({
+      url: `${BASE}/ar/properties/${u.code.toLowerCase()}`,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    });
   }
 
   return pages;

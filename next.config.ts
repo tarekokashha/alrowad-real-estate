@@ -15,7 +15,14 @@ const nextConfig: NextConfig = {
     imageSizes: [180, 260, 360, 480, 640],
   },
   async redirects() {
-    return [{ source: "/", destination: "/ar", permanent: false }];
+    return [
+      { source: "/", destination: "/ar", permanent: false },
+      // The English locale is gone. These are permanent so the indexed /en
+      // URLs collapse into their Arabic originals instead of turning into a
+      // page of 404s, and so anything already shared on WhatsApp still opens.
+      { source: "/en", destination: "/ar", permanent: true },
+      { source: "/en/:path*", destination: "/ar/:path*", permanent: true },
+    ];
   },
 };
 

@@ -101,7 +101,7 @@ export const ENTRANCE_SHOTS: EntranceShot[] = [
 export function shouldSkipEntrance(pathname: string): boolean {
   if (typeof window === "undefined") return false;
 
-  const homepages = ["/", "/ar", "/en"];
+  const homepages = ["/", "/ar"];
   if (!homepages.includes(pathname)) return true;
 
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return true;

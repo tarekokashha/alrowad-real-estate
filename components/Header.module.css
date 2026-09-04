@@ -55,13 +55,6 @@
 .whatsapp { color: var(--action-on-night); }
 .whatsapp:hover { color: var(--paper); }
 
-.lang {
-  font-family: var(--mono);
-  font-size: 12px;
-  color: rgba(244, 241, 234, 0.65);
-  letter-spacing: 0.08em;
-}
-.lang:hover { color: var(--paper); }
 
 @media (max-width: 1100px) {
   .link:nth-of-type(n + 4) { display: none; }
@@ -73,14 +66,13 @@
   .nav { gap: 10px; font-size: 14px; }
   .link, .divider { display: none; }
 
-  /* The phone, WhatsApp and language links were 22–26px tall: reachable with
-     a mouse, a coin toss with a thumb. Padding does the work and a matching
-     negative margin keeps the row looking identical — the target grows, the
-     design does not. */
+  /* The phone and WhatsApp links were 22–26px tall: reachable with a mouse,
+     a coin toss with a thumb. Padding does the work and a matching negative
+     margin keeps the row looking identical — the target grows, the design
+     does not. */
   .brand,
   .phone,
-  .whatsapp,
-  .lang {
+  .whatsapp {
     display: inline-flex;
     align-items: center;
     min-height: 44px;
@@ -92,12 +84,6 @@
     margin-inline: -8px;
   }
 
-  /* "EN" is two characters, so height alone cannot carry it to 44px. */
-  .lang {
-    justify-content: center;
-    min-width: 44px;
-    font-size: 13px;
-  }
 }
 
 /* The header arrives with the hero, on the same stagger. Without JS the
@@ -145,8 +131,6 @@
 .light .divider { background: var(--hairline); }
 .light .whatsapp { color: var(--action); }
 .light .whatsapp:hover { color: var(--bronze); }
-.light .lang { color: var(--structure); }
-.light .lang:hover { color: var(--ink); }
 
 /* The interior header never joins the entrance choreography — it belongs to
    a page the visitor navigated to deliberately. */

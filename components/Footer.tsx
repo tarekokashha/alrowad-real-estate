@@ -39,22 +39,6 @@ export default function Footer({ locale }: { locale: string }) {
             </ul>
           </nav>
         ))}
-
-        <nav className={s.col} aria-label="اللغة">
-          <h2 className={s.colTitle}>اللغة</h2>
-          <ul>
-            <li>
-              <Link href="/ar" hrefLang="ar">
-                العربية
-              </Link>
-            </li>
-            <li>
-              <Link href="/en" hrefLang="en">
-                English
-              </Link>
-            </li>
-          </ul>
-        </nav>
       </div>
 
       <div className="shell">

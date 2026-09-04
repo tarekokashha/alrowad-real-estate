@@ -23,7 +23,6 @@ export default function Header({
   variant?: "hero" | "light";
 }) {
   const ar = locale === "ar";
-  const other = ar ? "en" : "ar";
 
   return (
     <header className={`${s.header} ${variant === "light" ? s.light : ""}`}>
@@ -74,9 +73,6 @@ export default function Header({
           {ar ? "واتساب" : "WhatsApp"}
         </a>
 
-        <Link href={`/${other}`} className={s.lang} hrefLang={other}>
-          {ar ? "EN" : "ع"}
-        </Link>
       </nav>
     </header>
   );

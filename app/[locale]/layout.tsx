@@ -5,7 +5,18 @@ import { COMPANY } from "@/lib/content";
 import { PHONE_E164 } from "@/lib/format";
 import EntranceGate from "@/components/EntranceGate";
 
-export const LOCALES = ["ar", "en"] as const;
+/**
+ * One locale. There was an "en" here and a switch in the header pointing at
+ * it, but /en only ever rendered the Arabic site with dir="ltr" — the body
+ * copy, the nav, the unit data and every interior <title> stayed Arabic.
+ * A language switch that changes the text direction and nothing else is
+ * worse than no switch: it reads as a broken feature rather than an absent
+ * one, and it published a second indexable copy of every page.
+ *
+ * /en/* is now a permanent redirect to /ar/* (see next.config.ts), so any
+ * link already in the wild still lands somewhere real.
+ */
+export const LOCALES = ["ar"] as const;
 export type Locale = (typeof LOCALES)[number];
 
 export function generateStaticParams() {
@@ -34,7 +45,7 @@ export async function generateMetadata({
     description,
     alternates: {
       canonical: `/${locale}`,
-      languages: { "ar-EG": "/ar", en: "/en", "x-default": "/ar" },
+      languages: { "ar-EG": "/ar", "x-default": "/ar" },
     },
     openGraph: {
       type: "website",
