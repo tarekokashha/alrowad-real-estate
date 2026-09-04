@@ -53,6 +53,25 @@
 .copyright { margin-inline-start: auto; }
 
 @media (max-width: 900px) {
+  /* The global .grid12 rule drops every child to full width. For most of the
+     site that is right; for the footer it stacked four short link lists into
+     one endless column — twelve 44px rows with the registry line somewhere
+     past the horizon.
+     These lists are three or four items each and belong beside one another.
+     Two columns halves the height and, more to the point, gives the eye a
+     shape to read instead of an undifferentiated ribbon. */
+  .footer :global(.grid12) {
+    grid-template-columns: 1fr 1fr;
+    gap: 30px var(--gap-col);
+  }
+  /* The address block stays full width — it is prose, not a list. */
+  .footer .brand {
+    grid-column: 1 / -1 !important;
+  }
+  .footer .col {
+    grid-column: span 1 !important;
+  }
+
   .registry { gap: 8px 18px; }
   .copyright { margin-inline-start: 0; }
 
@@ -71,6 +90,12 @@
     display: inline-flex;
     align-items: center;
     min-height: 44px;
+  }
+
+  /* Each row already carries 44px of its own height, so the 9px list gap is
+     spacing on top of spacing — it added about 70px of nothing to the footer. */
+  .col ul {
+    gap: 0;
   }
 
   /* Column headings and the copyright line were 11px on a dark ground, which

@@ -107,30 +107,13 @@
   opacity: 0;
   animation: headerSettle var(--d-element) var(--arrival) both;
 }
-/* Anchored to --entrance-settle — the moment the flying wordmark lands in
-   the brand slot — so the brand appears to be what the wordmark became, and
-   the nav follows it out on the shared stagger. */
-:global([data-entrance="play"]) .brand {
-  animation-delay: var(--entrance-settle);
-}
-:global([data-entrance="play"]) .nav > *:nth-child(1) {
-  animation-delay: calc(var(--entrance-settle) + 1 * var(--stagger));
-}
-:global([data-entrance="play"]) .nav > *:nth-child(2) {
-  animation-delay: calc(var(--entrance-settle) + 2 * var(--stagger));
-}
-:global([data-entrance="play"]) .nav > *:nth-child(3) {
-  animation-delay: calc(var(--entrance-settle) + 3 * var(--stagger));
-}
-:global([data-entrance="play"]) .nav > *:nth-child(4) {
-  animation-delay: calc(var(--entrance-settle) + 4 * var(--stagger));
-}
-:global([data-entrance="play"]) .nav > *:nth-child(5) {
-  animation-delay: calc(var(--entrance-settle) + 5 * var(--stagger));
-}
-:global([data-entrance="play"]) .nav > *:nth-child(n + 6) {
-  animation-delay: calc(var(--entrance-settle) + 6 * var(--stagger));
-}
+:global([data-entrance="play"]) .brand { animation-delay: 4.2s; }
+:global([data-entrance="play"]) .nav > *:nth-child(1) { animation-delay: 4.26s; }
+:global([data-entrance="play"]) .nav > *:nth-child(2) { animation-delay: 4.32s; }
+:global([data-entrance="play"]) .nav > *:nth-child(3) { animation-delay: 4.38s; }
+:global([data-entrance="play"]) .nav > *:nth-child(4) { animation-delay: 4.44s; }
+:global([data-entrance="play"]) .nav > *:nth-child(5) { animation-delay: 4.5s; }
+:global([data-entrance="play"]) .nav > *:nth-child(n + 6) { animation-delay: 4.56s; }
 
 @keyframes headerSettle {
   from { opacity: 0; transform: translateY(14px); }
