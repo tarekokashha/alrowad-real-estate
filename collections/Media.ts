@@ -1,4 +1,23 @@
-import type { CollectionConfig } from "payload";
+import { APIError, type CollectionConfig } from "payload";
+
+/**
+ * A serverless function has no persistent disk. Without object storage an
+ * uploaded file lands in the instance's own temporary filesystem, where it
+ * survives until the next deploy — or simply is not there for the next
+ * request, which may be served by a different instance entirely.
+ *
+ * Payload would accept that upload and render its thumbnail, so nothing
+ * looks wrong until the client has spent an evening adding photographs and
+ * they are gone the next morning. Refusing the upload with a message he can
+ * act on is far kinder than accepting work that cannot survive.
+ */
+const ephemeralStorage =
+  Boolean(process.env.VERCEL) &&
+  !(
+    process.env.S3_BUCKET &&
+    process.env.S3_ENDPOINT &&
+    process.env.S3_ACCESS_KEY_ID
+  );
 
 /**
  * الصور — media.
@@ -22,6 +41,20 @@ export const Media: CollectionConfig = {
     },
   },
   access: { read: () => true },
+  hooks: {
+    beforeOperation: [
+      ({ operation, req }) => {
+        if (!ephemeralStorage) return;
+        if (operation !== "create" && operation !== "update") return;
+        // Editing alt text carries no file and is perfectly safe.
+        if (!req.file) return;
+        throw new APIError(
+          "التخزين لسه مش متظبّط على السيرفر، والصورة هتضيع لو رفعناها دلوقتي. لازم مفاتيح Supabase Storage تتحط في إعدادات الموقع الأول. كلّم اللي ظبّطلك الموقع.",
+          503,
+        );
+      },
+    ],
+  },
   upload: {
     staticDir: "public/uploads",
     mimeTypes: ["image/*"],
