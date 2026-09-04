@@ -6,6 +6,38 @@
 
 ---
 
+## ⛔ الحالة دلوقتي — النشر على Production متوقف
+
+البناء بينجح. الحاجة الوحيدة الواقفة إن **Vercel رافض يبدأ أي نشر على
+production** للمشروع ده.
+
+| الدليل | القيمة |
+|---|---|
+| آخر نشر production | `BLOCKED` — ومدة البناء **٠ ثانية**، يعني ما بدأش أصلًا |
+| حالة المشروع | `live: false` |
+| نشر preview في نفس التوقيت | `READY` — بنى في دقيقة واحدة ✅ |
+| محاولة `unpause` بالـAPI | `403 Forbidden` |
+
+يعني **الكود سليم** — الـpreview اتبنى من نفس الـcommit بالظبط. المشكلة في
+إعداد الحساب مش في المشروع.
+
+ودي بالظبط الحالة اللي بيوصفها توثيق Vercel لمشروع **متوقّف (paused)**:
+> "the project disables auto-assigning custom production domains and
+> **blocks the active Production Deployment**"
+
+### اللي محتاج تعمله إنت (أنا مش قادر — الـAPI بيرد 403)
+
+1. افتح **https://vercel.com/tareks-projects-2103af5a/alrowad-real-estate**
+2. لو فيه بانر **Resume / Unpause** فوق ← اضغطه
+3. لو مفيش، بصّ في **Settings ← General** تحت خالص، وفي
+   **Account ← Billing** لو فيه أي تنبيه أو حد استهلاك
+4. بعد ما يترفع الإيقاف، قوللي وأنا أنشر تاني على طول
+
+> ملاحظة: عملت ١٦ نشر النهار ده وإحنا بنظبط، فلو الإيقاف مؤقت بسبب كتر
+> النشر، غالبًا هيفك لوحده خلال ساعات.
+
+---
+
 ## ١) Supabase — قاعدة بيانات + تخزين صور، حساب واحد
 
 1. **supabase.com** ← New project
