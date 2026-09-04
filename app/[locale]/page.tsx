@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Entrance from "@/components/Entrance";
 import PropertyCard from "@/components/PropertyCard";
 import Footer from "@/components/Footer";
+import MobileActionBar from "@/components/MobileActionBar";
 import {
   COMPANY,
   PRICE_INDEX,
@@ -110,6 +111,11 @@ export default async function HomePage({
 
             <div className={s.indexTable}>
               <div className={s.bracket}>
+                {/* The five columns will not fit a phone. Rather than let
+                    them crush — "ربع/ربع" was breaking across two lines and
+                    a price range across three — the table keeps its width
+                    and the wrapper scrolls. */}
+                <div className={s.tableScroll}>
                 <table className={s.table}>
                   <thead>
                     <tr>
@@ -138,6 +144,7 @@ export default async function HomePage({
                     ))}
                   </tbody>
                 </table>
+                </div>
               </div>
               <p className={s.footnote}>{PRICE_INDEX.footnoteAr}</p>
             </div>
@@ -391,6 +398,7 @@ export default async function HomePage({
         </section>
       </main>
 
+      <MobileActionBar />
       <Footer locale={locale} />
     </>
   );

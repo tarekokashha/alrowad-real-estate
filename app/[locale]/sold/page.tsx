@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import MobileActionBar from "@/components/MobileActionBar";
 import SoldTable from "@/components/SoldTable";
 import { SOLD, SOLD_TOTAL_SINCE_2011, SOLD_SUMMARY_2026, SOLD_USES } from "@/lib/sold";
 import { formatNumber } from "@/lib/format";
@@ -108,6 +109,7 @@ export default async function SoldPage({
         </section>
       </main>
 
+      <MobileActionBar enquiry="شفت سجل البيع، عايز أعرف المتاح دلوقتي" />
       <Footer locale={locale} />
 
       <script

@@ -152,7 +152,17 @@
 
 /* ---- Tables -------------------------------------------------------------- */
 
-.tableWrap { overflow-x: auto; }
+/* Scroll shadows — a shadow appears only at the end where more table remains.
+   See components/SoldTable.module.css for how the layers work. */
+.tableWrap {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  background:
+    linear-gradient(to right, var(--paper) 32%, rgba(244, 241, 234, 0)) left center / 44px 100% no-repeat local,
+    linear-gradient(to left, var(--paper) 32%, rgba(244, 241, 234, 0)) right center / 44px 100% no-repeat local,
+    radial-gradient(farthest-side at 0 50%, rgba(27, 26, 23, 0.14), rgba(27, 26, 23, 0)) left center / 15px 100% no-repeat scroll,
+    radial-gradient(farthest-side at 100% 50%, rgba(27, 26, 23, 0.14), rgba(27, 26, 23, 0)) right center / 15px 100% no-repeat scroll;
+}
 .table {
   font-size: 15px;
   margin-block-start: 26px;
@@ -381,4 +391,9 @@
   .districts, .priceTable, .accessTable, .cautionList, .faq {
     margin-block-start: 28px;
   }
+
+  /* 11px mono headings do not survive a phone screen. */
+  .table thead th { font-size: 12.5px; }
+  .table { font-size: 15px; }
+  .table th, .table td { padding: 13px 14px 13px 0; }
 }

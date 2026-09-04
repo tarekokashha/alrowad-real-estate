@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import MobileActionBar from "@/components/MobileActionBar";
 import Catalogue from "@/components/Catalogue";
 import { COMPANY } from "@/lib/content";
 import { UNITS, CATALOGUE_REVIEWED_AR } from "@/lib/units";
@@ -83,6 +84,7 @@ export default async function PropertiesPage({
         <Catalogue locale={locale} />
       </main>
 
+      <MobileActionBar enquiry="مهتم بوحدة من المعروض في حدائق أكتوبر" />
       <Footer locale={locale} />
 
       <script

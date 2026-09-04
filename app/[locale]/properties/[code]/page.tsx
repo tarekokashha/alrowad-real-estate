@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import MobileActionBar from "@/components/MobileActionBar";
 import PropertyCard from "@/components/PropertyCard";
 import InstalmentCalculator from "@/components/InstalmentCalculator";
 import CopyCode from "@/components/CopyCode";
@@ -317,21 +318,10 @@ export default async function UnitPage({
         </section>
       </main>
 
-      {/* Sticky mobile action bar. The unit code travels in the WhatsApp
-          message so the conversation starts with context — without it the
-          sales team cannot tell which unit produced the lead. */}
-      <div className={s.mobileBar}>
-        <a
-          className={s.mobileWa}
-          href={whatsappHref(enquiry)}
-          rel="noopener"
-        >
-          واتساب — {u.code}
-        </a>
-        <a className={s.mobileCall} href={`tel:${PHONE_E164}`}>
-          اتصال
-        </a>
-      </div>
+      {/* The unit code travels in the WhatsApp message so the conversation
+          starts with context — without it the sales team cannot tell which
+          unit produced the lead. */}
+      <MobileActionBar enquiry={enquiry} waLabel={`واتساب — ${u.code}`} />
 
       <Footer locale={locale} />
 

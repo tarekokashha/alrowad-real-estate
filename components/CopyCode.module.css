@@ -18,3 +18,9 @@
   font-size: 11px;
   color: var(--bronze);
 }
+
+@media (max-width: 900px) {
+  /* Copying the unit code is how a buyer quotes it back over WhatsApp. */
+  .btn { min-height: 44px; }
+  .hint { font-size: 12.5px; }
+}

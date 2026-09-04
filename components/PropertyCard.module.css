@@ -77,3 +77,20 @@
 
 :global([lang="en"]) .title { font-family: var(--la-display); line-height: 1.18; }
 :global([lang="en"]) .media { aspect-ratio: 3 / 2; }
+
+@media (max-width: 900px) {
+  /* On a phone the card is the full width of the screen, so there is room —
+     the small type was sized for a three-across desktop grid and simply
+     carried over. The unit code and the price-checked date are the two lines
+     that make this card different from a competitor's, so they are the last
+     things that should be hard to read. */
+  .code { font-size: 12.5px; }
+  .checked { font-size: 12.5px; }
+  .legal { font-size: 14px; }
+  .metrics { font-size: 14px; }
+
+  /* The forced two-line clamp exists to keep a desktop grid on one baseline.
+     In a single column there is no row to align to, and it just leaves a gap
+     under every short title. */
+  .title { min-height: 0; }
+}

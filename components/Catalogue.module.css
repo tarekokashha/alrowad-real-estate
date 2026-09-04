@@ -290,4 +290,34 @@
   .resultsHead {
     flex-wrap: wrap;
   }
+
+  /* Filters are the whole point of this page on a phone, so every control
+     gets the full 44px band and the labels get a size worth reading. */
+  .chip {
+    min-height: 44px;
+    padding: 8px 14px;
+  }
+  .range {
+    /* A 32px slider is a fiddly thing to drag with a thumb. */
+    min-height: 44px;
+  }
+  .rangeEnds {
+    font-size: 12.5px;
+  }
+  .sort {
+    min-height: 44px;
+  }
+
+  /* The labels that say what each filter does. At 11px they were the smallest
+     text on a page whose whole job is filtering. */
+  .legend,
+  .railTitle,
+  .sortLabel {
+    font-size: 12.5px;
+  }
+  .rail label,
+  .rail dt,
+  .rail bdi {
+    font-size: 12.5px;
+  }
 }

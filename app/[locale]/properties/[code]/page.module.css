@@ -258,11 +258,8 @@
   gap: var(--gap-card);
 }
 
-/* ---- Mobile action bar ---------------------------------------------------
-   The only persistent affordance on mobile. Not a floating bubble, and it
-   carries the unit code into the message. */
-
-.mobileBar { display: none; }
+/* The mobile action bar now lives in components/MobileActionBar — every page
+   carries one, not just this one. */
 
 @media (max-width: 1100px) {
   .compsGrid { grid-template-columns: repeat(2, 1fr); }
@@ -278,29 +275,20 @@
   .compsGrid { grid-template-columns: 1fr; }
   .spec th, .rooms th { width: 46%; white-space: normal; }
 
-  .mobileBar {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 10px;
-    position: fixed;
-    inset-inline: 0;
-    inset-block-end: 0;
-    z-index: 90;
-    padding: 12px var(--page-pad) calc(12px + env(safe-area-inset-bottom));
-    background: rgba(244, 241, 234, 0.96);
-    backdrop-filter: blur(10px);
-    border-block-start: 1px solid var(--hairline);
-  }
-  .mobileWa, .mobileCall {
-    display: flex;
+  /* Breadcrumbs are how you get back out of a unit page, and they were 20px. */
+  .crumb a {
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    /* 56px in the thumb zone — WCAG's 24px floor is a floor, not a target. */
-    min-height: 56px;
-    border-radius: var(--radius);
-    font-size: 15px;
-    font-weight: 500;
+    min-height: 44px;
   }
-  .mobileWa { background: var(--action); color: var(--paper); }
-  .mobileCall { border: 1px solid var(--ink); color: var(--ink); }
+
+  /* The lines that make this page worth trusting — when the photographs were
+     taken, the legal-status label, the drive-time caveat — were the smallest
+     type on it. */
+  .galleryCaption,
+  .legalLabel,
+  .agentMeta,
+  .driveNote {
+    font-size: 12.5px;
+  }
 }

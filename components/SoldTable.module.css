@@ -57,7 +57,23 @@
   cursor: pointer;
 }
 
-.wrap { overflow-x: auto; }
+/* Nine columns cannot fit a phone, so the table scrolls sideways. The trouble
+   with a sideways-scrolling table is that nobody discovers it: the other six
+   columns may as well not exist.
+   These are scroll shadows. The two `local` layers scroll with the content
+   and so cover the shadow when that edge is reached, while the `scroll`
+   layers stay put — the result is a shadow that appears only on the side
+   where there is more to see. No JavaScript, and it degrades to a plain
+   table in browsers without background-attachment support. */
+.wrap {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  background:
+    linear-gradient(to right, var(--paper) 32%, rgba(244, 241, 234, 0)) left center / 44px 100% no-repeat local,
+    linear-gradient(to left, var(--paper) 32%, rgba(244, 241, 234, 0)) right center / 44px 100% no-repeat local,
+    radial-gradient(farthest-side at 0 50%, rgba(27, 26, 23, 0.14), rgba(27, 26, 23, 0)) left center / 15px 100% no-repeat scroll,
+    radial-gradient(farthest-side at 100% 50%, rgba(27, 26, 23, 0.14), rgba(27, 26, 23, 0)) right center / 15px 100% no-repeat scroll;
+}
 
 .table { font-size: 14.5px; min-width: 900px; }
 .table th, .table td {
@@ -92,4 +108,16 @@
 @media (max-width: 900px) {
   .bar { position: static; gap: 16px; }
   .barEnd { margin-inline-start: 0; }
+
+  /* 10.5px mono is legible on a desktop monitor at arm's length and simply
+     is not on a phone. The column headings are how you read the table. */
+  .table thead th { font-size: 12.5px; }
+  .table tbody th { font-size: 13px; }
+  .table { font-size: 15px; }
+  .table th, .table td { padding: 14px 14px 14px 0; }
+
+  /* Filter controls into the 44px band. */
+  .chip { min-height: 44px; padding: 8px 14px; }
+  .clear { min-height: 44px; padding-inline: 4px; font-size: 12.5px; }
+  .legend { font-size: 12px; }
 }

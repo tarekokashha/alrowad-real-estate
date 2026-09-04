@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import MobileActionBar from "@/components/MobileActionBar";
 import { COMPANY } from "@/lib/content";
 import {
   GUIDE_UPDATED_AR,
@@ -437,6 +438,7 @@ export default async function AreaGuidePage({
         </section>
       </main>
 
+      <MobileActionBar enquiry="قرأت دليل حدائق أكتوبر وحابب أستشيركم" />
       <Footer locale={locale} />
 
       <script

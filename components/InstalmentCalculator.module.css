@@ -57,3 +57,11 @@
   font-size: 12px;
   color: var(--structure);
 }
+
+@media (max-width: 900px) {
+  /* A 32px slider is hard to grab and easy to overshoot with a thumb, and
+     these two decide the number the whole page is built around. */
+  .range { min-height: 44px; }
+  .resultLabel { font-size: 12.5px; }
+  .note { font-size: 13px; }
+}

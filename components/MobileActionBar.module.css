@@ -1,0 +1,72 @@
+/* The persistent contact affordance on small screens.
+   Hidden on desktop, where the header stays in reach the whole way down. */
+
+.bar { display: none; }
+
+@media (max-width: 900px) {
+  .bar {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 10px;
+    position: fixed;
+    inset-inline: 0;
+    inset-block-end: 0;
+    z-index: 90;
+    /* env() keeps the buttons clear of the iPhone home indicator, which
+       otherwise swallows the bottom ~34px and the taps that land there. */
+    padding: 12px var(--page-pad) calc(12px + env(safe-area-inset-bottom));
+    background: rgba(244, 241, 234, 0.96);
+    backdrop-filter: blur(10px);
+    border-block-start: 1px solid var(--hairline);
+  }
+
+  .wa,
+  .call {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* 56px in the thumb zone — WCAG's 24px floor is a floor, not a target. */
+    min-height: 56px;
+    border-radius: var(--radius);
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .wa {
+    background: var(--action);
+    color: var(--paper);
+  }
+  .wa:hover {
+    color: var(--paper);
+  }
+
+  .call {
+    border: 1px solid var(--ink);
+    color: var(--ink);
+  }
+}
+
+/* Clearance for this bar lives in Footer.module.css, so the footer's own
+   background continues underneath it. */
+
+@media (prefers-reduced-motion: no-preference) {
+  @media (max-width: 900px) {
+    .bar {
+      animation: barRise 400ms var(--arrival) both;
+      /* Late enough not to compete with the entrance sequence on the
+         homepage, and unnoticeable on every other page. */
+      animation-delay: 0.6s;
+    }
+  }
+}
+
+@keyframes barRise {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

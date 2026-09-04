@@ -67,9 +67,37 @@
   .link:nth-of-type(n + 4) { display: none; }
 }
 @media (max-width: 820px) {
-  .header { padding: 18px var(--page-pad); gap: 16px; }
-  .nav { gap: 16px; font-size: 14px; }
+  /* Less padding on the bar itself because each control now carries its own
+     height — the row ends up about the same, but every part of it is hittable. */
+  .header { padding: 8px var(--page-pad); gap: 12px; }
+  .nav { gap: 10px; font-size: 14px; }
   .link, .divider { display: none; }
+
+  /* The phone, WhatsApp and language links were 22–26px tall: reachable with
+     a mouse, a coin toss with a thumb. Padding does the work and a matching
+     negative margin keeps the row looking identical — the target grows, the
+     design does not. */
+  .brand,
+  .phone,
+  .whatsapp,
+  .lang {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .phone,
+  .whatsapp {
+    padding-inline: 8px;
+    margin-inline: -8px;
+  }
+
+  /* "EN" is two characters, so height alone cannot carry it to 44px. */
+  .lang {
+    justify-content: center;
+    min-width: 44px;
+    font-size: 13px;
+  }
 }
 
 /* The header arrives with the hero, on the same stagger. Without JS the

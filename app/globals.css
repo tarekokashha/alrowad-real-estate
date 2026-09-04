@@ -195,6 +195,12 @@ button {
   }
   .grid12 > * {
     grid-column: 1 / -1 !important;
+    /* A grid item defaults to min-width:auto, meaning it refuses to shrink
+       below its content. One wide table inside it therefore widens the item,
+       then the grid, then the page — and the whole document scrolls sideways
+       instead of the table doing it. Overriding to 0 keeps the overflow where
+       it belongs. */
+    min-width: 0;
   }
 }
 
@@ -213,6 +219,20 @@ button {
   font-size: 12px;
   text-transform: none;
   letter-spacing: 0;
+}
+
+/* Arabic loses legibility faster than Latin as size drops: the difference
+   between ب ت ث is dots, and between ح خ ج a single dot's position — detail
+   that survives a desktop monitor and disappears on a phone held at arm's
+   length in Cairo daylight. So the small labels go up on small screens
+   rather than down, which is the opposite of the usual instinct. */
+@media (max-width: 900px) {
+  .eyebrow {
+    font-size: 12px;
+  }
+  :lang(ar) .eyebrow {
+    font-size: 13px;
+  }
 }
 
 .mono {

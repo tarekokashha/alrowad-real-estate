@@ -55,4 +55,28 @@
 @media (max-width: 900px) {
   .registry { gap: 8px 18px; }
   .copyright { margin-inline-start: 0; }
+
+  /* Clearance for the fixed action bar. It belongs to the footer rather than
+     to <body> so the night background continues underneath the bar — padding
+     on body would leave a paper-coloured strip below the footer. */
+  .footer {
+    padding-block-end: calc(46px + 92px + env(safe-area-inset-bottom));
+  }
+
+  /* Footer navigation is a list of destinations, not prose, and each entry sat
+     at 21px — about half a fingertip. inline-flex grows the target without
+     stretching the underline across the whole row. */
+  .footer li a,
+  .footer .brand a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  /* Column headings and the copyright line were 11px on a dark ground, which
+     is the hardest combination to read on a phone outdoors. */
+  .colTitle,
+  .copyright {
+    font-size: 12.5px;
+  }
 }
