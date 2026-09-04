@@ -80,11 +80,35 @@ production** للمشروع ده.
 postgresql://postgres.xxxxx:PASSWORD@aws-0-eu-central-1.pooler.supabase.com:6543/postgres
 ```
 
-### تخزين الصور
+### تخزين الصور — الحاجة الوحيدة اللي لازم إيدك
 
-1. `Storage ← New bucket` ← الاسم **`media`** ← علّم **Public**
-2. `Settings ← Storage ← S3 connection ← New access key`
-3. هتاخد منها: الـendpoint و access key id و secret
+الـbucket اسمه `media` **اتعمل خلاص**، وكل إعدادات التخزين اتكتبت في `.env`
+ما عدا مفتاحين. المفتاحين دول **مش بيتعملوا غير من اللوحة** — مفيش endpoint
+في الـManagement API بيولّدهم، فمقدرتش أعملهم لك.
+
+1. افتح **Settings ← Storage ← S3 connection ← New access key**
+2. هيديك `Access key ID` و `Secret access key`
+3. حطهم في `alrowad/.env` في السطرين الفاضيين:
+   ```
+   S3_ACCESS_KEY_ID=
+   S3_SECRET_ACCESS_KEY=
+   ```
+4. شغّل: `npm run vercel:env` — هيرفعهم لـVercel لوحده
+
+الباقي متكتب أصلاً:
+
+| المتغير | القيمة |
+|---|---|
+| `S3_BUCKET` | `media` |
+| `S3_REGION` | `eu-central-1` |
+| `S3_ENDPOINT` | `https://vnwoivqnqvkdhcbhiwat.storage.supabase.co/storage/v1/s3` |
+
+> لاحظ إن الـendpoint على `storage.supabase.co` مش على `supabase.co` العادي.
+> ده اللي التوثيق بيقول إنه أسرع بكتير في رفع الملفات الكبيرة — وده بالظبط
+> اللي أحمد هيعمله: فولدر صور وحدات.
+
+> ومفاتيح S3 دي بتتخطى الـRLS وليها صلاحية كاملة على كل الـbuckets، فهي
+> للسيرفر بس — عمرها ما تتحط في كود بيوصل للمتصفح.
 
 ---
 
@@ -97,7 +121,7 @@ postgresql://postgres.xxxxx:PASSWORD@aws-0-eu-central-1.pooler.supabase.com:6543
 | `DATABASE_URI` | رابط الـpooler من Supabase |
 | `PAYLOAD_SECRET` | ولّده — تحت |
 | `S3_BUCKET` | `media` |
-| `S3_ENDPOINT` | `https://xxxxx.supabase.co/storage/v1/s3` |
+| `S3_ENDPOINT` | `https://xxxxx.storage.supabase.co/storage/v1/s3` |
 | `S3_REGION` | `eu-central-1` |
 | `S3_ACCESS_KEY_ID` | من Supabase |
 | `S3_SECRET_ACCESS_KEY` | من Supabase |
