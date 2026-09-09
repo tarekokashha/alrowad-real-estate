@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import MobileActionBar from "@/components/MobileActionBar";
 import {
   GULF_SUMMARY,
   GULF_STEPS,
@@ -303,7 +302,6 @@ export default async function GulfPage({
         </section>
       </main>
 
-      <MobileActionBar enquiry="مهتم بالشراء من خارج مصر في حدائق أكتوبر" />
       <Footer locale={locale} />
     </>
   );

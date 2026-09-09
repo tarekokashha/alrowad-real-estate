@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import MobileActionBar from "@/components/MobileActionBar";
 import Catalogue from "@/components/Catalogue";
 import { COMPANY } from "@/lib/content";
 import { CATALOGUE_REVIEWED_AR } from "@/lib/units";
@@ -16,7 +15,6 @@ import s from "./page.module.css";
  * that the database is not queried on every request.
  */
 export const revalidate = 300;
-
 
 export const metadata: Metadata = {
   title: "الوحدات المعروضة في حدائق أكتوبر — الرواد للتطوير العقاري",
@@ -96,7 +94,6 @@ export default async function PropertiesPage({
         <Catalogue locale={locale} units={units} />
       </main>
 
-      <MobileActionBar enquiry="مهتم بوحدة من المعروض في حدائق أكتوبر" />
       <Footer locale={locale} />
 
       <script

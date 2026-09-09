@@ -4,7 +4,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import MobileActionBar from "@/components/MobileActionBar";
 import PropertyCard from "@/components/PropertyCard";
 import InstalmentCalculator from "@/components/InstalmentCalculator";
 import CopyCode from "@/components/CopyCode";
@@ -37,7 +36,6 @@ import s from "./page.module.css";
  * that the database is not queried on every request.
  */
 export const revalidate = 300;
-
 
 export async function generateStaticParams() {
   // Built from the CMS, so a unit the client publishes gets its own page.
@@ -329,11 +327,6 @@ export default async function UnitPage({
           </div>
         </section>
       </main>
-
-      {/* The unit code travels in the WhatsApp message so the conversation
-          starts with context — without it the sales team cannot tell which
-          unit produced the lead. */}
-      <MobileActionBar enquiry={enquiry} waLabel={`واتساب — ${u.code}`} />
 
       <Footer locale={locale} />
 

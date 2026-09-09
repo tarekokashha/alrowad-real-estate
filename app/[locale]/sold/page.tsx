@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import MobileActionBar from "@/components/MobileActionBar";
 import SoldTable from "@/components/SoldTable";
 import { SOLD_TOTAL_SINCE_2011, SOLD_SUMMARY_2026, SOLD_USES } from "@/lib/sold";
 import { getSoldRecords } from "@/lib/cms";
@@ -16,7 +15,6 @@ import s from "./page.module.css";
  * that the database is not queried on every request.
  */
 export const revalidate = 300;
-
 
 export const metadata: Metadata = {
   title: "سجل البيع — كل وحدة بعناها بتاريخها وسعرها | الرواد",
@@ -121,7 +119,6 @@ export default async function SoldPage({
         </section>
       </main>
 
-      <MobileActionBar enquiry="شفت سجل البيع، عايز أعرف المتاح دلوقتي" />
       <Footer locale={locale} />
 
       <script

@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import MobileActionBar from "@/components/MobileActionBar";
 import { COMPANY } from "@/lib/content";
 import { SOLD_TOTAL_SINCE_2011 } from "@/lib/sold";
 import { whatsappHref, PhoneNumber } from "@/lib/format";
@@ -286,7 +285,6 @@ export default async function AboutPage({
         </section>
       </main>
 
-      <MobileActionBar enquiry="حابب أتواصل مع الرواد" />
       <Footer locale={locale} />
     </>
   );

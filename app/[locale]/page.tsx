@@ -4,7 +4,6 @@ import Header from "@/components/Header";
 import Entrance from "@/components/Entrance";
 import PropertyCard from "@/components/PropertyCard";
 import Footer from "@/components/Footer";
-import MobileActionBar from "@/components/MobileActionBar";
 import {
   COMPANY,
   PRICE_INDEX,
@@ -34,7 +33,6 @@ import s from "./page.module.css";
  * that the database is not queried on every request.
  */
 export const revalidate = 300;
-
 
 export default async function HomePage({
   params,
@@ -415,7 +413,6 @@ export default async function HomePage({
         </section>
       </main>
 
-      <MobileActionBar />
       <Footer locale={locale} />
     </>
   );
