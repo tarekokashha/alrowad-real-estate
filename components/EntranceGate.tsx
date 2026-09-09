@@ -37,13 +37,24 @@ const SCRIPT = `
       if (c) {
         // saveData is an explicit request from the user; always honour it.
         if (c.saveData === true) return "skip";
-        // effectiveType only blocks genuinely slow links. It is a rounded
-        // estimate that reports "3g" on plenty of usable connections, and the
-        // entrance loads no extra assets — it animates the hero images the
-        // page already shows — so blocking 3g cost real users the sequence
-        // for no bandwidth saved.
+        // 3g is deliberately NOT in this list, even though the entrance now
+        // costs real bytes. effectiveType is a rounded estimate and reports
+        // "3g" on plenty of usable links — this very machine reports it while
+        // serving from localhost. Gating on it would deny the entrance to
+        // people whose connection is fine.
+        //
+        // The bandwidth is handled where it can be measured instead: the
+        // component loads half the frames on a slow link, and draws the
+        // nearest frame it actually has, so a genuinely slow connection
+        // degrades to a coarser scrub rather than a blank screen.
         if (["slow-2g", "2g"].indexOf(c.effectiveType) !== -1) return "skip";
       }
+      // There is deliberately no visibilityState check. A background tab
+      // needed one while the entrance ran on a timer — the CSS timeline kept
+      // running against a video the browser had paused, so the two clocks
+      // drifted apart and the reader arrived at a settled header sitting on a
+      // frozen first frame. Scroll has no clock: a tab nobody is looking at
+      // is a tab nobody is scrolling, and it simply waits at frame one.
       return "play";
     } catch (e) {
       return "skip";

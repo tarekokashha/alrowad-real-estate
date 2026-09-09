@@ -31,57 +31,59 @@ export const STAGGER = 60;
 export const PARALLAX = { foreground: 1.0, mid: 0.94, background: 0.88 } as const;
 
 /* -------------------------------------------------------------------------
-   The entrance sequence — 4.5s, four stills, one continuous camera move.
-   Timings are the source of truth; the CSS keyframes are generated from
-   these percentages so the two can never drift apart.
+   The entrance — one continuous dolly through the gate, driven by scroll.
+
+   The clip is a single 4.04s take at 24fps: it starts outside a closed gate
+   at night, the gate opens, the camera passes between the piers and comes to
+   rest on the palm-lined water channel inside. No cuts. That is why it can be
+   scrubbed — a cut would tear under a slow drag.
+
+   It is played as a FRAME SEQUENCE on a canvas, not as <video>.
+   Setting video.currentTime from a scroll handler stutters badly: h264 has to
+   seek to the nearest keyframe and decode forward, which cannot keep up with
+   a finger, and iOS Safari is worse still. Ninety-seven decoded WebP frames
+   scrub exactly, and at 2.7 MB the whole sequence is smaller than the source
+   mp4 was.
    ------------------------------------------------------------------------- */
 
-export const ENTRANCE_MS = 4500;
+/** Frames exported from the source clip, 1-indexed: /entrance/f_001.webp … */
+export const ENTRANCE_FRAMES = 97;
 
-export type EntranceShot = {
-  key: string;
-  /** Arabic name of the movement. */
-  name: string;
-  src: string;
-  alt: string;
-  start: number;
-  end: number;
-};
+export const framePath = (i: number) =>
+  `/entrance/f_${String(i).padStart(3, "0")}.webp`;
 
-export const ENTRANCE_SHOTS: EntranceShot[] = [
-  {
-    key: "arcade",
-    name: "الوصول",
-    src: "/img/arcade-night.webp",
-    alt: "ممر مقنطر مضاء ليلًا داخل كمبوند سكني بحدائق أكتوبر",
-    start: 0,
-    end: 1200,
-  },
-  {
-    key: "gate",
-    name: "العبور",
-    src: "/img/gate-night.webp",
-    alt: "بوابة كمبوند سكني من الحجر الجيري مضاءة ليلًا",
-    start: 1200,
-    end: 2200,
-  },
-  {
-    key: "aerial",
-    name: "الصعود",
-    src: "/img/aerial-sunset.webp",
-    alt: "منظر جوي مرتفع فوق فناء الكمبوند وقت الزرقة، وأضواء المدينة في الأفق",
-    start: 2200,
-    end: 3200,
-  },
-  {
-    key: "courtyard",
-    name: "الانكشاف",
-    src: "/img/courtyard-dusk.webp",
-    alt: "منظر جوي واسع لحدائق أكتوبر وقت الذهبي — مبانٍ من الحجر الجيري وشوارع مشجّرة وهضبة الصحراء في الأفق",
-    start: 3200,
-    end: 4500,
-  },
-];
+/**
+ * How far the hero is scrolled through, as a multiple of the viewport.
+ *
+ * The first 100vh is the hero at rest; the remainder is the travel. Desktop
+ * gets 240vh of travel across 97 frames — about 22px of scroll per frame on a
+ * 900px viewport, which is roughly two unhurried wheel flicks. Less than this
+ * and the dolly snaps past; more and it turns into work.
+ */
+export const ENTRANCE_SCROLL_VH = { desktop: 340, mobile: 260 } as const;
+
+/**
+ * Where the overlaid copy moves, in scroll progress rather than milliseconds.
+ * Scroll-driven motion has no clock — the reader sets the pace — so every
+ * timing here is a fraction of the journey, not a duration.
+ */
+export const ENTRANCE_CUES = {
+  /** The centred wordmark fades as the gate starts to open. */
+  wordmarkOut: [0.04, 0.26],
+  /** The H1 and its aside rise once the camera is through the piers. */
+  contentIn: [0.30, 0.52],
+  /** The scroll hint disappears as soon as the reader has taken the hint. */
+  cueOut: [0.02, 0.12],
+} as const;
+
+/**
+ * Halve the payload where it is most expensive.
+ *
+ * Every second frame still reads as continuous under a thumb, and it takes
+ * the sequence from 2.7 MB to about 1.4 MB — which on Egyptian mobile data is
+ * the difference between an entrance and an apology.
+ */
+export const MOBILE_FRAME_STEP = 2;
 
 /** The session key. Version-stamped so a redesign can re-show the entrance. */
 

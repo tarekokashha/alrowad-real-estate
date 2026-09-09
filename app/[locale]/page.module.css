@@ -38,19 +38,15 @@
    Nothing is ever parked at opacity 0 waiting on JavaScript. */
 :global([data-entrance="play"]) .heroH1,
 :global([data-entrance="play"]) .heroAside {
-  opacity: 0;
-  animation: heroSettle var(--d-section) var(--arrival) both;
-}
-:global([data-entrance="play"]) .heroH1 {
-  animation-delay: 4.2s;
+  /* Driven by scroll, not by a clock. --content is published by <Entrance>
+     as the reader moves through the gate; the wrapper fades the block and
+     these two carry the stagger, the aside settling a beat after the
+     headline. The old version keyed off animation-delay: 4.2s, which cannot
+     work when the reader — not a timer — decides when the camera arrives. */
+  transform: translateY(calc((1 - var(--content, 1)) * 14px));
 }
 :global([data-entrance="play"]) .heroAside {
-  animation-delay: 4.26s;
-}
-
-@keyframes heroSettle {
-  from { opacity: 0; transform: translateY(14px); }
-  to { opacity: 1; transform: translateY(0); }
+  transform: translateY(calc((1 - var(--content, 1)) * 26px));
 }
 
 /* ---- Trust line ---------------------------------------------------------- */
