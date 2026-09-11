@@ -46,7 +46,7 @@ export default async function SoldPage({
 
       <main id="main">
         <section className={s.masthead}>
-          <div className="shell grid12">
+          <div className="shell grid12" data-reveal="rise">
             <div className={s.mastheadText}>
               <span className="eyebrow">سجل عام · يُحدَّث بعد كل تعاقد</span>
               <h1 className={s.h1}>
@@ -93,7 +93,7 @@ export default async function SoldPage({
 
         {/* The archive framed as a tool the buyer uses, including against us. */}
         <section className={s.uses}>
-          <div className="shell grid12">
+          <div className="shell grid12" data-reveal="rise">
             <div className={s.usesIntro}>
               <span className="eyebrow">كيف تستخدم هذا السجل</span>
               <h2 className={s.h2}>ثلاث طرق يستخدمها به المشترون فعلًا</h2>

@@ -305,3 +305,137 @@ button {
     scroll-behavior: auto !important;
   }
 }
+
+/* ==========================================================================
+   Scroll arrivals
+
+   Four ways in, all built from the two curves and the one stagger already in
+   this file. A site reads as designed because the same motion recurs — not
+   because each section invented its own.
+
+   THE RULE: nothing is hidden unless [data-motion="on"] is on <html>, which
+   the pre-paint script sets only when JavaScript is running AND the reader
+   has not asked for reduced motion. Without it every selector below fails to
+   match and the page is simply there. Content is never parked at opacity 0
+   waiting for a script that might not arrive.
+   ========================================================================== */
+
+[data-motion="on"] [data-reveal] {
+  /* The observer adds data-shown; everything here is the "before". */
+  will-change: opacity, transform, clip-path;
+}
+
+/* ---- rise: the workhorse. Text blocks, tables, anything editorial. ------- */
+[data-motion="on"] [data-reveal="rise"]:not([data-shown]) {
+  opacity: 0;
+  transform: translateY(22px);
+}
+[data-motion="on"] [data-reveal="rise"][data-shown] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--d-section) var(--arrival),
+    transform var(--d-section) var(--arrival);
+}
+
+/* ---- image: the shot settles out of its own frame ------------------------
+   A photograph does not fade in — it is revealed. The clip opens from the
+   bottom while the picture inside it eases down from a slight over-scale, so
+   the image appears to settle rather than to slide, which is the difference
+   between a camera and a carousel. */
+[data-motion="on"] [data-reveal="image"] {
+  overflow: hidden;
+}
+[data-motion="on"] [data-reveal="image"]:not([data-shown]) {
+  clip-path: inset(0 0 100% 0);
+}
+[data-motion="on"] [data-reveal="image"][data-shown] {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 900ms var(--arrival);
+}
+[data-motion="on"] [data-reveal="image"] :is(img, figure, picture, canvas) {
+  transition: transform 1100ms var(--arrival);
+}
+[data-motion="on"] [data-reveal="image"]:not([data-shown])
+  :is(img, figure, picture, canvas) {
+  transform: scale(1.08);
+}
+
+/* ---- line: a heading arrives from behind its own baseline ----------------
+   Wrap each line in <span class="line"><span>…</span></span>. The outer span
+   is the mask; the inner one is what moves. Used sparingly — on the two or
+   three headings that carry the argument, never on every h2. */
+[data-motion="on"] [data-reveal="line"] .line {
+  display: block;
+  overflow: hidden;
+}
+[data-motion="on"] [data-reveal="line"] .line > * {
+  display: block;
+  transition: transform 800ms var(--arrival);
+}
+[data-motion="on"] [data-reveal="line"]:not([data-shown]) .line > * {
+  transform: translateY(105%);
+}
+[data-motion="on"] [data-reveal="line"][data-shown] .line:nth-child(2) > * {
+  transition-delay: var(--stagger);
+}
+[data-motion="on"] [data-reveal="line"][data-shown] .line:nth-child(3) > * {
+  transition-delay: calc(2 * var(--stagger));
+}
+
+/* ---- wipe: a rule or divider draws itself -------------------------------- */
+[data-motion="on"] [data-reveal="wipe"]:not([data-shown]) {
+  transform: scaleX(0);
+}
+[data-motion="on"] [data-reveal="wipe"] {
+  transform-origin: right center;
+}
+:lang(en) [data-motion="on"] [data-reveal="wipe"] {
+  transform-origin: left center;
+}
+[data-motion="on"] [data-reveal="wipe"][data-shown] {
+  transform: scaleX(1);
+  transition: transform var(--d-section) var(--arrival);
+}
+
+/* ---- stagger: direct children arrive one after another -------------------
+   60ms, the same interval as the header nav and the hero. Capped at eight:
+   past that the last item is waiting half a second and the effect reads as
+   lag rather than rhythm. */
+[data-motion="on"] [data-reveal][data-stagger]:not([data-shown]) > * {
+  opacity: 0;
+  transform: translateY(18px);
+}
+[data-motion="on"] [data-reveal][data-stagger][data-shown] > * {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--d-section) var(--arrival),
+    transform var(--d-section) var(--arrival);
+}
+[data-motion="on"] [data-reveal][data-stagger][data-shown] > *:nth-child(1) { transition-delay: 0ms; }
+[data-motion="on"] [data-reveal][data-stagger][data-shown] > *:nth-child(2) { transition-delay: calc(1 * var(--stagger)); }
+[data-motion="on"] [data-reveal][data-stagger][data-shown] > *:nth-child(3) { transition-delay: calc(2 * var(--stagger)); }
+[data-motion="on"] [data-reveal][data-stagger][data-shown] > *:nth-child(4) { transition-delay: calc(3 * var(--stagger)); }
+[data-motion="on"] [data-reveal][data-stagger][data-shown] > *:nth-child(5) { transition-delay: calc(4 * var(--stagger)); }
+[data-motion="on"] [data-reveal][data-stagger][data-shown] > *:nth-child(6) { transition-delay: calc(5 * var(--stagger)); }
+[data-motion="on"] [data-reveal][data-stagger][data-shown] > *:nth-child(7) { transition-delay: calc(6 * var(--stagger)); }
+[data-motion="on"] [data-reveal][data-stagger][data-shown] > *:nth-child(n + 8) { transition-delay: calc(7 * var(--stagger)); }
+
+/* ---- delay: hold one element back within the same eyeline ---------------- */
+[data-motion="on"] [data-reveal][data-delay="1"][data-shown] { transition-delay: calc(1 * var(--stagger)); }
+[data-motion="on"] [data-reveal][data-delay="2"][data-shown] { transition-delay: calc(2 * var(--stagger)); }
+[data-motion="on"] [data-reveal][data-delay="3"][data-shown] { transition-delay: calc(3 * var(--stagger)); }
+
+/* Belt and braces. data-motion is already withheld under reduced motion, but
+   a reader can change the setting after the script has run. */
+@media (prefers-reduced-motion: reduce) {
+  [data-motion="on"] [data-reveal],
+  [data-motion="on"] [data-reveal] > *,
+  [data-motion="on"] [data-reveal] .line > * {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+    transition: none !important;
+  }
+}

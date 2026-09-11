@@ -70,7 +70,7 @@ export default async function PropertiesPage({
       <main id="main">
         <section className={s.masthead}>
           <div className="shell grid12">
-            <div className={s.mastheadText}>
+            <div className={s.mastheadText} data-reveal="rise">
               <span className="eyebrow">المعروض الآن</span>
               <h1 className={s.h1}>وحدات معروضة في حدائق أكتوبر</h1>
               <p className={s.lede}>
@@ -78,7 +78,7 @@ export default async function PropertiesPage({
                 مكتوبة على الكارت نفسه، مش جوه الصفحة.
               </p>
             </div>
-            <dl className={`mono ${s.mastheadMeta}`}>
+            <dl className={`mono ${s.mastheadMeta}`} data-reveal="rise" data-delay="1">
               <div>
                 <dt>آخر مراجعة للقائمة</dt>
                 <dd>{CATALOGUE_REVIEWED_AR}</dd>

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { COMPANY } from "@/lib/content";
 import { PHONE_E164 } from "@/lib/format";
 import EntranceGate from "@/components/EntranceGate";
+import ScrollMotion from "@/components/ScrollMotion";
 
 /**
  * One locale. There was an "en" here and a switch in the header pointing at
@@ -154,6 +155,9 @@ export default async function LocaleLayout({
           {ar ? "تخطَّ إلى المحتوى" : "Skip to content"}
         </a>
         <div className="grain" aria-hidden="true" />
+        {/* One observer for every [data-reveal] on the page, mounted once.
+            It adds nothing to the markup — see components/ScrollMotion. */}
+        <ScrollMotion />
         {children}
       </body>
     </html>

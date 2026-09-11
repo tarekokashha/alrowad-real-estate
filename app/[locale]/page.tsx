@@ -76,7 +76,7 @@ export default async function HomePage({
                 real estate and an unverifiable claim. ---- */}
         <section className={s.trust}>
           <div className="shell">
-            <p className={s.trustText}>
+            <p className={s.trustText} data-reveal="rise">
               خمسة عشر عامًا في هذا النطاق، و{toEasternDigits(500)}+ وحدة مبيعة،
               و{toEasternDigits(30)}+ مشروعًا — وكلها مؤرَّخة، وحدة وحدة، في سجل
               البيع.{" "}
@@ -90,7 +90,7 @@ export default async function HomePage({
         {/* ---- Price index ---- */}
         <section id="index" className={s.section}>
           <div className="shell grid12">
-            <div className={s.indexIntro}>
+            <div className={s.indexIntro} data-reveal="rise">
               <span className="eyebrow">٠٢ / الأرقام محدّثة</span>
               <h2 className={s.h2}>
                 مؤشر سعر المتر
@@ -118,7 +118,7 @@ export default async function HomePage({
               </dl>
             </div>
 
-            <div className={s.indexTable}>
+            <div className={s.indexTable} data-reveal="rise" data-delay="1">
               <div className={s.bracket}>
                 {/* The five columns will not fit a phone. Rather than let
                     them crush — "ربع/ربع" was breaking across two lines and
@@ -166,7 +166,7 @@ export default async function HomePage({
           <div className="shell">
             {/* Pillar 1 — the legal status disclosure */}
             <article className={`grid12 ${s.pillar}`}>
-              <div className={s.pillarText}>
+              <div className={s.pillarText} data-reveal="rise">
                 <span className="eyebrow">٠١ / الأوراق واضحة</span>
                 <h2 className={s.h3}>
                   حالة الوحدة القانونية مكتوبة قبل أن تسأل عنها
@@ -178,7 +178,7 @@ export default async function HomePage({
                   الورقة — العلامة ادّعاء، والسطر إفصاح.
                 </p>
               </div>
-              <div className={s.pillarArtifact}>
+              <div className={s.pillarArtifact} data-reveal="rise" data-delay="1">
                 <table className={s.miniTable}>
                   <tbody>
                     {LEGAL_STATUSES.map((l) => (
@@ -198,7 +198,7 @@ export default async function HomePage({
 
             {/* Pillar 2 — the dated revision list */}
             <article className={`grid12 ${s.pillar} ${s.pillarFlip}`}>
-              <div className={s.pillarText}>
+              <div className={s.pillarText} data-reveal="rise">
                 <span className="eyebrow">٠٢ / الأرقام محدّثة</span>
                 <h2 className={s.h3}>سعر بلا تاريخ ليس سعرًا</h2>
                 <p className={s.lede}>
@@ -207,7 +207,7 @@ export default async function HomePage({
                   التي حُسب منها، والنسخ القديمة تبقى في مكانها للمقارنة.
                 </p>
               </div>
-              <div className={s.pillarArtifact}>
+              <div className={s.pillarArtifact} data-reveal="rise" data-delay="1">
                 <table className={s.miniTable}>
                   <tbody>
                     {INDEX_REVISIONS.map((r) => (
@@ -229,7 +229,7 @@ export default async function HomePage({
 
             {/* Pillar 3 — the sold archive */}
             <article className={`grid12 ${s.pillar}`}>
-              <div className={s.pillarText}>
+              <div className={s.pillarText} data-reveal="rise">
                 <span className="eyebrow">٠٣ / البيع مسجّل</span>
                 <h2 className={s.h3}>سجل البيع مفتوح للقراءة</h2>
                 <p className={s.lede}>
@@ -241,7 +241,7 @@ export default async function HomePage({
                   افتح سجل البيع ←
                 </Link>
               </div>
-              <div className={s.pillarArtifact}>
+              <div className={s.pillarArtifact} data-reveal="rise" data-delay="1">
                 {/* Four columns — code, description, price, date — do not fit
                     a phone. Left to crush, "شقة 144 م² — أشجار سيتي" came
                     apart into a five-line ladder. It keeps its width and the
@@ -291,7 +291,7 @@ export default async function HomePage({
               </div>
             </div>
 
-            <div className={s.cardGrid}>
+            <div className={s.cardGrid} data-reveal="rise" data-stagger>
               {units.slice(0, 3).map((unit, i) => (
                 <PropertyCard
                   key={unit.code}
@@ -313,7 +313,7 @@ export default async function HomePage({
         {/* ---- Scope. A typeset index, not cards. ---- */}
         <section className={s.scope}>
           <div className="shell grid12">
-            <div className={s.scopeIntro}>
+            <div className={s.scopeIntro} data-reveal="rise">
               <span className="eyebrow">٠٥ / النطاق</span>
               <h2 className={s.h2}>المناطق التي نعمل فيها، ولا نعمل خارجها</h2>
               <p className={s.ledeOnNight}>
@@ -329,7 +329,7 @@ export default async function HomePage({
               </Link>
             </div>
 
-            <div className={s.scopeCompounds}>
+            <div className={s.scopeCompounds} data-reveal="rise" data-delay="1">
               <h3 className={s.scopeTitle}>كمبوندات</h3>
               <ul className={s.index}>
                 {COMPOUNDS.map((c) => (
@@ -341,7 +341,7 @@ export default async function HomePage({
               </ul>
             </div>
 
-            <div className={s.scopeDistricts}>
+            <div className={s.scopeDistricts} data-reveal="rise" data-delay="2">
               <h3 className={s.scopeTitle}>مناطق ومشروعات إسكان</h3>
               <ul className={s.index}>
                 {DISTRICTS.map((d) => (
@@ -377,7 +377,7 @@ export default async function HomePage({
                 exactly the experience this brand exists to contradict. ---- */}
         <section className={s.contact}>
           <div className="shell grid12">
-            <div className={s.contactIntro}>
+            <div className={s.contactIntro} data-reveal="rise">
               <span className="eyebrow">٠٦ / التواصل</span>
               <h2 className={s.h2}>
                 كلّمنا في أي وقت — على واتساب أو في المكتب
@@ -388,7 +388,7 @@ export default async function HomePage({
               </p>
             </div>
 
-            <div className={s.contactWhatsapp}>
+            <div className={s.contactWhatsapp} data-reveal="rise" data-delay="1">
               <h3 className={s.contactTitle}>على واتساب</h3>
               <p className={s.contactMeta}>{COMPANY.replyTimeAr}</p>
               <p className={s.contactMeta}>بالعربية والإنجليزية</p>
@@ -403,7 +403,7 @@ export default async function HomePage({
               </a>
             </div>
 
-            <div className={s.contactOffice}>
+            <div className={s.contactOffice} data-reveal="rise" data-delay="2">
               <h3 className={s.contactTitle}>في المكتب</h3>
               <p className={s.contactMeta}>حدائق أكتوبر — تعالى بدون موعد</p>
               <p className={s.contactMeta}>{COMPANY.officeHoursAr}</p>

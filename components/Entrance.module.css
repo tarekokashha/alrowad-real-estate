@@ -21,7 +21,12 @@
 }
 
 :global([data-entrance="play"]) .hero {
-  height: 340vh;
+  /* 400vh of travel across 121 frames — about 30px of scroll per frame on a
+     900px viewport, so the dolly moves at walking pace under an unhurried
+     wheel. Long on purpose: the point of scrubbing is that the reader can
+     dwell in it, and 340vh went past too briskly. Mirrors
+     ENTRANCE_SCROLL_VH in lib/motion.ts. */
+  height: 500vh;
   min-height: 0;
 }
 
@@ -195,7 +200,9 @@
 
 @media (max-width: 900px) {
   :global([data-entrance="play"]) .hero {
-    height: 260vh;
+    /* 240vh of travel over 61 frames — a phone screen is shorter, and every
+       extra viewport of hero is one the reader pays for with their thumb. */
+    height: 340vh;
   }
   .wordmark {
     font-size: clamp(2.6rem, 16vw, 5rem);

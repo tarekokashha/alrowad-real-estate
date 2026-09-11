@@ -276,7 +276,7 @@ export default async function AreaGuidePage({
               </p>
             </div>
 
-            <div className={s.priceTable}>
+            <div className={s.priceTable} data-reveal="rise" data-delay="1">
               <div className={s.tableWrap}>
                 <table className={s.table}>
                   <thead>
@@ -329,7 +329,7 @@ export default async function AreaGuidePage({
                 ٩ دقائق على كل رحلة.
               </p>
             </div>
-            <div className={s.accessTable}>
+            <div className={s.accessTable} data-reveal="rise" data-delay="1">
               <table className={s.table}>
                 <tbody>
                   {ACCESS.map((a) => (
@@ -400,7 +400,7 @@ export default async function AreaGuidePage({
         <section className={s.section}>
           <div className="shell grid12">
             <h2 className={`${s.h2} ${s.faqHead}`}>أسئلة يسألها المشترون هنا</h2>
-            <div className={s.faq}>
+            <div className={s.faq} data-reveal="rise">
               {GUIDE_FAQ.map((f) => (
                 <article key={f.qAr} className={s.faqItem}>
                   <h3 className={s.faqQ}>{f.qAr}</h3>

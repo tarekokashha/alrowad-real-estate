@@ -61,6 +61,17 @@ const SCRIPT = `
     }
   }
   d.setAttribute("data-entrance", decide());
+
+  // Scroll arrivals, decided by the same pre-paint script for the same
+  // reason: the stylesheet must never hide anything that JavaScript might
+  // not arrive to un-hide. Only when this attribute is present does
+  // [data-reveal] have a hidden state at all — so no JS, a crawler, or a
+  // reader who asked for stillness gets the finished page immediately.
+  try {
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      d.setAttribute("data-motion", "on");
+    }
+  } catch (e) {}
 })();
 `;
 

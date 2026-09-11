@@ -1,12 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  ENTRANCE_FRAMES,
-  ENTRANCE_CUES,
-  MOBILE_FRAME_STEP,
-  framePath,
-} from "@/lib/motion";
+import { ENTRANCE_TIERS, ENTRANCE_CUES, framePath } from "@/lib/motion";
 import { COMPANY } from "@/lib/content";
 import s from "./Entrance.module.css";
 
@@ -55,28 +50,25 @@ export default function Entrance({ children, locale }: Props) {
     const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
 
-    // Halve the payload where it is most expensive: small screens, an
-    // explicit Save-Data request, or a link the browser rates below 4g.
-    // effectiveType is too unreliable to refuse the entrance over — see
-    // EntranceGate — but it is a reasonable signal for spending half as much.
-    const conn = (
-      navigator as Navigator & {
-        connection?: { saveData?: boolean; effectiveType?: string };
-      }
-    ).connection;
-    const thrifty =
-      window.innerWidth < 900 ||
-      conn?.saveData === true ||
-      (conn?.effectiveType !== undefined && conn.effectiveType !== "4g");
-    const step = thrifty ? MOBILE_FRAME_STEP : 1;
+    // Which tier to spend.
+    //
+    // Screen size and an explicit Save-Data request, and deliberately NOT
+    // effectiveType. A 1440px hero needs 1440px frames and a 390px one does
+    // not, so the viewport is the signal that actually describes the need —
+    // and it cannot be wrong about itself. effectiveType can: it reports "3g"
+    // while serving from localhost over loopback, and trusting it here handed
+    // every desktop the 960px set.
+    //
+    // Genuinely slow links are already handled where it can be measured: the
+    // frames load in order and the canvas draws the nearest one it has, so a
+    // slow connection degrades to a coarser scrub rather than a stall.
+    const conn = (navigator as Navigator & { connection?: { saveData?: boolean } })
+      .connection;
+    const tier =
+      window.innerWidth < 900 || conn?.saveData === true ? "sd" : "hd";
 
     const indices: number[] = [];
-    for (let i = 1; i <= ENTRANCE_FRAMES; i += step) indices.push(i);
-    // Always land on the final frame — the arrival is the one image that must
-    // not be approximated, because it is where the reader stops.
-    if (indices[indices.length - 1] !== ENTRANCE_FRAMES) {
-      indices.push(ENTRANCE_FRAMES);
-    }
+    for (let i = 1; i <= ENTRANCE_TIERS[tier].frames; i += 1) indices.push(i);
 
     const images: (HTMLImageElement | null)[] = new Array(indices.length).fill(
       null,
@@ -112,7 +104,7 @@ export default function Entrance({ children, locale }: Props) {
     // rest of the sequence is even requested.
     const first = new Image();
     first.decoding = "async";
-    first.src = framePath(indices[0]);
+    first.src = framePath(tier, indices[0]);
     first.onload = () => {
       if (cancelled) return;
       images[0] = first;
@@ -124,7 +116,7 @@ export default function Entrance({ children, locale }: Props) {
       indices.slice(1).forEach((n, k) => {
         const img = new Image();
         img.decoding = "async";
-        img.src = framePath(n);
+        img.src = framePath(tier, n);
         img.onload = () => {
           if (cancelled) return;
           images[k + 1] = img;

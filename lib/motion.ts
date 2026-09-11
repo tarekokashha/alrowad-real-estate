@@ -33,34 +33,50 @@ export const PARALLAX = { foreground: 1.0, mid: 0.94, background: 0.88 } as cons
 /* -------------------------------------------------------------------------
    The entrance — one continuous dolly through the gate, driven by scroll.
 
-   The clip is a single 4.04s take at 24fps: it starts outside a closed gate
-   at night, the gate opens, the camera passes between the piers and comes to
-   rest on the palm-lined water channel inside. No cuts. That is why it can be
-   scrubbed — a cut would tear under a slow drag.
+   A single 5.04s take at 24fps, 121 frames: outside a closed gate at night,
+   the gate opens, the camera passes between the piers and comes to rest on
+   the palm-lined water channel inside. No cuts — which is what makes it
+   scrubbable, because a cut would tear under a slow drag.
 
-   It is played as a FRAME SEQUENCE on a canvas, not as <video>.
-   Setting video.currentTime from a scroll handler stutters badly: h264 has to
-   seek to the nearest keyframe and decode forward, which cannot keep up with
-   a finger, and iOS Safari is worse still. Ninety-seven decoded WebP frames
-   scrub exactly, and at 2.7 MB the whole sequence is smaller than the source
-   mp4 was.
+   Played as a FRAME SEQUENCE on a canvas, not as <video>. Setting
+   video.currentTime from a scroll handler stutters: h264 seeks to a keyframe
+   and decodes forward, which cannot keep up with a finger, and iOS Safari is
+   worse still. Decoded WebP frames scrub exactly.
+
+   The source carried a generative-tool watermark in the bottom-right. It is
+   painted out at export with ffmpeg's delogo, which interpolates from the
+   surrounding pixels — clean here because that corner is the fast-moving,
+   motion-blurred foreground of a dolly, which is the easy case.
    ------------------------------------------------------------------------- */
 
-/** Frames exported from the source clip, 1-indexed: /entrance/f_001.webp … */
-export const ENTRANCE_FRAMES = 97;
+/**
+ * Two tiers, because one does not fit both.
+ *
+ * hd is 1440px wide, every frame — a 1:1 match for a desktop hero, and the
+ * reason the clip was re-shot at 1080p. sd is 960px and every second frame:
+ * a quarter of the bytes, which on Egyptian mobile data is the difference
+ * between an entrance and an apology.
+ */
+export const ENTRANCE_TIERS = {
+  hd: { dir: "hd", frames: 121 },
+  sd: { dir: "sd", frames: 61 },
+} as const;
 
-export const framePath = (i: number) =>
-  `/entrance/f_${String(i).padStart(3, "0")}.webp`;
+export type EntranceTier = keyof typeof ENTRANCE_TIERS;
+
+export const framePath = (tier: EntranceTier, i: number) =>
+  `/entrance/${ENTRANCE_TIERS[tier].dir}/f_${String(i).padStart(3, "0")}.webp`;
 
 /**
  * How far the hero is scrolled through, as a multiple of the viewport.
  *
- * The first 100vh is the hero at rest; the remainder is the travel. Desktop
- * gets 240vh of travel across 97 frames — about 22px of scroll per frame on a
- * 900px viewport, which is roughly two unhurried wheel flicks. Less than this
- * and the dolly snaps past; more and it turns into work.
+ * The first 100vh is the hero at rest; the remainder is the travel. 500vh
+ * gives 400vh of travel across 121 frames — about 30px of scroll per frame on
+ * a 900px viewport, so the dolly moves at roughly walking pace under an
+ * unhurried wheel. Long on purpose: the whole point of scrubbing is that the
+ * reader can dwell in it, and the earlier 340vh went past too briskly.
  */
-export const ENTRANCE_SCROLL_VH = { desktop: 340, mobile: 260 } as const;
+export const ENTRANCE_SCROLL_VH = { desktop: 500, mobile: 340 } as const;
 
 /**
  * Where the overlaid copy moves, in scroll progress rather than milliseconds.
@@ -69,23 +85,12 @@ export const ENTRANCE_SCROLL_VH = { desktop: 340, mobile: 260 } as const;
  */
 export const ENTRANCE_CUES = {
   /** The centred wordmark fades as the gate starts to open. */
-  wordmarkOut: [0.04, 0.26],
+  wordmarkOut: [0.04, 0.24],
   /** The H1 and its aside rise once the camera is through the piers. */
-  contentIn: [0.30, 0.52],
-  /** The scroll hint disappears as soon as the reader has taken the hint. */
-  cueOut: [0.02, 0.12],
+  contentIn: [0.34, 0.56],
+  /** The scroll hint goes as soon as the reader has taken the hint. */
+  cueOut: [0.015, 0.1],
 } as const;
-
-/**
- * Halve the payload where it is most expensive.
- *
- * Every second frame still reads as continuous under a thumb, and it takes
- * the sequence from 2.7 MB to about 1.4 MB — which on Egyptian mobile data is
- * the difference between an entrance and an apology.
- */
-export const MOBILE_FRAME_STEP = 2;
-
-/** The session key. Version-stamped so a redesign can re-show the entrance. */
 
 /**
  * Every condition under which the entrance must NOT run.
