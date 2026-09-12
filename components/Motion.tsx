@@ -105,7 +105,11 @@ export default function Motion() {
         ({ trigger, start: "top 82%", once: true }) as const;
 
       const scrubbed = (trigger: Element, start = "top bottom", end = "bottom top") =>
-        ({ trigger, start, end, scrub: 0.6 }) as const;
+        ({ trigger, start, end, scrub: 0.35 }) as const;
+
+      // The pointer-driven cases attach real listeners. matchMedia's
+      // revert undoes tweens, not event handlers, so they collect here.
+      const cleanups: (() => void)[] = [];
 
       const wire = (el: HTMLElement) => {
         el.dataset.animReady = "";
@@ -200,6 +204,91 @@ export default function Motion() {
             break;
           }
 
+          // A heading arrives a word at a time from behind its own baseline.
+          // Split here rather than in the markup: the served HTML stays one
+          // clean run of text for a crawler, a screen reader and a reader
+          // copying the sentence, and the spans exist only once this has
+          // run. Whitespace is preserved so the line still wraps normally.
+          case "words": {
+            if (!el.dataset.split) {
+              const words = (el.textContent ?? "").split(/(\s+)/);
+              el.textContent = "";
+              for (const w of words) {
+                if (/^\s+$/.test(w)) {
+                  el.appendChild(document.createTextNode(w));
+                  continue;
+                }
+                const mask = document.createElement("span");
+                mask.className = "w-mask";
+                const inner = document.createElement("span");
+                inner.textContent = w;
+                mask.appendChild(inner);
+                el.appendChild(mask);
+              }
+              el.dataset.split = "";
+            }
+            gsap.from(el.querySelectorAll<HTMLElement>(".w-mask > span"), {
+              yPercent: 116,
+              duration: 0.9,
+              ease: ARRIVAL,
+              stagger: 0.045,
+              delay,
+              scrollTrigger: arrival(el),
+            });
+            break;
+          }
+
+          // A pointer-only tilt. Touch never gets it: there is no hover on a
+          // touch screen, and a transform that latches after a tap reads as a
+          // broken card rather than as depth.
+          case "tilt": {
+            if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) break;
+            const max = Number(el.dataset.tilt || 6);
+            const rx = gsap.quickTo(el, "rotationX", { duration: 0.5, ease: "power3" });
+            const ry = gsap.quickTo(el, "rotationY", { duration: 0.5, ease: "power3" });
+            gsap.set(el, { transformPerspective: 900, transformOrigin: "center" });
+            const move = (e: PointerEvent) => {
+              const b = el.getBoundingClientRect();
+              rx(-((e.clientY - b.top) / b.height - 0.5) * 2 * max);
+              ry(((e.clientX - b.left) / b.width - 0.5) * 2 * max);
+            };
+            const leave = () => {
+              rx(0);
+              ry(0);
+            };
+            el.addEventListener("pointermove", move);
+            el.addEventListener("pointerleave", leave);
+            cleanups.push(() => {
+              el.removeEventListener("pointermove", move);
+              el.removeEventListener("pointerleave", leave);
+            });
+            break;
+          }
+
+          // A control that leans toward the cursor before it is reached.
+          case "magnet": {
+            if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) break;
+            const pull = Number(el.dataset.magnet || 0.28);
+            const mx = gsap.quickTo(el, "x", { duration: 0.4, ease: "power3" });
+            const my = gsap.quickTo(el, "y", { duration: 0.4, ease: "power3" });
+            const move = (e: PointerEvent) => {
+              const b = el.getBoundingClientRect();
+              mx((e.clientX - (b.left + b.width / 2)) * pull);
+              my((e.clientY - (b.top + b.height / 2)) * pull);
+            };
+            const leave = () => {
+              mx(0);
+              my(0);
+            };
+            el.addEventListener("pointermove", move);
+            el.addEventListener("pointerleave", leave);
+            cleanups.push(() => {
+              el.removeEventListener("pointermove", move);
+              el.removeEventListener("pointerleave", leave);
+            });
+            break;
+          }
+
           /* ---- scrubs -------------------------------------------------- */
 
           // Each child fills with colour in turn as the block is passed.
@@ -218,7 +307,7 @@ export default function Motion() {
                     trigger: el,
                     start: `top ${70 - i * 4}%`,
                     end: `+=${260}`,
-                    scrub: 0.6,
+                    scrub: 0.35,
                   },
                 },
               );
@@ -233,6 +322,63 @@ export default function Motion() {
               { yPercent: -depth * 50 },
               { yPercent: depth * 50, ease: "none", scrollTrigger: scrubbed(el) },
             );
+            // data-blur: the full-bleed band resolves out of a soft focus as
+            // it is passed, which is beat 4 of the reference. Only over the
+            // first half of the pass — carry it the whole way and the
+            // photograph is never once actually sharp.
+            if (el.hasAttribute("data-blur")) {
+              gsap.fromTo(
+                inner,
+                { filter: "blur(12px)" },
+                {
+                  filter: "blur(0px)",
+                  ease: "none",
+                  scrollTrigger: scrubbed(el, "top bottom", "center center"),
+                },
+              );
+            }
+            break;
+          }
+
+          // An endless horizontal band. The track holds two identical runs
+          // and travels exactly one run's width before wrapping, so the seam
+          // never lands anywhere a reader can see it. Scrolling adds to the
+          // speed and the direction of travel follows the direction of
+          // scroll, which is what stops it reading as decoration bolted on
+          // top of a page rather than as part of it.
+          case "marquee": {
+            const track = el.querySelector<HTMLElement>("[data-marquee-track]");
+            if (!track) break;
+            const dir = el.dataset.dir === "reverse" ? 1 : -1;
+            const base = Number(el.dataset.speed || 40);
+            const width = () => track.scrollWidth / 2;
+            const tween = gsap.to(track, {
+              x: () => dir * width(),
+              duration: () => width() / base,
+              ease: "none",
+              repeat: -1,
+              modifiers: {
+                x: (v) => `${gsap.utils.wrap(dir < 0 ? -width() : 0, dir < 0 ? 0 : width(), parseFloat(v))}px`,
+              },
+            });
+            const st = ScrollTrigger.create({
+              trigger: el,
+              start: "top bottom",
+              end: "bottom top",
+              onUpdate: (self) => {
+                // timeScale, not position: the band keeps its own pace when
+                // the page is still, and leans with the reader when it is not.
+                gsap.to(tween, {
+                  timeScale: self.direction === -1 ? -1.6 : 1.6,
+                  duration: 0.3,
+                  overwrite: true,
+                });
+              },
+            });
+            cleanups.push(() => {
+              tween.kill();
+              st.kill();
+            });
             break;
           }
 
@@ -252,9 +398,13 @@ export default function Motion() {
           // section: in over the first half of its own height, out over the
           // second.
           case "wash": {
+            // The attribute goes on the track, not on the panel. A sticky
+            // panel's own box moves with the scroll, so using it as its own
+            // trigger measures a moving target; the track stands still.
+            const panel = el.querySelector<HTMLElement>("[data-wash]") ?? el;
             const tl = gsap.timeline({ scrollTrigger: scrubbed(el) });
-            tl.fromTo(el, { opacity: 0 }, { opacity: 1, ease: "none" })
-              .to(el, { opacity: 0, ease: "none" });
+            tl.fromTo(panel, { opacity: 0 }, { opacity: 1, ease: "none" })
+              .to(panel, { opacity: 0, ease: "none" });
             break;
           }
 
@@ -266,11 +416,20 @@ export default function Motion() {
             const veil = el.querySelector<HTMLElement>("[data-hero-veil]");
             const copy = el.querySelector<HTMLElement>("[data-hero-copy]");
             const tl = gsap.timeline({
-              scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: 0.6 },
+              scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: 0.35 },
             });
+            // A sibling of the hero, not a child — see the note in Hero.tsx.
+            const wash = document.querySelector<HTMLElement>("[data-hero-wash]");
             if (img) tl.to(img, { scale: 1.18, filter: "blur(8px)", ease: "none" }, 0);
             if (veil) tl.to(veil, { opacity: 0.92, ease: "none" }, 0);
             if (copy) tl.to(copy, { y: -80, opacity: 0, ease: "none" }, 0);
+            // In over the last third of the hero's exit, out over the tail:
+            // 0 at both ends, so there is no scroll position at which a
+            // full-viewport amber sheet can be left standing.
+            if (wash) {
+              tl.to(wash, { opacity: 1, ease: "none", duration: 0.22 }, 0.62)
+                .to(wash, { opacity: 0, ease: "none", duration: 0.16 }, 0.84);
+            }
             break;
           }
         }
@@ -317,6 +476,7 @@ export default function Motion() {
       window.addEventListener("load", onLoad);
 
       return () => {
+        cleanups.forEach((fn) => fn());
         mo.disconnect();
         if (pending) cancelAnimationFrame(pending);
         window.removeEventListener("load", onLoad);

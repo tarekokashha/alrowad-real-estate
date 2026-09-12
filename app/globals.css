@@ -353,6 +353,34 @@ body {
   display: block;
 }
 
+/* data-anim="words": Motion wraps each word in a mask at runtime. The mask is
+   inline-block so it can clip a word that is mid-line, and the whole element
+   needs a little vertical room or the descenders of the word above are
+   trimmed as it travels. */
+[data-anim="words"] .w-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  /* Arabic drops below the baseline further than Latin — the tail of a ج or
+     a ي is cut clean off by a mask sized to the em box alone. */
+  padding-block-end: 0.14em;
+  margin-block-end: -0.14em;
+}
+[data-anim="words"] .w-mask > span {
+  display: inline-block;
+}
+
+/* data-anim="marquee": the track carries two identical runs and wraps after
+   travelling exactly one of them. */
+[data-anim="marquee"] {
+  overflow: hidden;
+}
+[data-anim="marquee"] [data-marquee-track] {
+  display: flex;
+  inline-size: max-content;
+  will-change: transform;
+}
+
 /* data-anim="img": the clip has to have something to clip. */
 [data-anim="img"] {
   overflow: hidden;
@@ -371,6 +399,14 @@ body {
    for nothing. */
 [data-anim="hero"] [data-hero-img],
 [data-anim="parallax"] :is(img, picture, figure, video) {
+  will-change: transform;
+}
+
+/* The pointer-driven cases hand the compositor a hint only while the pointer
+   is actually over them — a permanent one on every card costs memory for
+   nothing. */
+[data-anim="tilt"]:hover,
+[data-anim="magnet"]:hover {
   will-change: transform;
 }
 

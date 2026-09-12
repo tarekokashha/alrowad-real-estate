@@ -1,0 +1,225 @@
+/* ==========================================================================
+   One unit per row, the sides alternating.
+   ========================================================================== */
+
+.row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: clamp(28px, 5vw, 88px);
+  align-items: center;
+  padding-block: clamp(44px, 9vh, 120px);
+  border-block-end: 1px solid var(--hairline);
+}
+.row:last-child {
+  border-block-end: 0;
+}
+
+/* The swap. `order` rather than a second grid definition: one property, and
+   the source order stays the reading order for anyone not seeing the
+   layout at all. */
+.flipped .media {
+  order: 2;
+}
+
+/* ---- The picture --------------------------------------------------------- */
+
+.media {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 3.4;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--paper-2);
+}
+
+.tilt {
+  position: absolute;
+  inset: 0;
+  display: block;
+  /* Its own stacking and clipping context, so the parallax layer inside
+     cannot show an edge when the tilt rotates the frame. */
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+/* Taller than the frame and offset by half the overflow, so the picture can
+   travel against the scroll in both directions without exposing an edge. */
+.parallax {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: -9%;
+  block-size: 118%;
+  display: block;
+}
+
+.img {
+  object-fit: cover;
+  transition: transform 900ms var(--settle);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .row:hover .img {
+    transform: scale(1.04);
+  }
+}
+
+/* ---- The detail column ---------------------------------------------------- */
+
+.detail {
+  position: relative;
+  min-width: 0;
+}
+
+/* The row's index.
+   It was absolutely positioned and ghosted behind the copy, which put it
+   underneath a three-word Arabic title at the one size where the title wraps
+   — and a numeral half-visible behind a headline reads as a rendering fault,
+   not as a design. In flow it cannot collide with anything, and at this size
+   it still does the job the ghost was there for.
+
+   Decorative, and marked so: a screen reader announcing "zero one" before
+   every unit adds nothing the heading does not already say. */
+.ghost {
+  display: block;
+  font-size: clamp(3rem, 6vw, 5.5rem);
+  font-weight: 700;
+  line-height: 0.82;
+  color: var(--amber);
+  opacity: 0.45;
+  margin-block-end: 14px;
+  user-select: none;
+}
+
+.detailInner {
+  position: relative;
+  z-index: 1;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 16px;
+}
+
+.code {
+  font-size: 11.5px;
+  color: var(--amber-deep);
+}
+
+.legal {
+  font-size: 13px;
+  color: var(--structure);
+}
+
+.title {
+  margin-block-start: 14px;
+  font-family: var(--ar-display);
+  font-weight: 800;
+  font-size: clamp(1.7rem, 3.2vw, 3rem);
+  line-height: 1.22;
+  color: var(--ink);
+}
+:lang(ar) .title {
+  line-height: 1.34;
+}
+
+.price {
+  margin-block-start: 16px;
+  font-family: var(--ar-display);
+  font-weight: 700;
+  font-size: clamp(1.4rem, 2.4vw, 2.1rem);
+  color: var(--ink);
+}
+
+/* ---- The spec table ------------------------------------------------------- */
+
+.specs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  margin-block-start: clamp(20px, 3vh, 30px);
+  border-block-start: 1px solid var(--hairline);
+}
+
+.specs > div {
+  padding-block: 14px;
+  border-block-end: 1px solid var(--hairline);
+}
+.specs > div:nth-child(odd) {
+  padding-inline-end: 16px;
+  border-inline-end: 1px solid var(--hairline);
+}
+.specs > div:nth-child(even) {
+  padding-inline-start: 16px;
+}
+
+.specs dt {
+  font-size: 11.5px;
+  font-family: var(--mono);
+  color: var(--structure);
+}
+
+.specs dd {
+  margin: 5px 0 0;
+  font-size: var(--fs-body-2);
+  color: var(--ink);
+}
+
+.checked {
+  margin-block-start: 14px;
+  font-size: 11.5px;
+  color: var(--structure);
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  margin-block-start: clamp(18px, 2.6vh, 26px);
+  padding-inline: 26px;
+  border-radius: var(--radius);
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  font-family: var(--ar-display);
+  font-weight: 700;
+  font-size: var(--fs-body-2);
+  transition:
+    background var(--d-micro) var(--settle),
+    color var(--d-micro) var(--settle),
+    border-color var(--d-micro) var(--settle);
+}
+.cta:hover {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+/* ---- Small screens --------------------------------------------------------
+   The alternation is a desktop idea. At one column both sides stack anyway,
+   and letting `order` keep flipping would put the picture above the text on
+   one unit and below it on the next — which reads as a bug, not a rhythm. */
+
+@media (max-width: 900px) {
+  .row {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    padding-block: clamp(30px, 5vh, 48px);
+  }
+  .flipped .media {
+    order: 0;
+  }
+  .media {
+    aspect-ratio: 4 / 3;
+  }
+  .ghost {
+    font-size: 3.2rem;
+  }
+  .specs {
+    grid-template-columns: 1fr 1fr;
+  }
+  .cta {
+    width: 100%;
+    justify-content: center;
+  }
+}

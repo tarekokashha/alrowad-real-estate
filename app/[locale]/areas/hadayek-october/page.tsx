@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { COMPANY } from "@/lib/content";
+import { COMPANY, PRICE_INDEX, INDEX_REVISIONS } from "@/lib/content";
 import {
   GUIDE_UPDATED_AR,
   GUIDE_SAMPLE_AR,
@@ -18,7 +18,7 @@ import {
   CAUTIONS,
   GUIDE_FAQ,
 } from "@/lib/area-guide";
-import { whatsappHref } from "@/lib/format";
+import { whatsappHref, formatNumber } from "@/lib/format";
 import s from "./page.module.css";
 
 export const metadata: Metadata = {
@@ -307,6 +307,86 @@ export default async function AreaGuidePage({
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ---- The price index ------------------------------------------
+                Moved here from the homepage. Every row is a compound inside
+                this area, and the homepage opening with a five-column table
+                was a homepage nobody scrolled past. The id is kept so links
+                already in the wild still land on it. ---- */}
+        <section id="index" className={s.section}>
+          <div className="shell grid12">
+            <div className={s.priceIntro}>
+              <h2 className={s.h2}>مؤشر سعر المتر</h2>
+              <p className={s.sectionLede}>
+                نحسبه بأنفسنا من العروض المعروضة فعلًا ومن عمليات البيع التي
+                أتممناها داخل النطاق. مع كل رقم تاريخه وحجم عيّنته، حتى تعرف
+                على أي أساس تقارن.
+              </p>
+              <dl className={`mono ${s.premium}`}>
+                <div>
+                  <dt>آخر تحديث</dt>
+                  <dd>{PRICE_INDEX.updatedAr}</dd>
+                </div>
+                <div>
+                  <dt>العيّنة</dt>
+                  <dd>{PRICE_INDEX.sampleAr}</dd>
+                </div>
+                <div>
+                  <dt>الدورة</dt>
+                  <dd>{PRICE_INDEX.cycleAr}</dd>
+                </div>
+              </dl>
+
+              <h3 className={s.h3}>النسخ السابقة</h3>
+              <dl className={s.premium}>
+                {INDEX_REVISIONS.map((r) => (
+                  <div key={r.dateAr}>
+                    <dt className="mono">{r.dateAr}</dt>
+                    <dd>{r.noteAr}</dd>
+                  </div>
+                ))}
+              </dl>
+              <p className={s.footnote}>
+                كل نسخة سابقة من المؤشر تبقى منشورة بتاريخها. لا نعيد كتابة
+                الأرقام القديمة.
+              </p>
+            </div>
+
+            <div className={s.priceTable} data-anim="rise" data-delay="1">
+              <div className={s.tableWrap}>
+                <table className={s.table}>
+                  <thead>
+                    <tr>
+                      <th scope="col">المنطقة / الكمبوند</th>
+                      <th scope="col">متوسط سعر المتر</th>
+                      <th scope="col">المدى</th>
+                      <th scope="col">العيّنة</th>
+                      <th scope="col">ربع/ربع</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {PRICE_INDEX.rows.map((r) => (
+                      <tr key={r.areaAr}>
+                        <th scope="row">{r.areaAr}</th>
+                        <td className="mono">{formatNumber(r.avg)}</td>
+                        <td className="mono">
+                          <bdi>
+                            {formatNumber(r.low)} – {formatNumber(r.high)}
+                          </bdi>
+                        </td>
+                        <td className="mono">{r.sample}</td>
+                        <td className="mono">
+                          <bdi>{r.qoq}</bdi>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className={s.footnote}>{PRICE_INDEX.footnoteAr}</p>
             </div>
           </div>
         </section>

@@ -1,19 +1,19 @@
 /* ==========================================================================
-   Homepage. Editorial density, asymmetric spans, no cards where a typeset
-   list will do. Content routinely spans 5 or 7 of 12 columns — never
-   always 12, which is what makes a grid read as designed.
+   The homepage.
+
+   Rewritten with the redesign. The price-index table, the three long-form
+   proof blocks and the compound/district registers left for /areas and
+   /about, and their styles left with them — what is here is what this page
+   renders, and nothing else.
    ========================================================================== */
 
 /* ---- Hero content (rendered inside <Hero>) ------------------------------- */
 
-/* The hero copy. It is laid out by Hero.module.css; what lives here is the
-   type, because the same three elements are reused by the page headers on
-   every other route. */
 .heroH1 {
   font-family: var(--ar-display);
-  /* 800, the heaviest weight loaded. The reference sets its headline as
-     heavy as the face goes and relies on the photograph behind it for
-     contrast; at 400 the same line reads as a caption. */
+  /* 800, the heaviest weight loaded. The reference sets its headline as heavy
+     as the face goes and relies on the photograph behind it for contrast; at
+     400 the same line reads as a caption. */
   font-weight: 800;
   font-size: clamp(2.5rem, 6vw, 6.2rem);
   line-height: 1.16;
@@ -21,9 +21,8 @@
   max-width: 18ch;
 }
 
-/* Arabic sets looser than Latin at the same nominal size — the cursive
-   joins and the dots below the baseline need the room. 1.16 is right for
-   Plus Jakarta Sans and cramped for Tajawal. */
+/* Arabic sets looser than Latin at the same nominal size — the cursive joins
+   and the dots below the baseline need the room. */
 :lang(ar) .heroH1 {
   line-height: 1.28;
 }
@@ -42,28 +41,9 @@
   font-family: var(--mono);
   font-size: 12px;
   color: rgba(246, 244, 240, 0.6);
-  font-variant-numeric: tabular-nums;
 }
 
-/* ---- Trust line ---------------------------------------------------------- */
-
-.trust {
-  border-block-end: 1px solid var(--hairline);
-  padding-block: clamp(28px, 5vh, 48px);
-}
-
-.trustText {
-  font-size: clamp(1.05rem, 1.9vw, 1.45rem);
-  line-height: 1.75;
-  max-width: 62ch;
-}
-
-.trustLink {
-  white-space: nowrap;
-  box-shadow: inset 0 -1px 0 currentColor;
-}
-
-/* ---- Generic section ----------------------------------------------------- */
+/* ---- Shared ---------------------------------------------------------------- */
 
 .section {
   padding-block: var(--sec-pad);
@@ -71,34 +51,20 @@
 
 .h2 {
   font-family: var(--ar-display);
-  font-size: clamp(1.9rem, 3vw, 3rem);
-  line-height: 1.34;
+  font-weight: 800;
+  font-size: clamp(2rem, 3.4vw, 3.4rem);
+  line-height: 1.16;
   margin-block: 14px 0;
+  max-width: 22ch;
 }
-
-.h3 {
-  font-family: var(--ar-display);
-  font-size: clamp(1.8rem, 2.8vw, 2.9rem);
-  line-height: 1.36;
-  margin-block: 14px 0;
+:lang(ar) .h2 {
+  line-height: 1.3;
 }
 
 .lede {
   margin-block-start: 20px;
-  color: var(--ink);
+  color: var(--structure);
   max-width: 54ch;
-}
-
-.footnote {
-  margin-block-start: 16px;
-  font-size: 13px;
-  line-height: 1.9;
-  color: var(--structure);
-  max-width: 62ch;
-}
-
-.dim {
-  color: var(--structure);
 }
 
 .inlineLink {
@@ -111,281 +77,355 @@
   box-shadow: inset 0 -1px 0 currentColor;
 }
 
-/* ---- Price index --------------------------------------------------------- */
+/* ---- The units ------------------------------------------------------------- */
 
-.indexIntro {
+.units {
+  padding-block: var(--sec-pad-major) var(--sec-pad);
+}
+
+.unitsHead {
+  margin-block-end: clamp(18px, 3vh, 34px);
+}
+
+.unitRows {
+  border-block-start: 1px solid var(--hairline);
+}
+
+.unitsFoot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(16px, 3vw, 40px);
+  margin-block-start: clamp(34px, 5vh, 60px);
+  padding-block-start: clamp(26px, 4vh, 44px);
+  border-block-start: 1px solid var(--hairline);
+}
+
+.bigLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 56px;
+  padding-inline: clamp(24px, 3vw, 38px);
+  border-radius: var(--radius);
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--ar-display);
+  font-weight: 700;
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  transition: background var(--d-micro) var(--settle);
+}
+.bigLink:hover {
+  background: var(--amber-deep);
+  color: var(--paper);
+}
+.unitsFoot .inlineLink {
+  margin-block-start: 0;
+}
+
+/* ---- The scope band -------------------------------------------------------- */
+
+.scopeBand {
+  padding-block: clamp(28px, 5vh, 56px);
+  background: var(--void);
+  color: var(--paper);
+  border-block: 1px solid var(--hairline-void);
+  overflow: hidden;
+}
+
+.marquee {
+  /* The track itself is built by Motion's marquee case; these are only the
+     type and the fade at the edges. Without the mask the band ends in a hard
+     vertical cut that reads as a clipping bug. */
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+}
+
+.marqueeRun {
+  display: flex;
+  align-items: center;
+  flex: none;
+}
+
+.marqueeItem {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(18px, 3vw, 44px);
+  padding-inline-end: clamp(18px, 3vw, 44px);
+  font-family: var(--ar-display);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 3.4vw, 3rem);
+  line-height: 1.4;
+  white-space: nowrap;
+  color: var(--paper);
+}
+
+.marqueeDot {
+  inline-size: 7px;
+  block-size: 7px;
+  border-radius: 50%;
+  background: var(--amber);
+  flex: none;
+}
+
+.scopeLine {
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--page-pad);
+  margin-block-start: clamp(20px, 3vh, 32px);
+  color: var(--paper-on-void);
+  font-size: var(--fs-body-2);
+}
+.scopeLine .inlineLink {
+  margin-block-start: 0;
+  color: var(--amber-bright);
+}
+
+/* ---- Statement and counters ------------------------------------------------ */
+
+.statement {
+  padding-block: var(--sec-pad-major);
+}
+
+.statementText {
+  grid-column: span 5;
+}
+
+.counters {
+  grid-column: span 7;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(24px, 3vw, 44px);
+  margin: 0;
+  align-content: start;
+  padding-block-start: clamp(8px, 2vh, 26px);
+}
+
+.counter {
+  border-block-start: 1px solid var(--hairline);
+  padding-block-start: 16px;
+}
+
+.counterValue {
+  font-family: var(--ar-display);
+  font-weight: 800;
+  font-size: clamp(2.6rem, 5.2vw, 4.4rem);
+  line-height: 1;
+  color: var(--ink);
+  /* The digits are counting. Without a fixed advance the label under them
+     jitters sideways on every frame. */
+  font-variant-numeric: tabular-nums;
+}
+
+.counterLabel {
+  margin: 10px 0 0;
+  font-size: var(--fs-body-2);
+  color: var(--ink);
+}
+
+.counterSource {
+  margin: 4px 0 0;
+  font-size: 11.5px;
+  color: var(--structure);
+}
+
+/* ---- The word — beat 6 ------------------------------------------------------ */
+
+.wordSection {
+  background: var(--amber);
+  padding-block: var(--sec-pad-major);
+  overflow: hidden;
+}
+
+.word {
+  font-family: var(--ar-display);
+  font-weight: 800;
+  /* 18vw. The reference sets its one word at the width of the viewport and
+     lets it be the whole screen; anything smaller reads as a heading that
+     happens to be large. */
+  font-size: clamp(4.5rem, 18vw, 17rem);
+  line-height: 1.1;
+  text-align: center;
+  /* 6.63:1 against the amber. Paper would be 2.55:1 — see the token block. */
+  color: var(--ink);
+  transform-origin: center;
+}
+
+.wordNote {
+  margin-block-start: clamp(20px, 3vh, 34px);
+  margin-inline: auto;
+  max-width: 60ch;
+  text-align: center;
+  font-size: var(--fs-body-2);
+  line-height: 1.8;
+  color: var(--ink);
+}
+
+.wordLink {
+  color: var(--ink);
+  white-space: nowrap;
+  box-shadow: inset 0 -1px 0 currentColor;
+}
+.wordLink:hover {
+  color: var(--ink);
+  box-shadow: inset 0 -2px 0 currentColor;
+}
+
+/* ---- The services list — beat 7, the signature ------------------------------
+   Outlined type that fills, one item at a time, as the block is passed.
+
+   --f is how full each item is, 0 to 1, and Motion is the only thing that
+   moves it. It defaults to 1 — declared in globals.css — so with no
+   JavaScript every item renders solid and finished rather than as a row of
+   empty outlines. @property makes the browser interpolate it as a number
+   instead of swapping it as a string. */
+
+@property --f {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
+}
+
+.services {
+  padding-block: var(--sec-pad-major);
+  border-block-end: 1px solid var(--hairline);
+}
+
+.serviceList {
+  list-style: none;
+  margin: clamp(24px, 4vh, 44px) 0 0;
+  padding: 0;
+  display: grid;
+  gap: clamp(6px, 1.4vh, 16px);
+}
+
+.serviceItem {
+  font-family: var(--ar-display);
+  font-weight: 800;
+  font-size: clamp(2.2rem, 7vw, 6rem);
+  line-height: 1.28;
+  /* THE FLOOR: solid, legible ink. Everything below is an enhancement laid on
+     top of this, and if any of it is unsupported this is what remains. */
+  color: var(--ink);
+}
+
+/* Only where BOTH halves of the effect exist. The transparent fill without
+   the stroke — or the stroke without background-clip — leaves the list
+   invisible at --f: 0, which is content destroyed by a decoration. */
+@supports (-webkit-text-stroke: 1px black) and
+  ((-webkit-background-clip: text) or (background-clip: text)) {
+  .serviceItem {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--structure);
+    background-image: linear-gradient(
+      to left,
+      var(--ink) 0 calc(var(--f) * 100%),
+      transparent calc(var(--f) * 100%)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+  /* The fill travels with the reading direction. */
+  :global(:lang(en)) .serviceItem {
+    background-image: linear-gradient(
+      to right,
+      var(--ink) 0 calc(var(--f) * 100%),
+      transparent calc(var(--f) * 100%)
+    );
+  }
+}
+
+.servicesNote {
+  margin-block-start: clamp(26px, 4vh, 40px);
+  max-width: 58ch;
+  color: var(--structure);
+  font-size: var(--fs-body-2);
+}
+
+/* ---- The area band — beat 8 ------------------------------------------------- */
+
+.areaBand {
+  position: relative;
+  overflow: hidden;
+  block-size: clamp(340px, 72vh, 720px);
+  background: var(--void);
+  display: grid;
+  align-items: end;
+}
+
+/* The reference puts a play control here, over a black-and-white video still.
+   There is no film, so there is no button — a control that does nothing is
+   worse than no control. The picture carries the beat instead: desaturated,
+   and coming back to colour as it is passed. */
+.areaImg {
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.06);
+  transition: filter 900ms var(--settle);
+}
+.areaBand:hover .areaImg {
+  filter: grayscale(0) contrast(1);
+}
+
+.areaOverlay {
+  position: relative;
+  z-index: 1;
+  padding: var(--page-pad);
+  inline-size: 100%;
+  background: linear-gradient(to top, rgba(10, 10, 10, 0.8), transparent);
+}
+
+.areaName {
+  font-family: var(--ar-display);
+  font-weight: 800;
+  font-size: clamp(2rem, 6vw, 5rem);
+  line-height: 1.2;
+  color: var(--paper);
+}
+
+.areaMeta {
+  margin-block-start: 8px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--paper-on-void);
+}
+
+/* ---- The process ------------------------------------------------------------ */
+
+.processIntro {
   grid-column: span 4;
 }
 
-.indexTable {
+.processList {
   grid-column: span 8;
 }
 
-.indexMeta {
-  margin-block-start: 28px;
-  display: grid;
-  gap: 10px;
-  font-size: 12px;
-}
-.indexMeta > div {
-  display: flex;
-  gap: 10px;
-  align-items: baseline;
-}
-.indexMeta dt {
-  color: var(--structure);
-  min-width: 76px;
-}
-.indexMeta dd {
-  margin: 0;
-  color: var(--ink);
-}
+/* ---- Testimonials ------------------------------------------------------------ */
 
-/* Bronze corner brackets. The cadastral language, carrying real data —
-   not a decorative frame. */
-.bracket {
-  position: relative;
-  padding: 20px 0 0;
+.quotes {
+  margin-block-start: clamp(24px, 4vh, 40px);
 }
-.bracket::before,
-.bracket::after {
-  content: "";
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  top: 0;
-}
-.bracket::before {
-  inset-inline-start: 0;
-  border-top: 1px solid var(--amber);
-  border-inline-start: 1px solid var(--amber);
-}
-.bracket::after {
-  inset-inline-end: 0;
-  border-top: 1px solid var(--amber);
-  border-inline-end: 1px solid var(--amber);
-}
-
-/* Scroll shadows, same technique as the sold archive: the `local` layers
-   ride with the content and mask the shadow at whichever end has been
-   reached, so a shadow shows only where there is more table to see. */
-.tableScroll {
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  /* Belt and braces with the .grid12 rule: a scroll container must be allowed
-     to be narrower than what it contains, or it cannot scroll at all. */
-  min-width: 0;
-  background:
-    linear-gradient(to right, var(--paper) 32%, rgba(244, 241, 234, 0)) left center / 44px 100% no-repeat local,
-    linear-gradient(to left, var(--paper) 32%, rgba(244, 241, 234, 0)) right center / 44px 100% no-repeat local,
-    radial-gradient(farthest-side at 0 50%, rgba(27, 26, 23, 0.14), rgba(27, 26, 23, 0)) left center / 15px 100% no-repeat scroll,
-    radial-gradient(farthest-side at 100% 50%, rgba(27, 26, 23, 0.14), rgba(27, 26, 23, 0)) right center / 15px 100% no-repeat scroll;
-}
-
-.table {
-  font-size: 15px;
-}
-.table th,
-.table td {
-  text-align: start;
-  padding: 14px 16px 14px 0;
-  border-block-end: 1px solid var(--hairline);
-  font-weight: 400;
-  vertical-align: baseline;
-}
-.table thead th {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--structure);
-  border-block-end-color: var(--ink);
-  padding-block: 10px;
-}
-.table tbody th {
-  color: var(--ink);
-}
-.table tbody tr:last-child th,
-.table tbody tr:last-child td {
-  border-block-end: none;
-}
-.qoq {
-  color: var(--amber-deep);
-}
-
-/* ---- Pillars ------------------------------------------------------------- */
-
-.pillars {
-  background: var(--paper-2);
-  padding-block: var(--sec-pad-major);
-}
-
-.pillar {
-  padding-block: clamp(34px, 6vh, 62px);
-  border-block-end: 1px solid var(--hairline);
-  align-items: start;
-}
-.pillar:last-child {
-  border-block-end: none;
-  padding-block-end: 0;
-}
-
-.pillarText {
-  grid-column: 1 / span 5;
-}
-.pillarArtifact {
-  grid-column: 7 / span 6;
-}
-/* Alternating spans keep the rhythm from turning into a stack of identical rows. */
-.pillarFlip .pillarText {
-  grid-column: 8 / span 5;
-}
-.pillarFlip .pillarArtifact {
-  grid-column: 1 / span 6;
-  grid-row: 1;
-}
-
-.miniTable {
-  font-size: 15px;
-}
-.miniTable th,
-.miniTable td {
-  text-align: start;
-  padding: 12px 14px 12px 0;
-  border-block-end: 1px solid var(--hairline);
-  font-weight: 400;
-  vertical-align: baseline;
-}
-.miniTable tr:last-child th,
-.miniTable tr:last-child td {
-  border-block-end: none;
-}
-.miniTable tbody th {
-  color: var(--ink);
-  white-space: nowrap;
-}
-.miniTable td {
-  color: var(--structure);
-  white-space: nowrap;
-}
-/* The sale description is the one cell allowed to wrap. */
-.miniTable td.wrap {
-  white-space: normal;
-}
-
-/* ---- Featured units ------------------------------------------------------ */
-
-.sectionHead {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--gap-col);
-  align-items: end;
-  margin-block-end: clamp(32px, 5vh, 56px);
-}
-.sectionAside {
-  color: var(--structure);
-  font-size: var(--fs-body-2);
-  max-width: 42ch;
-  justify-self: end;
-}
-.sectionAside .inlineLink {
-  margin-block-start: 14px;
-}
-
-.cardGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--gap-card);
-}
-
-.gridFoot {
-  margin-block-start: clamp(28px, 4vh, 44px);
-}
-
-/* ---- Scope (night band) --------------------------------------------------- */
-
-.scope {
-  background: var(--void);
-  color: var(--paper);
-  padding-block: var(--sec-pad-major);
-}
-.scope .h2 {
-  color: var(--paper);
-}
-.scope .eyebrow {
-  color: var(--amber);
-}
-
-.scopeIntro {
-  grid-column: 1 / span 5;
-}
-.scopeCompounds {
-  grid-column: 7 / span 3;
-}
-.scopeDistricts {
-  grid-column: 10 / span 3;
-}
-
-.ledeOnNight {
-  margin-block-start: 20px;
-  color: var(--paper-on-void);
-  max-width: 46ch;
-}
-
-.inlineLinkNight {
-  display: inline-block;
-  margin-block-start: 22px;
-  color: var(--amber);
-}
-.inlineLinkNight:hover {
-  color: var(--paper);
-}
-
-.scopeTitle {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: rgba(244, 241, 234, 0.5);
-  margin-block-end: 16px;
-  font-weight: 400;
-}
-
-.index {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  font-size: 15px;
-}
-.index li {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  padding-block: 11px;
-  border-block-end: 1px solid rgba(244, 241, 234, 0.12);
-}
-.index li:last-child {
-  border-block-end: none;
-}
-.index li span:last-child {
-  color: rgba(244, 241, 234, 0.45);
-  font-size: 13px;
-}
-
-/* ---- Testimonials --------------------------------------------------------- */
 
 .quote {
-  grid-column: 1 / span 5;
+  grid-column: span 6;
   margin: 0;
-}
-.quote + .quote {
-  grid-column: 7 / span 5;
+  padding-block-start: clamp(20px, 3vh, 30px);
+  border-block-start: 1px solid var(--hairline);
 }
 
 .quoteText {
   font-family: var(--ar-display);
+  font-weight: 500;
   font-size: clamp(1.15rem, 1.9vw, 1.6rem);
-  line-height: 1.65;
+  line-height: 1.8;
+  color: var(--ink);
 }
 
 .quote figcaption {
-  margin-block-start: 22px;
+  margin-block-start: 18px;
   display: grid;
   gap: 5px;
 }
@@ -398,12 +438,65 @@
   color: var(--structure);
 }
 
-/* ---- Contact --------------------------------------------------------------- */
+/* ---- Who we are --------------------------------------------------------------- */
 
-.contact {
+.who {
   background: var(--paper-2);
   padding-block: var(--sec-pad-major);
 }
+
+.whoText {
+  grid-column: span 6;
+}
+
+.whoRegistry {
+  grid-column: 8 / span 5;
+  display: grid;
+  gap: 0;
+  margin: 0;
+  align-content: start;
+  background: var(--amber);
+  border-radius: var(--radius-card);
+  padding: clamp(24px, 3vw, 40px);
+}
+
+.whoRegistry > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding-block: 14px;
+  border-block-end: 1px solid rgba(20, 19, 15, 0.18);
+}
+.whoRegistry > div:last-child {
+  border-block-end: 0;
+}
+
+.whoRegistry dt {
+  font-size: var(--fs-body-2);
+  color: var(--ink);
+}
+
+.whoRegistry dd {
+  margin: 0;
+  font-size: var(--fs-body-2);
+  color: var(--ink);
+  text-align: end;
+}
+
+/* ---- Contact ------------------------------------------------------------------ */
+
+.contact {
+  background: var(--void);
+  color: var(--paper);
+  padding-block: var(--sec-pad-major);
+}
+.contact .h2 {
+  color: var(--paper);
+}
+.contact .lede {
+  color: var(--paper-on-void);
+}
+
 .contactIntro {
   grid-column: 1 / span 5;
 }
@@ -416,324 +509,116 @@
 
 .contactTitle {
   font-family: var(--ar-display);
+  font-weight: 700;
   font-size: 22px;
   margin-block-end: 14px;
+  color: var(--paper);
 }
 .contactMeta {
   font-size: 14px;
-  color: var(--structure);
+  color: var(--paper-on-void);
   line-height: 1.7;
 }
 .contactNumber {
   display: inline-block;
   margin-block-start: 16px;
   font-size: 18px;
-  color: var(--ink);
+  color: var(--paper);
   box-shadow: inset 0 -1px 0 var(--amber);
 }
 .contactNumber:hover {
-  color: var(--amber-deep);
+  color: var(--amber-bright);
 }
 
-/* ---- Footer ----------------------------------------------------------------- */
-
-.footer {
-  background: var(--void);
-  color: var(--paper-on-void);
-  padding-block: clamp(48px, 8vh, 88px) 34px;
-  font-size: 14px;
-}
-.footer a {
-  color: var(--paper-on-void);
-}
-.footer a:hover {
-  color: var(--paper);
-}
-
-.footBrand {
-  grid-column: 1 / span 4;
-  display: grid;
-  gap: 6px;
-  align-content: start;
-}
-.footWordmark {
-  font-family: var(--ar-display);
-  font-size: 28px;
-  color: var(--paper);
-  line-height: 1;
-  margin-block-end: 10px;
-}
-.footPhone {
-  margin-block-start: 12px;
-  font-size: 15px;
-}
-
-.footCol {
-  grid-column: span 2;
-}
-.footColTitle {
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 400;
-  color: rgba(244, 241, 234, 0.45);
-  margin-block-end: 14px;
-}
-.footCol ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 9px;
-}
-
-.footRule {
-  border-top-color: rgba(244, 241, 234, 0.14);
-  margin-block: clamp(34px, 5vh, 56px) 20px;
-}
-
-.registry {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 26px;
-  font-size: 11px;
-  color: rgba(244, 241, 234, 0.42);
-}
-.copyright {
-  margin-inline-start: auto;
-}
-
-/* ---- Responsive -------------------------------------------------------------
+/* ---- Responsive ----------------------------------------------------------------
    Mobile is designed, not derived. Below 900px the 12-column grid collapses
-   and the card grid steps 3 → 2 → 1. Section padding stays in vh. */
-
-@media (max-width: 1100px) {
-  .cardGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
+   and every section that was two columns becomes one. Section padding stays
+   in vh. */
 
 @media (max-width: 900px) {
-  .heroH1,
-  .heroAside {
-    grid-column: 1 / -1;
-  }
   .heroH1 {
     font-size: clamp(2.2rem, 10vw, 3.4rem);
-  }
-  .sectionHead {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-  .sectionAside {
-    justify-self: start;
-  }
-  .pillarFlip .pillarArtifact {
-    grid-row: auto;
-  }
-  .pillar {
-    gap: 28px;
+    max-width: none;
   }
 
-  /* Two across, not one.
-     A full-width card puts a 4:5 image at 419px tall and pushes the section
-     to 2,728px — three cards that take four screens to scroll past, which is
-     how a catalogue stops being browsable. At half width the image is 201px,
-     the price still sets on one line with room to spare at 360px, and the
-     section drops to about 1,160px. Measured, not assumed. */
-  .cardGrid {
-    grid-template-columns: 1fr 1fr;
-    gap: 22px 14px;
-  }
-
-  /* Two short lists that were stacked for no reason — the same mistake as the
-     footer. They are compound names and district names, a few words each, and
-     they belong beside each other. The intro above them is prose and stays
-     full width. */
-  .scope :global(.grid12) {
-    grid-template-columns: 1fr 1fr;
-  }
-  .scope .scopeCompounds,
-  .scope .scopeDistricts {
-    grid-column: span 1 !important;
-  }
-  .scope .scopeIntro {
+  .statementText,
+  .counters,
+  .whoText,
+  .whoRegistry,
+  .processIntro,
+  .processList,
+  .contactIntro,
+  .contactWhatsapp,
+  .contactOffice {
     grid-column: 1 / -1 !important;
   }
-  .registry {
-    gap: 8px 18px;
-  }
-  .copyright {
-    margin-inline-start: 0;
+
+  .counters {
+    /* Four counters stay two across rather than stacking. They are short
+       numbers with short labels, and one per row turns a compact block of
+       evidence into half a screen of scrolling. */
+    grid-template-columns: 1fr 1fr;
+    gap: 22px 18px;
+    padding-block-start: 0;
+    margin-block-start: 30px;
   }
 
-  /* Hold the price index at a width its five columns can actually occupy and
-     let the wrapper scroll, instead of crushing every cell. */
-  .table {
-    min-width: 560px;
-  }
-  .table th,
-  .table td {
-    white-space: nowrap;
-    padding: 13px 14px 13px 0;
-  }
-  .table thead th {
-    font-size: 12.5px;
-  }
-  .indexMeta {
-    font-size: 13px;
+  .quote {
+    grid-column: 1 / -1;
   }
 
-  /* The small print sat at 13px over a long measure. */
-  .footnote {
-    font-size: 14px;
+  .areaBand {
+    block-size: clamp(280px, 52vh, 420px);
+  }
+
+  /* 18vw of a 390px screen is 70px, which is not the effect. On a phone the
+     word wants to be as wide as the screen allows, so it is driven by vw with
+     a far higher ceiling. */
+  .word {
+    font-size: clamp(3.4rem, 22vw, 7rem);
+  }
+
+  .serviceItem {
+    font-size: clamp(2rem, 11vw, 3.6rem);
+  }
+
+  .marqueeItem {
+    font-size: clamp(1.2rem, 6vw, 1.9rem);
+  }
+
+  .whoRegistry {
+    margin-block-start: 32px;
+  }
+  .whoRegistry > div {
+    /* The label and the value stop sharing a line: "قيد الوساطة العقارية"
+       against "RB-2026-0413" at 390px leaves each of them about eleven
+       characters, and both wrap into ladders. */
+    flex-direction: column;
+    gap: 4px;
+  }
+  .whoRegistry dd {
+    text-align: start;
+  }
+
+  .processList {
+    margin-block-start: 28px;
+  }
+
+  .unitsFoot {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+  .bigLink {
+    justify-content: center;
   }
 
   /* The "←" links are the routes between sections, and tapping a number is
-     how someone actually rings the office. Both were around 30px.
-     .trustLink is deliberately left alone: it sits inside a sentence, where
-     enlarging it would break the line, and WCAG 2.5.8 exempts inline links
-     in a block of text for exactly that reason. */
+     how someone actually rings the office. Both were around 30px. */
   .inlineLink,
-  .inlineLinkNight,
-  .contactNumber,
-  .contactOffice a {
+  .contactNumber {
     display: inline-flex;
     align-items: center;
     min-height: 44px;
-  }
-}
-
-@media (max-width: 900px) {
-  /* The four-column sales table needs room its columns can actually occupy;
-     the scroller above provides it. Without the min-width the table would
-     still crush to fit and there would be nothing to scroll. */
-  .tableScroll .miniTable {
-    min-width: 430px;
-  }
-  /* The description is allowed to wrap on desktop because the column is wide
-     and wrapping is cheaper than a scrollbar. Inside the scroller that
-     trade-off inverts: there is horizontal room to spend, and a description
-     broken over three lines is what made this table unreadable. */
-  .tableScroll .miniTable td.wrap {
-    white-space: nowrap;
-  }
-  .miniTable th,
-  .miniTable td {
-    padding: 12px 12px 12px 0;
-  }
-}
-
-/* ---- The gallery ----------------------------------------------------------
-   Six units at a size where the photograph can be read. The rhythm alternates
-   wide and tall rather than repeating one tile: a grid of identical rectangles
-   is what makes AI-generated photography read as stock, and varying the shape
-   is most of the fix.
-
-   The whole tile is the link. A "read more" under a picture is a second,
-   smaller target for the same destination the picture already promises. */
-
-.gallerySection {
-  padding-block: var(--sec-pad);
-  background: var(--paper-2);
-}
-
-.galleryGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--gap-card);
-  margin-block-start: clamp(32px, 5vh, 56px);
-}
-
-.tile {
-  display: grid;
-  gap: 14px;
-  color: var(--ink);
-  align-content: start;
-}
-.tile:hover {
-  color: var(--ink);
-}
-.tileWide {
-  grid-column: span 2;
-}
-
-.tileMedia {
-  position: relative;
-  display: block;
-  aspect-ratio: 4 / 5;
-  overflow: hidden;
-  border-radius: var(--radius-img);
-  background: var(--void);
-}
-.tileWide .tileMedia {
-  aspect-ratio: 16 / 10;
-}
-
-.tileImg {
-  object-fit: cover;
-  transition: transform 900ms var(--settle);
-}
-/* A slow push in on hover. Nothing moves but the photograph, and only far
-   enough to say the tile is live. */
-.tile:hover .tileImg {
-  transform: scale(1.04);
-}
-
-.tileBody {
-  display: grid;
-  gap: 5px;
-}
-
-.tileCode {
-  font-size: 12.5px;
-  color: var(--amber-deep);
-  letter-spacing: 0.04em;
-}
-
-.tileTitle {
-  font-family: var(--ar-display);
-  font-size: clamp(1.15rem, 1.7vw, 1.5rem);
-  line-height: 1.4;
-}
-.tile:hover .tileTitle {
-  box-shadow: inset 0 -1px 0 var(--amber);
-}
-
-.tileDesc {
-  font-size: 14px;
-  color: var(--structure);
-  line-height: 1.7;
-}
-
-.tilePrice {
-  font-size: 18px;
-  font-weight: 500;
-  margin-block-start: 2px;
-}
-
-@media (max-width: 1100px) {
-  .galleryGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .tileWide {
-    grid-column: span 2;
-  }
-}
-
-@media (max-width: 900px) {
-  .galleryGrid {
-    grid-template-columns: 1fr 1fr;
-    gap: 22px 14px;
-  }
-  /* On a phone the wide tile is the only one that gets the full width — the
-     rest pair up, the same two-across rhythm as the cards above. */
-  .tileWide {
-    grid-column: 1 / -1;
-  }
-  .tileTitle {
-    font-size: 17px;
-  }
-  .tileDesc {
-    font-size: 13px;
   }
 }

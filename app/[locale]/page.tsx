@@ -2,26 +2,19 @@ import Link from "next/link";
 import Image from "next/image";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
-import PropertyCard from "@/components/PropertyCard";
+import UnitRow from "@/components/UnitRow";
+import Process, { type Step } from "@/components/Process";
 import Footer from "@/components/Footer";
 import {
   COMPANY,
   PRICE_INDEX,
-  INDEX_REVISIONS,
   LEGAL_STATUSES,
-  RECENT_SALES,
   COMPOUNDS,
   DISTRICTS,
   TESTIMONIALS,
   TOTAL_LISTED,
 } from "@/lib/content";
-import {
-  Price,
-  PhoneNumber,
-  whatsappHref,
-  formatNumber,
-  toEasternDigits,
-} from "@/lib/format";
+import { PhoneNumber, whatsappHref, toEasternDigits } from "@/lib/format";
 import { getUnits } from "@/lib/cms";
 import s from "./page.module.css";
 
@@ -33,6 +26,92 @@ import s from "./page.module.css";
  * that the database is not queried on every request.
  */
 export const revalidate = 300;
+
+/**
+ * WHAT THIS PAGE IS NOW, AND WHAT MOVED.
+ *
+ * The units come first, directly under the hero, because they are what
+ * anyone arriving is here to see. Everything that was long-form argument —
+ * the price-index table with its six rows and its revision history, the
+ * compound and district registers, the legal-status disclosure essay — left
+ * for pages that already exist for it:
+ *
+ *   · the price index, its revisions, the compound and district lists
+ *       → /areas/hadayek-october
+ *   · the legal-status breakdown and the disclosure argument
+ *       → /about#credentials
+ *   · the sold archive
+ *       → /sold, where it already lived
+ *
+ * Nothing was deleted, and every one of them is linked from here. A homepage
+ * that opens with a five-column table is a homepage nobody scrolls past.
+ */
+
+/**
+ * The counters.
+ *
+ * There is an argument in this codebase's history against animated counters:
+ * they are the most template-coded element in real-estate design, and one
+ * that lands on "500+ units sold" is an unverifiable claim wearing the
+ * costume of data. That reasoning holds. What changes is the conclusion —
+ * counters are fine on numbers a reader can go and check, which is why every
+ * value here is READ from its export rather than typed, and why each one
+ * carries the name of the place it can be checked against.
+ */
+const counters = [
+  { value: TOTAL_LISTED, labelAr: "وحدة مدرجة", sourceAr: "القائمة الكاملة" },
+  {
+    value: LEGAL_STATUSES[0].count,
+    labelAr: "مسجلة بالشهر العقاري",
+    sourceAr: "إفصاح الحالة القانونية",
+  },
+  {
+    value: PRICE_INDEX.rows.reduce((n, r) => n + r.sample, 0),
+    labelAr: "عرضًا في عيّنة المؤشر",
+    sourceAr: `آخر تحديث ${PRICE_INDEX.updatedAr}`,
+  },
+  {
+    value: PRICE_INDEX.rows.length,
+    labelAr: "مناطق في المؤشر",
+    sourceAr: "جدول سعر المتر",
+  },
+];
+
+/** What a brokerage actually does. Not Architecture / Interior / Landscape —
+ *  see the design note about which beats of the reference are copied. */
+const services = ["بيع", "شراء", "تقسيط", "توثيق قانوني", "مصريون في الخليج"];
+
+/** Every name in the scope, for the band that runs across the page. The two
+ *  registers with their counts live on the area guide now; this is the same
+ *  fact at headline speed. */
+const scopeNames = [...COMPOUNDS, ...DISTRICTS].map((x) => x.nameAr);
+
+const processSteps: Step[] = [
+  {
+    numAr: "٠١",
+    titleAr: "المعاينة",
+    bodyAr:
+      "نروح معك الوحدة بنفسنا — مش نبعتلك لوكيشن على الخريطة. تشوف المبنى والدور والتشطيب والجيران، وتسأل اللي راح شافها قبلك. لو الوحدة مش زي ما في الصور، نقول لك قبل ما تتحرك من بيتك.",
+  },
+  {
+    numAr: "٠٢",
+    titleAr: "الحجز",
+    bodyAr:
+      "قبل أي مقدَّم، بنوريك الحالة القانونية للوحدة مكتوبة: مسجلة بالشهر العقاري، أو حكم صحة ونفاذ، أو عقد ابتدائي موثق، أو عرفي. الفرق بينهم في السعر وفي المخاطرة، ومن حقك تعرفه وأنت لسه بتفكر.",
+  },
+  {
+    numAr: "٠٣",
+    titleAr: "التعاقد",
+    bodyAr:
+      "العقد بيتقرا بند بند قبل التوقيع، ومعاه بيان المساحة وصورة أوراق الملكية. لو بتشتري من برّه مصر، بنبعتلك الصور دي كلها قبل أي تحويل — مش بعده.",
+  },
+  {
+    numAr: "٠٤",
+    titleAr: "التسجيل في الشهر العقاري",
+    bodyAr:
+      "دي الخطوة اللي معظم الناس بتقف قبلها، وهي الوحيدة اللي بتخلي الوحدة ملكك قانونًا. بنمشي فيها معاك للآخر ونقول لك تكلفتها ومدتها من البداية، حتى لو الوحدة اللي اخترتها لسه عقدها عرفي.",
+  },
+];
 
 export default async function HomePage({
   params,
@@ -70,366 +149,274 @@ export default async function HomePage({
       </Hero>
 
       <main id="main">
-        {/* ---- Trust line. Static type inside a sentence, with Eastern
-                digits because this is prose, not data. Never an animated
-                counter: that is both the most template-coded element in
-                real estate and an unverifiable claim. ---- */}
-        <section className={s.trust}>
+        {/* ---- The units. First thing under the hero, one per row, the
+                sides alternating. ---- */}
+        <section className={s.units}>
           <div className="shell">
-            <p className={s.trustText} data-anim="rise">
-              خمسة عشر عامًا في هذا النطاق، و{toEasternDigits(500)}+ وحدة مبيعة،
-              و{toEasternDigits(30)}+ مشروعًا — وكلها مؤرَّخة، وحدة وحدة، في سجل
-              البيع.{" "}
-              <Link href={`/${locale}/sold`} className={s.trustLink}>
-                افتح السجل
-              </Link>
-            </p>
-          </div>
-        </section>
-
-        {/* ---- Price index ---- */}
-        <section id="index" className={s.section}>
-          <div className="shell grid12">
-            <div className={s.indexIntro} data-anim="rise">
-              <span className="eyebrow">٠٢ / الأرقام محدّثة</span>
-              <h2 className={s.h2}>
-                مؤشر سعر المتر
-                <br />
-                في حدائق أكتوبر
+            <div className={s.unitsHead}>
+              <span className="eyebrow">٠١ / معروض الآن</span>
+              <h2 className={s.h2} data-anim="words">
+                وحدات مختارة داخل النطاق
               </h2>
-              <p className={s.lede}>
-                نحسبه بأنفسنا من العروض المعروضة فعلًا ومن عمليات البيع التي
-                أتممناها داخل النطاق. مع كل رقم تاريخه وحجم عيّنته، حتى تعرف على
-                أي أساس تقارن.
-              </p>
-              <dl className={`mono ${s.indexMeta}`}>
-                <div>
-                  <dt>آخر تحديث</dt>
-                  <dd>{PRICE_INDEX.updatedAr}</dd>
-                </div>
-                <div>
-                  <dt>العيّنة</dt>
-                  <dd>{PRICE_INDEX.sampleAr}</dd>
-                </div>
-                <div>
-                  <dt>الدورة</dt>
-                  <dd>{PRICE_INDEX.cycleAr}</dd>
-                </div>
-              </dl>
             </div>
 
-            <div className={s.indexTable} data-anim="rise" data-delay="1">
-              <div className={s.bracket}>
-                {/* The five columns will not fit a phone. Rather than let
-                    them crush — "ربع/ربع" was breaking across two lines and
-                    a price range across three — the table keeps its width
-                    and the wrapper scrolls. */}
-                <div className={s.tableScroll}>
-                <table className={s.table}>
-                  <thead>
-                    <tr>
-                      <th scope="col">المنطقة / الكمبوند</th>
-                      <th scope="col">متوسط سعر المتر</th>
-                      <th scope="col">المدى</th>
-                      <th scope="col">العيّنة</th>
-                      <th scope="col">ربع/ربع</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {PRICE_INDEX.rows.map((r) => (
-                      <tr key={r.areaAr}>
-                        <th scope="row">{r.areaAr}</th>
-                        <td className="mono">{formatNumber(r.avg)}</td>
-                        <td className="mono">
-                          <bdi>
-                            {formatNumber(r.low)} – {formatNumber(r.high)}
-                          </bdi>
-                        </td>
-                        <td className="mono">{r.sample}</td>
-                        <td className={`mono ${s.qoq}`}>
-                          <bdi>{r.qoq}</bdi>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                </div>
-              </div>
-              <p className={s.footnote}>{PRICE_INDEX.footnoteAr}</p>
-            </div>
-          </div>
-        </section>
-
-        {/* ---- The three proof pillars, as editorial blocks with real
-                artifacts. Never icon boxes, never a "لماذا تختارنا" heading. ---- */}
-        <section className={s.pillars}>
-          <div className="shell">
-            {/* Pillar 1 — the legal status disclosure */}
-            <article className={`grid12 ${s.pillar}`}>
-              <div className={s.pillarText} data-anim="rise">
-                <span className="eyebrow">٠١ / الأوراق واضحة</span>
-                <h2 className={s.h3}>
-                  حالة الوحدة القانونية مكتوبة قبل أن تسأل عنها
-                </h2>
-                <p className={s.lede}>
-                  في كل صفحة وحدة سطر اسمه «الحالة القانونية»، وفيه القيمة كما
-                  هي: مسجل بالشهر العقاري، أو حكم صحة ونفاذ، أو عقد ابتدائي
-                  موثق، أو عقد ابتدائي عرفي. لا نضع علامة صحيحة خضراء مكان
-                  الورقة — العلامة ادّعاء، والسطر إفصاح.
-                </p>
-              </div>
-              <div className={s.pillarArtifact} data-anim="rise" data-delay="1">
-                <table className={s.miniTable}>
-                  <tbody>
-                    {LEGAL_STATUSES.map((l) => (
-                      <tr key={l.status}>
-                        <th scope="row">{l.status}</th>
-                        <td className="mono">{l.count} وحدة معروضة</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <p className={s.footnote}>
-                  ننشر العرفي كما ننشر المسجل. الفارق في السعر وفي المخاطرة، ومن
-                  حقك تعرفهما قبل الحجز.
-                </p>
-              </div>
-            </article>
-
-            {/* Pillar 2 — the dated revision list */}
-            <article className={`grid12 ${s.pillar} ${s.pillarFlip}`}>
-              <div className={s.pillarText} data-anim="rise">
-                <span className="eyebrow">٠٢ / الأرقام محدّثة</span>
-                <h2 className={s.h3}>سعر بلا تاريخ ليس سعرًا</h2>
-                <p className={s.lede}>
-                  السوق في أكتوبر يتحرك كل شهر، ومعظم ما تقرأه على الإنترنت
-                  متروك من سنة. كل رقم عندنا مكتوب بجانبه يوم رصده وعدد الوحدات
-                  التي حُسب منها، والنسخ القديمة تبقى في مكانها للمقارنة.
-                </p>
-              </div>
-              <div className={s.pillarArtifact} data-anim="rise" data-delay="1">
-                <table className={s.miniTable}>
-                  <tbody>
-                    {INDEX_REVISIONS.map((r) => (
-                      <tr key={r.dateAr}>
-                        <th scope="row" className="mono">
-                          {r.dateAr}
-                        </th>
-                        <td>{r.noteAr}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <p className={s.footnote}>
-                  كل نسخة سابقة من المؤشر تبقى منشورة بتاريخها. لا نعيد كتابة
-                  الأرقام القديمة.
-                </p>
-              </div>
-            </article>
-
-            {/* Pillar 3 — the sold archive */}
-            <article className={`grid12 ${s.pillar}`}>
-              <div className={s.pillarText} data-anim="rise">
-                <span className="eyebrow">٠٣ / البيع مسجّل</span>
-                <h2 className={s.h3}>سجل البيع مفتوح للقراءة</h2>
-                <p className={s.lede}>
-                  بدل عدّاد يزيد أمام عينك، عندنا صفحة فيها كل وحدة بِعناها:
-                  كودها، منطقتها، مساحتها، سعرها يوم البيع، وتاريخ إتمام
-                  التعاقد. تقدر تقرأها كلها، وتقدر تقارن بها سعر اليوم.
-                </p>
-                <Link href={`/${locale}/sold`} className={s.inlineLink}>
-                  افتح سجل البيع ←
-                </Link>
-              </div>
-              <div className={s.pillarArtifact} data-anim="rise" data-delay="1">
-                {/* Four columns — code, description, price, date — do not fit
-                    a phone. Left to crush, "شقة 144 م² — أشجار سيتي" came
-                    apart into a five-line ladder. It keeps its width and the
-                    wrapper scrolls, same as the price index. */}
-                <div className={s.tableScroll}>
-                <table className={s.miniTable}>
-                  <tbody>
-                    {RECENT_SALES.map((sale) => (
-                      <tr key={sale.code}>
-                        <th scope="row" className="mono">
-                          {sale.code}
-                        </th>
-                        <td className={s.wrap}>{sale.descAr}</td>
-                        <td className="mono">
-                          <Price value={sale.price} unit={null} />
-                        </td>
-                        <td className={`mono ${s.dim}`}>{sale.dateAr}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                </div>
-              </div>
-            </article>
-          </div>
-        </section>
-
-        {/* ---- Featured units ---- */}
-        <section className={s.section}>
-          <div className="shell">
-            <div className={s.sectionHead}>
-              <div>
-                <span className="eyebrow">٠٤ / معروض الآن</span>
-                <h2 className={s.h2}>وحدات مختارة داخل النطاق</h2>
-              </div>
-              <div className={s.sectionAside}>
-                <p>
-                  تشتري بالقسط؟ ابدأ من المقدَّم الذي معك والقسط الذي تقدر عليه،
-                  واعرف الوحدات التي تناسبهما فعلًا.
-                </p>
-                <Link
-                  href={`/${locale}/properties#affordability`}
-                  className={s.inlineLink}
-                >
-                  اعرف قسطك ←
-                </Link>
-              </div>
-            </div>
-
-            <div className={s.cardGrid} data-anim="rise" data-stagger>
-              {units.slice(0, 3).map((unit, i) => (
-                <PropertyCard
+            <div className={s.unitRows}>
+              {units.slice(0, 6).map((unit, i) => (
+                <UnitRow
                   key={unit.code}
                   unit={unit}
                   locale={locale}
+                  index={i + 1}
                   priority={i === 0}
                 />
               ))}
             </div>
 
-            <p className={s.gridFoot}>
-              <Link href={`/${locale}/properties`} className={s.inlineLink}>
-                كل الوحدات المعروضة ({TOTAL_LISTED}) ←
+            <p className={s.unitsFoot}>
+              <Link
+                href={`/${locale}/properties`}
+                className={s.bigLink}
+                data-anim="magnet"
+              >
+                كل الوحدات المعروضة ({toEasternDigits(TOTAL_LISTED)})
+                <span aria-hidden="true"> ←</span>
+              </Link>
+              <Link
+                href={`/${locale}/properties#affordability`}
+                className={s.inlineLink}
+              >
+                أو ابدأ من القسط اللي تقدر عليه ←
               </Link>
             </p>
           </div>
         </section>
 
-        {/* ---- The gallery ---------------------------------------------------
-                The site is meant to show the work, so here it does: six more
-                units at a size where the photograph can actually be read.
-                Deliberately NOT a third row of the same card — the rhythm
-                alternates wide and tall, which is what stops a grid of
-                AI-generated photography from reading as stock.
-
-                Every figure is a link to its own page. The whole tile is the
-                target, not a "read more" underneath it. */}
-        <section className={s.gallerySection}>
-          <div className="shell">
-            <div className={s.sectionHead} data-anim="rise">
-              <div>
-                <span className="eyebrow">٠٥ / المعروض بالصور</span>
-                <h2 className={s.h2}>شوف الوحدة قبل ما تسأل عنها</h2>
-              </div>
-              <div className={s.sectionAside}>
-                <p>
-                  كل صورة هنا لوحدة حقيقية في القائمة، ومعها حالتها القانونية
-                  وسعرها وتاريخ آخر مراجعة له. دوس على أي واحدة تشوف باقي صورها
-                  وبياناتها الكاملة.
-                </p>
-              </div>
-            </div>
-
-            <div className={s.galleryGrid}>
-              {units.slice(3, 9).map((unit, i) => (
-                <Link
-                  key={unit.code}
-                  href={`/${locale}/properties/${unit.code.toLowerCase()}`}
-                  className={`${s.tile} ${i % 3 === 0 ? s.tileWide : ""}`}
-                >
-                  <span className={s.tileMedia} data-anim="img">
-                    <Image
-                      src={unit.image}
-                      alt={unit.imageAlt}
-                      fill
-                      sizes="(max-width: 900px) 50vw, (max-width: 1200px) 50vw, 33vw"
-                      quality={80}
-                      className={s.tileImg}
-                    />
-                  </span>
-                  <span className={s.tileBody}>
-                    <span className={`mono ${s.tileCode}`}>{unit.code}</span>
-                    <span className={s.tileTitle}>
-                      {unit.titleAr} — {unit.areaAr}
+        {/* ---- The scope, as a band that keeps moving. The two registers
+                with their counts are on the area guide; this is the same
+                fact at headline speed. ---- */}
+        <section className={s.scopeBand}>
+          <div
+            className={s.marquee}
+            data-anim="marquee"
+            data-speed="55"
+            aria-hidden="true"
+          >
+            <div className={s.marqueeTrack} data-marquee-track>
+              {[0, 1].map((run) => (
+                <span key={run} className={s.marqueeRun}>
+                  {scopeNames.map((name) => (
+                    <span key={name} className={s.marqueeItem}>
+                      {name}
+                      <i className={s.marqueeDot} />
                     </span>
-                    <span className={s.tileDesc}>
-                      {unit.finishing} · {unit.handoverAr} · {unit.legalStatus}
-                    </span>
-                    <span className={s.tilePrice}>
-                      <Price value={unit.price} />
-                    </span>
-                  </span>
-                </Link>
+                  ))}
+                </span>
               ))}
             </div>
           </div>
+          {/* The band above is decorative and duplicated; this is the line
+              that carries the fact. */}
+          <p className={s.scopeLine}>
+            {toEasternDigits(COMPOUNDS.length + DISTRICTS.length)} كمبوند ومنطقة
+            داخل حدائق أكتوبر و٦ أكتوبر والشيخ زايد.{" "}
+            <Link
+              href={`/${locale}/areas/hadayek-october`}
+              className={s.inlineLink}
+            >
+              دليل المنطقة ومؤشر سعر المتر ←
+            </Link>
+          </p>
         </section>
 
-        {/* ---- Scope. A typeset index, not cards. ---- */}
-        <section className={s.scope}>
+        {/* ---- Statement and counters ---- */}
+        <section className={s.statement}>
           <div className="shell grid12">
-            <div className={s.scopeIntro} data-anim="rise">
-              <span className="eyebrow">٠٥ / النطاق</span>
-              <h2 className={s.h2}>المناطق التي نعمل فيها، ولا نعمل خارجها</h2>
-              <p className={s.ledeOnNight}>
-                حدائق أكتوبر و٦ أكتوبر والشيخ زايد. لكل منطقة دليل مكتوب فيه
-                الكمبوندات باسمها، وأزمنة الوصول الحقيقية، والمدارس، ومؤشر سعر
-                المتر بتاريخه.
+            <div className={s.statementText}>
+              <span className="eyebrow">٠٢ / الأرقام</span>
+              <h2 className={s.h2} data-anim="words">
+                أرقام تقدر تراجعها، مش أرقام تصدّقها
+              </h2>
+              <p className={s.lede} data-anim="rise" data-delay="1">
+                كل رقم تحت ده مكتوب جنبه مصدره في نفس الموقع. افتح الصفحة
+                وعُدّها بنفسك — ده الفرق بين بيان وادّعاء.
               </p>
-              <Link
-                href={`/${locale}/areas/hadayek-october`}
-                className={s.inlineLinkNight}
-              >
-                دليل حدائق أكتوبر ←
+            </div>
+
+            <dl
+              className={s.counters}
+              data-anim="rise"
+              data-stagger
+              data-delay="1"
+            >
+              {counters.map((c) => (
+                <div key={c.labelAr} className={s.counter}>
+                  <dt className={`mono ${s.counterValue}`}>
+                    {/* The true value is server-rendered. Motion counts up to
+                        the same number and lands on it exactly; with no
+                        JavaScript it is simply already correct. */}
+                    <span data-anim="counter" data-to={c.value}>
+                      {toEasternDigits(c.value)}
+                    </span>
+                  </dt>
+                  <dd className={s.counterLabel}>{c.labelAr}</dd>
+                  <dd className={`mono ${s.counterSource}`}>{c.sourceAr}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+
+        {/* ---- The word. Beat 6 — one word at the size of the viewport.
+                Theirs is "Expertise", which is a claim about themselves.
+                This one names the thing the site is actually about, and the
+                line under it says where to go and check. ---- */}
+        <section className={s.wordSection}>
+          <div className="shell">
+            <p className={s.word} data-anim="grow" data-from="0.82" data-to="1">
+              مُوثّق
+            </p>
+            <p className={s.wordNote}>
+              {toEasternDigits(LEGAL_STATUSES[0].count)} وحدة مسجلة بالشهر
+              العقاري من أصل {toEasternDigits(TOTAL_LISTED)} معروضة. الباقي
+              منشور بحالته القانونية كما هي.{" "}
+              <Link href={`/${locale}/about#credentials`} className={s.wordLink}>
+                الإفصاح القانوني بالكامل ←
               </Link>
-            </div>
+            </p>
+          </div>
+        </section>
 
-            <div className={s.scopeCompounds} data-anim="rise" data-delay="1">
-              <h3 className={s.scopeTitle}>كمبوندات</h3>
-              <ul className={s.index}>
-                {COMPOUNDS.map((c) => (
-                  <li key={c.nameAr}>
-                    <span>{c.nameAr}</span>
-                    <span className="mono">{c.count}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+        {/* ---- The services list. Beat 7, the signature effect: outlined
+                type that fills as you pass it. ---- */}
+        <section className={s.services}>
+          <div className="shell">
+            <span className="eyebrow">٠٣ / اللي بنعمله</span>
+            <ul className={s.serviceList} data-anim="fill">
+              {services.map((name) => (
+                <li key={name} className={s.serviceItem}>
+                  {name}
+                </li>
+              ))}
+            </ul>
+            <p className={s.servicesNote}>
+              وساطة عقارية فقط. إحنا مش مطوّر ومش بنبني — بنبيع وحدات موجودة
+              فعلًا، شفناها بنفسنا، وبننشر أوراقها.
+            </p>
+          </div>
+        </section>
 
-            <div className={s.scopeDistricts} data-anim="rise" data-delay="2">
-              <h3 className={s.scopeTitle}>مناطق ومشروعات إسكان</h3>
-              <ul className={s.index}>
-                {DISTRICTS.map((d) => (
-                  <li key={d.nameAr}>
-                    <span>{d.nameAr}</span>
-                    <span className="mono">{d.count}</span>
-                  </li>
-                ))}
-              </ul>
+        {/* ---- The area band. Beat 8 is a black-and-white video still with a
+                play control. There is no film, so there is no play button: a
+                control that does nothing is worse than no control. The
+                picture desaturates back to colour as you pass it instead. ---- */}
+        <section className={s.areaBand} data-anim="parallax" data-depth="0.12">
+          <Image
+            src="/img/area-aerial.webp"
+            alt="لقطة جوية لحدائق أكتوبر"
+            fill
+            sizes="100vw"
+            quality={85}
+            className={s.areaImg}
+          />
+          <div className={s.areaOverlay}>
+            <p className={s.areaName} data-anim="words">
+              حدائق أكتوبر
+            </p>
+            <p className={s.areaMeta}>الجيزة · {COMPANY.surveyRef}</p>
+          </div>
+        </section>
+
+        {/* ---- The process ---- */}
+        <section className={s.section}>
+          <div className="shell grid12">
+            <div className={s.processIntro}>
+              <span className="eyebrow">٠٤ / الخطوات</span>
+              <h2 className={s.h2} data-anim="words">
+                إزاي بنشتغل، خطوة بخطوة
+              </h2>
+              <p className={s.lede} data-anim="rise" data-delay="1">
+                أربع خطوات، والرابعة هي اللي بتخلي الوحدة ملكك قانونًا. بنقول لك
+                تكلفتها ومدتها من أول مكالمة.
+              </p>
+            </div>
+            <div className={s.processList} data-anim="rise" data-delay="1">
+              <Process steps={processSteps} />
             </div>
           </div>
         </section>
 
-        {/* ---- Testimonials. Two, named, dated, with the unit type.
-                No stars, no slider. ---- */}
-        <section className={s.section}>
+        {/* ---- Testimonials. Named, dated, with the unit type.
+                No stars, no slider, and no aggregate rating: the
+                reference's "4.9 / 5.0" has nothing behind it here, and
+                inventing one is the exact failure this site is built
+                against. If there are none published, the section does not
+                render at all. ---- */}
+        {TESTIMONIALS.length > 0 && (
+          <section className={s.section}>
+            <div className="shell">
+              <span className="eyebrow">٠٥ / قالوا</span>
+              <div
+                className={`grid12 ${s.quotes}`}
+                data-anim="rise"
+                data-stagger
+              >
+                {TESTIMONIALS.map((t) => (
+                  <figure key={t.nameAr} className={s.quote}>
+                    <blockquote>
+                      <p className={s.quoteText}>«{t.quoteAr}»</p>
+                    </blockquote>
+                    <figcaption>
+                      <span className={s.quoteName}>{t.nameAr}</span>
+                      <span className={`mono ${s.quoteDetail}`}>
+                        {t.detailAr}
+                      </span>
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ---- Who we are. Beat 10 of the reference is a six-person team
+                grid. This is a brokerage with no such team, and putting
+                invented staff on a live commercial site is not a design
+                decision. The layout keeps the beat; the content is the
+                registry. ---- */}
+        <section className={s.who}>
           <div className="shell grid12">
-            {TESTIMONIALS.map((t) => (
-              <figure key={t.nameAr} className={s.quote}>
-                <blockquote>
-                  <p className={s.quoteText}>«{t.quoteAr}»</p>
-                </blockquote>
-                <figcaption>
-                  <span className={s.quoteName}>{t.nameAr}</span>
-                  <span className={`mono ${s.quoteDetail}`}>{t.detailAr}</span>
-                </figcaption>
-              </figure>
-            ))}
+            <div className={s.whoText}>
+              <span className="eyebrow">٠٦ / مين إحنا</span>
+              <h2 className={s.h2} data-anim="words">
+                مكتب واحد في حدائق أكتوبر، ولا نعمل في غيرها
+              </h2>
+              <p className={s.lede} data-anim="rise" data-delay="1">
+                بنشتغل في النطاق ده وبس، وده السبب اللي بيخلينا نعرف الفرق بين
+                عمارة وعمارة في نفس الشارع. تعالى المكتب من غير موعد.
+              </p>
+              <Link href={`/${locale}/about`} className={s.inlineLink}>
+                من نحن ←
+              </Link>
+            </div>
+
+            <dl className={s.whoRegistry} data-anim="rise" data-delay="1">
+              <div>
+                <dt>السجل التجاري</dt>
+                <dd className="mono">{COMPANY.commercialRegistry}</dd>
+              </div>
+              <div>
+                <dt>البطاقة الضريبية</dt>
+                <dd className="mono">{COMPANY.taxCard}</dd>
+              </div>
+              <div>
+                <dt>قيد الوساطة العقارية</dt>
+                <dd className="mono">{COMPANY.brokerageRegistration}</dd>
+              </div>
+              <div>
+                <dt>سند القيد</dt>
+                <dd>{COMPANY.brokerageDecreeAr}</dd>
+              </div>
+            </dl>
           </div>
         </section>
 
@@ -437,12 +424,12 @@ export default async function HomePage({
                 exactly the experience this brand exists to contradict. ---- */}
         <section className={s.contact}>
           <div className="shell grid12">
-            <div className={s.contactIntro} data-anim="rise">
-              <span className="eyebrow">٠٦ / التواصل</span>
-              <h2 className={s.h2}>
+            <div className={s.contactIntro}>
+              <span className="eyebrow">٠٧ / التواصل</span>
+              <h2 className={s.h2} data-anim="words">
                 كلّمنا في أي وقت — على واتساب أو في المكتب
               </h2>
-              <p className={s.lede}>
+              <p className={s.lede} data-anim="rise" data-delay="1">
                 مفيش فورم تسيب فيه رقمك ومحدش يرد. تكلّم على واتساب مع اللي شاف
                 الوحدة بنفسه، وهو اللي هيروح معاك المعاينة. إحنا موجودون ٢٤/٧.
               </p>

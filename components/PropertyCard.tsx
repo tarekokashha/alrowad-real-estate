@@ -23,21 +23,29 @@ export default function PropertyCard({
   unit,
   locale,
   priority = false,
+  depth,
 }: {
   unit: Unit;
   locale: string;
   priority?: boolean;
+  /** Parallax strength for the photograph inside the frame. The caller
+   *  varies it by column so a row of cards does not travel as one slab —
+   *  which is the difference between depth and a sliding panel. */
+  depth?: number;
 }) {
   const href = `/${locale}/properties/${unit.code.toLowerCase()}`;
 
   return (
     <article className={s.card}>
-      {/* data-anim="img" rather than a fade: the clip opens from the
-          bottom while the picture eases down from a slight over-scale, so the
+      {/* Two layers, and they are doing different jobs.
+          The outer one arrives once: the clip opens from the inline-start
+          edge while the picture eases down out of a slight over-scale, so the
           photograph settles out of its own frame the way a camera would find
           it. A card that fades in reads as a carousel; this reads as a shot.
-          The attribute is inert until <Motion /> wires it, so a
-          crawler and a reduced-motion reader see the image immediately. */}
+          The inner one never stops: the picture is taller than its frame and
+          travels against the scroll for as long as the card is on screen.
+          Both attributes are inert until <Motion /> wires them, so a crawler
+          and a reduced-motion reader see an ordinary photograph. */}
       <Link
         href={href}
         className={s.media}
@@ -45,15 +53,21 @@ export default function PropertyCard({
         aria-hidden="true"
         data-anim="img"
       >
-        <Image
-          src={unit.image}
-          alt={unit.imageAlt}
-          fill
-          sizes="(max-width: 900px) 100vw, (max-width: 1100px) 50vw, 33vw"
-          quality={80}
-          priority={priority}
-          className={s.img}
-        />
+        <span
+          className={s.parallax}
+          data-anim="parallax"
+          data-depth={depth ?? 0.12}
+        >
+          <Image
+            src={unit.image}
+            alt={unit.imageAlt}
+            fill
+            sizes="(max-width: 900px) 100vw, (max-width: 1100px) 50vw, 33vw"
+            quality={80}
+            priority={priority}
+            className={s.img}
+          />
+        </span>
       </Link>
 
       <div className={s.body}>

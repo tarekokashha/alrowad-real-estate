@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { COMPANY } from "@/lib/content";
+import { COMPANY, LEGAL_STATUSES } from "@/lib/content";
 import { SOLD_TOTAL_SINCE_2011 } from "@/lib/sold";
 import { whatsappHref, PhoneNumber } from "@/lib/format";
 import s from "./page.module.css";
@@ -239,6 +239,44 @@ export default async function AboutPage({
               تُراجع هذه البيانات مع كل تجديد سنوي، وآخر مراجعة لها في أغسطس
               ٢٠٢٦.
             </p>
+          </div>
+        </section>
+
+        {/* ---- The legal-status disclosure ------------------------------
+                Moved here from the homepage, where it was one of three
+                long-form argument blocks pushing the units below the fold.
+                It belongs with the credentials: both answer the same
+                question, which is whether anything on this site can be
+                checked. ---- */}
+        <section className={s.section}>
+          <div className="shell grid12">
+            <div className={s.credIntro}>
+              <span className="eyebrow">الإفصاح</span>
+              <h2 className={s.h2}>
+                حالة الوحدة القانونية مكتوبة قبل أن تسأل عنها
+              </h2>
+              <p className={s.sectionLede}>
+                في كل صفحة وحدة سطر اسمه «الحالة القانونية»، وفيه القيمة كما
+                هي: مسجل بالشهر العقاري، أو حكم صحة ونفاذ، أو عقد ابتدائي موثق،
+                أو عقد ابتدائي عرفي. لا نضع علامة صحيحة خضراء مكان الورقة —
+                العلامة ادّعاء، والسطر إفصاح.
+              </p>
+              <p className={s.sectionLede}>
+                ننشر العرفي كما ننشر المسجل. الفارق في السعر وفي المخاطرة، ومن
+                حقك تعرفهما قبل الحجز.
+              </p>
+            </div>
+
+            <table className={s.credTable} data-anim="rise" data-delay="1">
+              <tbody>
+                {LEGAL_STATUSES.map((l) => (
+                  <tr key={l.status}>
+                    <th scope="row">{l.status}</th>
+                    <td className="mono">{l.count} وحدة معروضة</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </section>
 

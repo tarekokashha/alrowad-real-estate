@@ -204,3 +204,27 @@ a:hover .callNumber {
     display: none;
   }
 }
+
+/* ---- The amber flood ------------------------------------------------------
+   See the note in Hero.tsx. Fixed and inert; driven only by the hero's
+   timeline, and 0 at both ends of it. */
+
+.wash {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    to bottom,
+    var(--amber-bright) 0%,
+    var(--amber) 62%,
+    var(--amber-deep) 100%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wash {
+    display: none;
+  }
+}

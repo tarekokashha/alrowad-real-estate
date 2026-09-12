@@ -142,7 +142,7 @@ export const FOOTER_LINKS = [
       { labelAr: "كل الوحدات", href: "/ar/properties" },
       { labelAr: "اعرف قسطك", href: "/ar/properties#affordability" },
       { labelAr: "تم البيع", href: "/ar/sold" },
-      { labelAr: "مؤشر سعر المتر", href: "/ar#index" },
+      { labelAr: "مؤشر سعر المتر", href: "/ar/areas/hadayek-october#index" },
     ],
   },
   {
