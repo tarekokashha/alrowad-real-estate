@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ENTRANCE_TIERS, ENTRANCE_CUES, framePath } from "@/lib/motion";
+import {
+  ENTRANCE_TIERS,
+  ENTRANCE_CUES,
+  AVIF_PROBE,
+  framePath,
+} from "@/lib/motion";
 import { COMPANY } from "@/lib/content";
 import s from "./Entrance.module.css";
 
@@ -50,6 +55,8 @@ export default function Entrance({ children, locale }: Props) {
     const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
 
+    let cancelled = false;
+
     // Which tier to spend.
     //
     // Screen size and an explicit Save-Data request, and deliberately NOT
@@ -64,17 +71,13 @@ export default function Entrance({ children, locale }: Props) {
     // slow connection degrades to a coarser scrub rather than a stall.
     const conn = (navigator as Navigator & { connection?: { saveData?: boolean } })
       .connection;
-    const tier =
-      window.innerWidth < 900 || conn?.saveData === true ? "sd" : "hd";
+    const small = window.innerWidth < 900 || conn?.saveData === true;
 
-    const indices: number[] = [];
-    for (let i = 1; i <= ENTRANCE_TIERS[tier].frames; i += 1) indices.push(i);
-
-    const images: (HTMLImageElement | null)[] = new Array(indices.length).fill(
-      null,
-    );
+    // Resolved once the AVIF probe answers, below.
+    let tier: keyof typeof ENTRANCE_TIERS = small ? "sd" : "hd";
+    let indices: number[] = [];
+    let images: (HTMLImageElement | null)[] = [];
     let loaded = 0;
-    let cancelled = false;
     let lastDrawn = -1;
 
     /** Cover-fit: fill the stage, crop the overflow, never distort. */
@@ -102,6 +105,12 @@ export default function Entrance({ children, locale }: Props) {
 
     // Frame 1 first and on its own, so something real is on screen before the
     // rest of the sequence is even requested.
+    const loadSequence = (avif: boolean) => {
+    tier = avif ? (small ? "sd" : "hd") : "fallback";
+    indices = [];
+    for (let i = 1; i <= ENTRANCE_TIERS[tier].frames; i += 1) indices.push(i);
+    images = new Array(indices.length).fill(null);
+
     const first = new Image();
     first.decoding = "async";
     first.src = framePath(tier, indices[0]);
@@ -124,6 +133,23 @@ export default function Entrance({ children, locale }: Props) {
         };
       });
     };
+    };
+
+    // Only start once AVIF is known to decode here. A browser without it
+    // keeps the still — the same outcome a reduced-motion reader gets —
+    // rather than being sent a parallel set of frames it would be the only
+    // audience for.
+    const probe = new Image();
+    probe.onload = () => {
+      if (!cancelled) loadSequence(true);
+    };
+    probe.onerror = () => {
+      // No AVIF decoder. Take the WebP set rather than leaving the reader
+      // with a still: the entrance is the one thing on this page that is
+      // supposed to show the work.
+      if (!cancelled) loadSequence(false);
+    };
+    probe.src = AVIF_PROBE;
 
     let rafId = 0;
     const update = () => {

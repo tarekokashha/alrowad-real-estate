@@ -58,14 +58,41 @@ export const PARALLAX = { foreground: 1.0, mid: 0.94, background: 0.88 } as cons
  * between an entrance and an apology.
  */
 export const ENTRANCE_TIERS = {
-  hd: { dir: "hd", frames: 121 },
-  sd: { dir: "sd", frames: 61 },
+  /** AVIF, 1916px, every frame. The source's own resolution. */
+  hd: { dir: "hd", frames: 121, ext: "avif" },
+  /** AVIF, 1200px, every second frame. */
+  sd: { dir: "sd", frames: 61, ext: "avif" },
+  /** WebP, 1200px — for anything that cannot decode AVIF. */
+  fallback: { dir: "fallback", frames: 61, ext: "webp" },
 } as const;
+
+/**
+ * The frames are AVIF, and that is what makes full resolution affordable.
+ *
+ * The same 121 frames cost 10MB as WebP at a comparable quality and 2.7MB as
+ * AVIF — so the sequence now runs at the source's own 1916x1080 instead of
+ * being downscaled to 1440 to keep the weight down. Better and smaller, which
+ * is not a trade that comes up often.
+ *
+ * Support is around 95% (Chrome 85, Firefox 93, Safari 16.4), so there is a
+ * WebP set for the rest. It is the 1200px one rather than a second full-size
+ * sequence: those browsers still get the dolly, just not at 1916px, and the
+ * repo carries 2.1MB for them instead of 10.
+ *
+ * That set also earns its place as the only one testable here — the Chromium
+ * bundled with Playwright decodes no AVIF at all, including known-good
+ * reference files, so without it the scrub could not be verified end to end
+ * in this project at all.
+ */
+export const AVIF_PROBE =
+  "data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAAD1bWV0YQAAAAAAAAAvaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAFBpY3R1cmVIYW5kbGVyAAAAAA5waXRtAAAAAAABAAAAHmlsb2MAAAAARAAAAQABAAAAAQAAAR0AAAAZAAAAKGlpbmYAAAAAAAEAAAAaaW5mZQIAAAAAAQAAYXYwMUNvbG9yAAAAAGZpcHJwAAAAR2lwY28AAAAUaXNwZQAAAAAAAAACAAAAAgAAABBwaXhpAAAAAAMICAgAAAAIYXYxQwAAABNjb2xybmNseAACAAIAAgAAAAAXaXBtYQAAAAAAAAABAAEEAQKDBAAAACFtZGF0CgkAAAAABm18wCAyDBAA/4AAAsAAAACvMA==";
 
 export type EntranceTier = keyof typeof ENTRANCE_TIERS;
 
-export const framePath = (tier: EntranceTier, i: number) =>
-  `/entrance/${ENTRANCE_TIERS[tier].dir}/f_${String(i).padStart(3, "0")}.webp`;
+export const framePath = (tier: EntranceTier, i: number) => {
+  const t = ENTRANCE_TIERS[tier];
+  return `/entrance/${t.dir}/f_${String(i).padStart(3, "0")}.${t.ext}`;
+};
 
 /**
  * How far the hero is scrolled through, as a multiple of the viewport.

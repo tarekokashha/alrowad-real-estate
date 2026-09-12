@@ -40,7 +40,11 @@ export default function ScrollMotion() {
       {
         // Start slightly before the fold so an arrival is finishing as the
         // element is reached, rather than starting once it is being read.
-        rootMargin: "0px 0px -10% 0px",
+        // -18%: the arrival starts once the element is properly into the
+        // viewport rather than the instant its top edge appears, so the
+        // reader actually watches it happen instead of finding it already
+        // finished.
+        rootMargin: "0px 0px -18% 0px",
         threshold: 0.05,
       },
     );

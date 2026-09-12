@@ -328,7 +328,11 @@ button {
 /* ---- rise: the workhorse. Text blocks, tables, anything editorial. ------- */
 [data-motion="on"] [data-reveal="rise"]:not([data-shown]) {
   opacity: 0;
-  transform: translateY(22px);
+  /* 44px, not 22. At 22 the arrival was technically present and practically
+     invisible — the restraint that suits a static page reads as nothing at
+     all when the reader is looking for movement. Far enough to be seen,
+     short enough that it never looks like a slide-in template. */
+  transform: translateY(44px);
 }
 [data-motion="on"] [data-reveal="rise"][data-shown] {
   opacity: 1;
@@ -358,7 +362,7 @@ button {
 }
 [data-motion="on"] [data-reveal="image"]:not([data-shown])
   :is(img, figure, picture, canvas) {
-  transform: scale(1.08);
+  transform: scale(1.14);
 }
 
 /* ---- line: a heading arrives from behind its own baseline ----------------
@@ -404,7 +408,7 @@ button {
    lag rather than rhythm. */
 [data-motion="on"] [data-reveal][data-stagger]:not([data-shown]) > * {
   opacity: 0;
-  transform: translateY(18px);
+  transform: translateY(38px);
 }
 [data-motion="on"] [data-reveal][data-stagger][data-shown] > * {
   opacity: 1;

@@ -310,6 +310,66 @@ export default async function HomePage({
           </div>
         </section>
 
+        {/* ---- The gallery ---------------------------------------------------
+                The site is meant to show the work, so here it does: six more
+                units at a size where the photograph can actually be read.
+                Deliberately NOT a third row of the same card — the rhythm
+                alternates wide and tall, which is what stops a grid of
+                AI-generated photography from reading as stock.
+
+                Every figure is a link to its own page. The whole tile is the
+                target, not a "read more" underneath it. */}
+        <section className={s.gallerySection}>
+          <div className="shell">
+            <div className={s.sectionHead} data-reveal="rise">
+              <div>
+                <span className="eyebrow">٠٥ / المعروض بالصور</span>
+                <h2 className={s.h2}>شوف الوحدة قبل ما تسأل عنها</h2>
+              </div>
+              <div className={s.sectionAside}>
+                <p>
+                  كل صورة هنا لوحدة حقيقية في القائمة، ومعها حالتها القانونية
+                  وسعرها وتاريخ آخر مراجعة له. دوس على أي واحدة تشوف باقي صورها
+                  وبياناتها الكاملة.
+                </p>
+              </div>
+            </div>
+
+            <div className={s.galleryGrid}>
+              {units.slice(3, 9).map((unit, i) => (
+                <Link
+                  key={unit.code}
+                  href={`/${locale}/properties/${unit.code.toLowerCase()}`}
+                  className={`${s.tile} ${i % 3 === 0 ? s.tileWide : ""}`}
+                >
+                  <span className={s.tileMedia} data-reveal="image">
+                    <Image
+                      src={unit.image}
+                      alt={unit.imageAlt}
+                      fill
+                      sizes="(max-width: 900px) 50vw, (max-width: 1200px) 50vw, 33vw"
+                      quality={80}
+                      className={s.tileImg}
+                    />
+                  </span>
+                  <span className={s.tileBody}>
+                    <span className={`mono ${s.tileCode}`}>{unit.code}</span>
+                    <span className={s.tileTitle}>
+                      {unit.titleAr} — {unit.areaAr}
+                    </span>
+                    <span className={s.tileDesc}>
+                      {unit.finishing} · {unit.handoverAr} · {unit.legalStatus}
+                    </span>
+                    <span className={s.tilePrice}>
+                      <Price value={unit.price} />
+                    </span>
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* ---- Scope. A typeset index, not cards. ---- */}
         <section className={s.scope}>
           <div className="shell grid12">
