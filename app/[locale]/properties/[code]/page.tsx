@@ -154,7 +154,7 @@ export default async function UnitPage({
         {/* ---- Title block ---- */}
         <section className={s.titleBlock}>
           <div className="shell grid12">
-            <div className={s.titleText} data-reveal="rise">
+            <div className={s.titleText} data-anim="rise">
               <h1 className={s.h1}>
                 {u.titleAr}
                 {u.gardenSize ? " بحديقة" : ""} — {u.areaAr}
@@ -164,7 +164,7 @@ export default async function UnitPage({
                 {u.finishing} · {u.handoverAr} · {u.saleTypeAr} من المالك
               </p>
             </div>
-            <div className={s.titlePrice} data-reveal="rise" data-delay="1">
+            <div className={s.titlePrice} data-anim="rise" data-delay="1">
               <p className={s.price}>
                 <Price value={u.price} />
               </p>
@@ -186,7 +186,7 @@ export default async function UnitPage({
                 <figure
                   key={g.src + i}
                   className={`${s.shot} ${i === 0 ? s.shotLead : ""}`}
-                  data-reveal="image"
+                  data-anim="img"
                 >
                   <Image
                     src={g.src}
@@ -211,7 +211,7 @@ export default async function UnitPage({
         {/* ---- Spec + sidebar ---- */}
         <section className={s.specSection}>
           <div className="shell grid12">
-            <div className={s.specCol} data-reveal="rise">
+            <div className={s.specCol} data-anim="rise">
               <h2 className={s.h2}>بيانات الوحدة</h2>
 
               {/* The legal disclosure, above the table rather than buried in
@@ -320,7 +320,7 @@ export default async function UnitPage({
                 كل الوحدات ←
               </Link>
             </div>
-            <div className={s.compsGrid} data-reveal="rise" data-stagger>
+            <div className={s.compsGrid} data-anim="rise" data-stagger>
               {comps.map((c) => (
                 <PropertyCard key={c.code} unit={c} locale={locale} />
               ))}

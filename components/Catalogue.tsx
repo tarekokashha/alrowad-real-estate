@@ -259,7 +259,7 @@ export default function Catalogue({
                 </a>
               </div>
             ) : (
-              <div className={s.grid} data-reveal="rise" data-stagger>
+              <div className={s.grid} data-anim="rise" data-stagger>
                 {results.map((u, i) => (
                   <div key={u.code} className={s.cell}>
                     <PropertyCard unit={u} locale={locale} priority={i < 3} />

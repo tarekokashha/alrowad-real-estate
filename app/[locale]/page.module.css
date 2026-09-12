@@ -4,23 +4,36 @@
    always 12, which is what makes a grid read as designed.
    ========================================================================== */
 
-/* ---- Hero content (rendered inside <Entrance>) --------------------------- */
+/* ---- Hero content (rendered inside <Hero>) ------------------------------- */
 
+/* The hero copy. It is laid out by Hero.module.css; what lives here is the
+   type, because the same three elements are reused by the page headers on
+   every other route. */
 .heroH1 {
-  grid-column: span 8;
   font-family: var(--ar-display);
-  font-size: clamp(2.6rem, 6.4vw, 7rem);
-  line-height: 1.32;
+  /* 800, the heaviest weight loaded. The reference sets its headline as
+     heavy as the face goes and relies on the photograph behind it for
+     contrast; at 400 the same line reads as a caption. */
+  font-weight: 800;
+  font-size: clamp(2.5rem, 6vw, 6.2rem);
+  line-height: 1.16;
   color: var(--paper);
+  max-width: 18ch;
+}
+
+/* Arabic sets looser than Latin at the same nominal size — the cursive
+   joins and the dots below the baseline need the room. 1.16 is right for
+   Plus Jakarta Sans and cramped for Tajawal. */
+:lang(ar) .heroH1 {
+  line-height: 1.28;
 }
 
 .heroAside {
-  grid-column: span 4;
   display: grid;
-  gap: 18px;
+  gap: 14px;
   color: var(--paper-on-void);
   font-size: var(--fs-body-2);
-  padding-block-end: 10px;
+  max-width: 52ch;
 }
 
 .heroFacts {
@@ -28,25 +41,8 @@
   gap: 6px;
   font-family: var(--mono);
   font-size: 12px;
-  color: rgba(244, 241, 234, 0.6);
+  color: rgba(246, 244, 240, 0.6);
   font-variant-numeric: tabular-nums;
-}
-
-/* Hero UI arrives after the camera settles, on the shared 60ms stagger.
-   Keyed on the attribute, never on a class React adds later: with no JS
-   the attribute is absent, no rule matches, and the text is simply visible.
-   Nothing is ever parked at opacity 0 waiting on JavaScript. */
-:global([data-entrance="play"]) .heroH1,
-:global([data-entrance="play"]) .heroAside {
-  /* Driven by scroll, not by a clock. --content is published by <Entrance>
-     as the reader moves through the gate; the wrapper fades the block and
-     these two carry the stagger, the aside settling a beat after the
-     headline. The old version keyed off animation-delay: 4.2s, which cannot
-     work when the reader — not a timer — decides when the camera arrives. */
-  transform: translateY(calc((1 - var(--content, 1)) * 14px));
-}
-:global([data-entrance="play"]) .heroAside {
-  transform: translateY(calc((1 - var(--content, 1)) * 26px));
 }
 
 /* ---- Trust line ---------------------------------------------------------- */

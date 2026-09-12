@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import Header from "@/components/Header";
-import Entrance from "@/components/Entrance";
+import Hero from "@/components/Hero";
 import PropertyCard from "@/components/PropertyCard";
 import Footer from "@/components/Footer";
 import {
@@ -46,11 +46,11 @@ export default async function HomePage({
     <>
       <Header locale={locale} />
 
-      {/* The hero content is server-rendered inside the entrance, not behind
-          it. With JavaScript disabled this H1, the description and the facts
-          all still render — which is the condition for being indexed and for
+      {/* The hero content is server-rendered inside the hero, not behind it.
+          With JavaScript disabled this H1, the description and the facts all
+          still render — which is the condition for being indexed and for
           being quotable by an answer engine. */}
-      <Entrance locale={locale}>
+      <Hero locale={locale}>
         <h1 className={s.heroH1}>
           نعرف كل متر
           <br />
@@ -67,7 +67,7 @@ export default async function HomePage({
             <span>{COMPANY.surveyRef}</span>
           </div>
         </div>
-      </Entrance>
+      </Hero>
 
       <main id="main">
         {/* ---- Trust line. Static type inside a sentence, with Eastern
@@ -76,7 +76,7 @@ export default async function HomePage({
                 real estate and an unverifiable claim. ---- */}
         <section className={s.trust}>
           <div className="shell">
-            <p className={s.trustText} data-reveal="rise">
+            <p className={s.trustText} data-anim="rise">
               خمسة عشر عامًا في هذا النطاق، و{toEasternDigits(500)}+ وحدة مبيعة،
               و{toEasternDigits(30)}+ مشروعًا — وكلها مؤرَّخة، وحدة وحدة، في سجل
               البيع.{" "}
@@ -90,7 +90,7 @@ export default async function HomePage({
         {/* ---- Price index ---- */}
         <section id="index" className={s.section}>
           <div className="shell grid12">
-            <div className={s.indexIntro} data-reveal="rise">
+            <div className={s.indexIntro} data-anim="rise">
               <span className="eyebrow">٠٢ / الأرقام محدّثة</span>
               <h2 className={s.h2}>
                 مؤشر سعر المتر
@@ -118,7 +118,7 @@ export default async function HomePage({
               </dl>
             </div>
 
-            <div className={s.indexTable} data-reveal="rise" data-delay="1">
+            <div className={s.indexTable} data-anim="rise" data-delay="1">
               <div className={s.bracket}>
                 {/* The five columns will not fit a phone. Rather than let
                     them crush — "ربع/ربع" was breaking across two lines and
@@ -166,7 +166,7 @@ export default async function HomePage({
           <div className="shell">
             {/* Pillar 1 — the legal status disclosure */}
             <article className={`grid12 ${s.pillar}`}>
-              <div className={s.pillarText} data-reveal="rise">
+              <div className={s.pillarText} data-anim="rise">
                 <span className="eyebrow">٠١ / الأوراق واضحة</span>
                 <h2 className={s.h3}>
                   حالة الوحدة القانونية مكتوبة قبل أن تسأل عنها
@@ -178,7 +178,7 @@ export default async function HomePage({
                   الورقة — العلامة ادّعاء، والسطر إفصاح.
                 </p>
               </div>
-              <div className={s.pillarArtifact} data-reveal="rise" data-delay="1">
+              <div className={s.pillarArtifact} data-anim="rise" data-delay="1">
                 <table className={s.miniTable}>
                   <tbody>
                     {LEGAL_STATUSES.map((l) => (
@@ -198,7 +198,7 @@ export default async function HomePage({
 
             {/* Pillar 2 — the dated revision list */}
             <article className={`grid12 ${s.pillar} ${s.pillarFlip}`}>
-              <div className={s.pillarText} data-reveal="rise">
+              <div className={s.pillarText} data-anim="rise">
                 <span className="eyebrow">٠٢ / الأرقام محدّثة</span>
                 <h2 className={s.h3}>سعر بلا تاريخ ليس سعرًا</h2>
                 <p className={s.lede}>
@@ -207,7 +207,7 @@ export default async function HomePage({
                   التي حُسب منها، والنسخ القديمة تبقى في مكانها للمقارنة.
                 </p>
               </div>
-              <div className={s.pillarArtifact} data-reveal="rise" data-delay="1">
+              <div className={s.pillarArtifact} data-anim="rise" data-delay="1">
                 <table className={s.miniTable}>
                   <tbody>
                     {INDEX_REVISIONS.map((r) => (
@@ -229,7 +229,7 @@ export default async function HomePage({
 
             {/* Pillar 3 — the sold archive */}
             <article className={`grid12 ${s.pillar}`}>
-              <div className={s.pillarText} data-reveal="rise">
+              <div className={s.pillarText} data-anim="rise">
                 <span className="eyebrow">٠٣ / البيع مسجّل</span>
                 <h2 className={s.h3}>سجل البيع مفتوح للقراءة</h2>
                 <p className={s.lede}>
@@ -241,7 +241,7 @@ export default async function HomePage({
                   افتح سجل البيع ←
                 </Link>
               </div>
-              <div className={s.pillarArtifact} data-reveal="rise" data-delay="1">
+              <div className={s.pillarArtifact} data-anim="rise" data-delay="1">
                 {/* Four columns — code, description, price, date — do not fit
                     a phone. Left to crush, "شقة 144 م² — أشجار سيتي" came
                     apart into a five-line ladder. It keeps its width and the
@@ -291,7 +291,7 @@ export default async function HomePage({
               </div>
             </div>
 
-            <div className={s.cardGrid} data-reveal="rise" data-stagger>
+            <div className={s.cardGrid} data-anim="rise" data-stagger>
               {units.slice(0, 3).map((unit, i) => (
                 <PropertyCard
                   key={unit.code}
@@ -321,7 +321,7 @@ export default async function HomePage({
                 target, not a "read more" underneath it. */}
         <section className={s.gallerySection}>
           <div className="shell">
-            <div className={s.sectionHead} data-reveal="rise">
+            <div className={s.sectionHead} data-anim="rise">
               <div>
                 <span className="eyebrow">٠٥ / المعروض بالصور</span>
                 <h2 className={s.h2}>شوف الوحدة قبل ما تسأل عنها</h2>
@@ -342,7 +342,7 @@ export default async function HomePage({
                   href={`/${locale}/properties/${unit.code.toLowerCase()}`}
                   className={`${s.tile} ${i % 3 === 0 ? s.tileWide : ""}`}
                 >
-                  <span className={s.tileMedia} data-reveal="image">
+                  <span className={s.tileMedia} data-anim="img">
                     <Image
                       src={unit.image}
                       alt={unit.imageAlt}
@@ -373,7 +373,7 @@ export default async function HomePage({
         {/* ---- Scope. A typeset index, not cards. ---- */}
         <section className={s.scope}>
           <div className="shell grid12">
-            <div className={s.scopeIntro} data-reveal="rise">
+            <div className={s.scopeIntro} data-anim="rise">
               <span className="eyebrow">٠٥ / النطاق</span>
               <h2 className={s.h2}>المناطق التي نعمل فيها، ولا نعمل خارجها</h2>
               <p className={s.ledeOnNight}>
@@ -389,7 +389,7 @@ export default async function HomePage({
               </Link>
             </div>
 
-            <div className={s.scopeCompounds} data-reveal="rise" data-delay="1">
+            <div className={s.scopeCompounds} data-anim="rise" data-delay="1">
               <h3 className={s.scopeTitle}>كمبوندات</h3>
               <ul className={s.index}>
                 {COMPOUNDS.map((c) => (
@@ -401,7 +401,7 @@ export default async function HomePage({
               </ul>
             </div>
 
-            <div className={s.scopeDistricts} data-reveal="rise" data-delay="2">
+            <div className={s.scopeDistricts} data-anim="rise" data-delay="2">
               <h3 className={s.scopeTitle}>مناطق ومشروعات إسكان</h3>
               <ul className={s.index}>
                 {DISTRICTS.map((d) => (
@@ -437,7 +437,7 @@ export default async function HomePage({
                 exactly the experience this brand exists to contradict. ---- */}
         <section className={s.contact}>
           <div className="shell grid12">
-            <div className={s.contactIntro} data-reveal="rise">
+            <div className={s.contactIntro} data-anim="rise">
               <span className="eyebrow">٠٦ / التواصل</span>
               <h2 className={s.h2}>
                 كلّمنا في أي وقت — على واتساب أو في المكتب
@@ -448,7 +448,7 @@ export default async function HomePage({
               </p>
             </div>
 
-            <div className={s.contactWhatsapp} data-reveal="rise" data-delay="1">
+            <div className={s.contactWhatsapp} data-anim="rise" data-delay="1">
               <h3 className={s.contactTitle}>على واتساب</h3>
               <p className={s.contactMeta}>{COMPANY.replyTimeAr}</p>
               <p className={s.contactMeta}>بالعربية والإنجليزية</p>
@@ -463,7 +463,7 @@ export default async function HomePage({
               </a>
             </div>
 
-            <div className={s.contactOffice} data-reveal="rise" data-delay="2">
+            <div className={s.contactOffice} data-anim="rise" data-delay="2">
               <h3 className={s.contactTitle}>في المكتب</h3>
               <p className={s.contactMeta}>حدائق أكتوبر — تعالى بدون موعد</p>
               <p className={s.contactMeta}>{COMPANY.officeHoursAr}</p>

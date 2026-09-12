@@ -86,40 +86,18 @@
 
 }
 
-/* The header arrives with the hero, on the same stagger. Without JS the
-   attribute is never set, so the nav is simply there from first paint. */
-:global([data-entrance="play"]) .brand,
-:global([data-entrance="play"]) .nav > * {
-  opacity: 0;
-  animation: headerSettle var(--d-element) var(--arrival) both;
-}
-:global([data-entrance="play"]) .brand { animation-delay: 4.2s; }
-:global([data-entrance="play"]) .nav > *:nth-child(1) { animation-delay: 4.26s; }
-:global([data-entrance="play"]) .nav > *:nth-child(2) { animation-delay: 4.32s; }
-:global([data-entrance="play"]) .nav > *:nth-child(3) { animation-delay: 4.38s; }
-:global([data-entrance="play"]) .nav > *:nth-child(4) { animation-delay: 4.44s; }
-:global([data-entrance="play"]) .nav > *:nth-child(5) { animation-delay: 4.5s; }
-:global([data-entrance="play"]) .nav > *:nth-child(n + 6) { animation-delay: 4.56s; }
-
-@keyframes headerSettle {
-  from { opacity: 0; transform: translateY(14px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  :global([data-entrance="play"]) .brand,
-  :global([data-entrance="play"]) .nav > * {
-    animation: none;
-    opacity: 1;
-  }
-}
+/* The header used to join the entrance's choreography on a 4.2s delay,
+   which only made sense while a timed camera move owned the first four
+   seconds of the page. The hero is now driven by the reader, so there is no
+   moment to wait for: the nav is simply there from first paint, which is
+   also what it should always have been for anyone arriving by keyboard. */
 
 /* ---- Light variant: the sticky bar on every interior page --------------- */
 
 .light {
   position: sticky;
   color: var(--ink);
-  background: rgba(244, 241, 234, 0.92);
+  background: rgba(246, 244, 240, 0.92);
   backdrop-filter: saturate(140%) blur(10px);
   border-block-end: 1px solid var(--hairline);
   padding-block: 18px;
@@ -132,10 +110,3 @@
 .light .whatsapp { color: var(--amber-deep); }
 .light .whatsapp:hover { color: var(--amber-deep); }
 
-/* The interior header never joins the entrance choreography — it belongs to
-   a page the visitor navigated to deliberately. */
-:global([data-entrance="play"]) .light .brand,
-:global([data-entrance="play"]) .light .nav > * {
-  animation: none;
-  opacity: 1;
-}

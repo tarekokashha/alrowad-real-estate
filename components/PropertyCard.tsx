@@ -32,18 +32,18 @@ export default function PropertyCard({
 
   return (
     <article className={s.card}>
-      {/* data-reveal="image" rather than a fade: the clip opens from the
+      {/* data-anim="img" rather than a fade: the clip opens from the
           bottom while the picture eases down from a slight over-scale, so the
           photograph settles out of its own frame the way a camera would find
           it. A card that fades in reads as a carousel; this reads as a shot.
-          The attribute is inert until <MotionGate> stamps data-motion, so a
+          The attribute is inert until <Motion /> wires it, so a
           crawler and a reduced-motion reader see the image immediately. */}
       <Link
         href={href}
         className={s.media}
         tabIndex={-1}
         aria-hidden="true"
-        data-reveal="image"
+        data-anim="img"
       >
         <Image
           src={unit.image}

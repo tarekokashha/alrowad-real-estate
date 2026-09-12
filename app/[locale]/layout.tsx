@@ -3,8 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { COMPANY } from "@/lib/content";
 import { PHONE_E164 } from "@/lib/format";
-import EntranceGate from "@/components/EntranceGate";
-import ScrollMotion from "@/components/ScrollMotion";
+import Motion from "@/components/Motion";
 
 /**
  * One locale. There was an "en" here and a switch in the header pointing at
@@ -131,10 +130,7 @@ export default async function LocaleLayout({
   const ar = locale === "ar";
 
   return (
-    // EntranceGate stamps data-entrance on <html> before React hydrates,
-    // which is the whole point of it. Tell React that attribute is expected
-    // to differ rather than letting it log a mismatch on every load.
-    <html lang={locale} dir={ar ? "rtl" : "ltr"} suppressHydrationWarning>
+    <html lang={locale} dir={ar ? "rtl" : "ltr"}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
@@ -142,7 +138,6 @@ export default async function LocaleLayout({
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;600;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
         />
-        <EntranceGate />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -155,9 +150,9 @@ export default async function LocaleLayout({
           {ar ? "تخطَّ إلى المحتوى" : "Skip to content"}
         </a>
         <div className="grain" aria-hidden="true" />
-        {/* One observer for every [data-reveal] on the page, mounted once.
-            It adds nothing to the markup — see components/ScrollMotion. */}
-        <ScrollMotion />
+        {/* One motion owner for every [data-anim] on the page, mounted
+            once. It renders nothing — see components/Motion. */}
+        <Motion />
         {children}
       </body>
     </html>

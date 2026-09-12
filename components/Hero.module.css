@@ -1,0 +1,206 @@
+/* ==========================================================================
+   The hero — one full-bleed still, driven by scroll.
+
+   No sticky track and no scroll-jacking. The section is exactly one viewport
+   tall and leaves at the ordinary speed; what the scroll drives is what
+   happens to it on the way out — the picture pushes in and softens, the veil
+   closes, the copy lifts away. The reference behaves the same way, and it is
+   the difference between a page that responds to the reader and one that
+   holds them hostage for four screens before letting them read anything.
+   ========================================================================== */
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--void);
+
+  /* svh, not vh. On iOS Safari `100vh` is the height with the address bar
+     hidden, so a 100vh hero is cropped by the bar on arrival — the one
+     moment it is guaranteed to be visible. */
+  height: 100svh;
+  min-height: 560px;
+
+  display: grid;
+  align-items: end;
+}
+
+/* The picture sits a little larger than its frame so the scrub has somewhere
+   to push it without exposing an edge. */
+.media {
+  position: absolute;
+  inset: -4%;
+  z-index: 0;
+  transform-origin: center;
+}
+
+.img {
+  object-fit: cover;
+  /* Photographs are never mirrored in RTL: it flips signage and stair
+     handedness, and a local reader catches it immediately. */
+  transform: none;
+}
+
+/* Fixed, and only about legibility. Weighted to the bottom because that is
+   where the copy is. */
+.grad {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 10, 10, 0.55) 0%,
+    rgba(10, 10, 10, 0.15) 34%,
+    rgba(10, 10, 10, 0.35) 62%,
+    rgba(10, 10, 10, 0.88) 100%
+  );
+}
+
+/* Driven by the scroll: 0.45 at rest, closing to 0.92 as the section leaves.
+   Declared at its resting value so the hero is correct before any script
+   runs. */
+.veil {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: var(--void);
+  opacity: 0.45;
+}
+
+.copy {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  padding-block-end: clamp(40px, 8vh, 96px);
+}
+
+.copyInner {
+  display: grid;
+  gap: clamp(22px, 3vw, 34px);
+}
+
+/* ---- The two calls to action -------------------------------------------- */
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(16px, 2.4vw, 30px);
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 52px;
+  padding-inline: clamp(22px, 2.6vw, 34px);
+  border-radius: var(--radius);
+  background: var(--amber);
+  /* 6.63:1. Paper on amber is 2.55:1 and would fail — see the token block. */
+  color: var(--ink);
+  font-family: var(--ar-display);
+  font-weight: 700;
+  font-size: var(--fs-body-2);
+  transition:
+    background var(--d-micro) var(--settle),
+    transform var(--d-micro) var(--settle);
+}
+.cta:hover {
+  background: var(--amber-bright);
+  color: var(--ink);
+}
+.cta:active {
+  transform: translateY(1px);
+}
+
+.call {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  /* The target is the number, and it needs 44px without moving the baseline
+     it shares with the button. */
+  padding-block: 11px;
+  margin-block: -11px;
+}
+
+.callLabel {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--paper-on-void);
+}
+
+.callNumber {
+  font-family: var(--mono);
+  font-size: var(--fs-body-2);
+  color: var(--paper);
+}
+a:hover .callNumber {
+  color: var(--amber-bright);
+}
+
+/* ---- The scroll cue ------------------------------------------------------ */
+
+.cue {
+  position: absolute;
+  inset-block-end: clamp(16px, 2.6vh, 26px);
+  inset-inline-start: 50%;
+  transform: translateX(50%);
+  z-index: 4;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: rgba(246, 244, 240, 0.6);
+  pointer-events: none;
+}
+
+:global(:lang(en)) .cue {
+  transform: translateX(-50%);
+}
+
+.cueLine {
+  width: 1px;
+  height: 34px;
+  background: linear-gradient(
+    to bottom,
+    rgba(246, 244, 240, 0),
+    rgba(246, 244, 240, 0.55)
+  );
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cueLine {
+    animation: cueDrift 2.4s var(--settle) infinite;
+  }
+}
+
+@keyframes cueDrift {
+  0%,
+  100% {
+    transform: translateY(-4px);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateY(4px);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero {
+    min-height: 520px;
+  }
+  .actions {
+    gap: 14px;
+  }
+  .cta {
+    /* Full width on a phone: a 52px pill floating in the middle of a dark
+       photograph is harder to hit than it looks. */
+    width: 100%;
+    justify-content: center;
+  }
+  .cue {
+    display: none;
+  }
+}
