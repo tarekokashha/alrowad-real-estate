@@ -59,6 +59,15 @@ export default function Footer({ locale }: { locale: string }) {
           </span>
         </div>
       </div>
+
+      {/* Beat 12: the wordmark across the bottom edge, outlined and enormous.
+          aria-hidden and inert — the company name is already in the brand
+          block above, and a screen reader reading it twice is noise. It is
+          clipped by the footer, so it can be wider than the viewport without
+          ever adding a horizontal scrollbar. */}
+      <div className={s.bigmarkWrap} aria-hidden="true">
+        <span className={s.bigmark}>{COMPANY.shortAr}</span>
+      </div>
     </footer>
   );
 }

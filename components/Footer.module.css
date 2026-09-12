@@ -1,4 +1,6 @@
 .footer {
+  position: relative;
+  overflow: hidden;
   background: var(--void);
   color: var(--paper-on-void);
   padding-block: clamp(48px, 8vh, 88px) 34px;
@@ -15,6 +17,7 @@
 }
 .wordmark {
   font-family: var(--ar-display);
+  font-weight: 800;
   font-size: 28px;
   color: var(--paper);
   line-height: 1;
@@ -27,7 +30,7 @@
   font-family: var(--mono);
   font-size: 11px;
   font-weight: 400;
-  color: rgba(244, 241, 234, 0.45);
+  color: rgba(246, 244, 240, 0.45);
   margin-block-end: 14px;
 }
 .col ul {
@@ -39,7 +42,7 @@
 }
 
 .rule {
-  border-top-color: rgba(244, 241, 234, 0.14);
+  border-top-color: var(--hairline-void);
   margin-block: clamp(34px, 5vh, 56px) 20px;
 }
 
@@ -48,7 +51,7 @@
   flex-wrap: wrap;
   gap: 8px 26px;
   font-size: 11px;
-  color: rgba(244, 241, 234, 0.42);
+  color: rgba(246, 244, 240, 0.42);
 }
 .copyright { margin-inline-start: auto; }
 
@@ -96,5 +99,48 @@
   .colTitle,
   .copyright {
     font-size: 12.5px;
+  }
+}
+
+/* ---- The bottom-edge wordmark ----------------------------------------------
+   Outlined rather than filled, and cropped by the footer's own bottom edge —
+   the reference lets its mark run off the page, and a mark that fits neatly
+   inside its box reads as a logo rather than as a watermark.
+
+   `-webkit-text-stroke` has no standard equivalent. Where it is missing the
+   fallback must not be transparent text on a black ground, so the floor is a
+   very dim filled version of the same word: still decorative, still quiet,
+   never invisible-but-present. */
+
+.bigmarkWrap {
+  margin-block-start: clamp(28px, 5vh, 60px);
+  /* The descender sits below the footer's edge on purpose. */
+  margin-block-end: clamp(-64px, -5vw, -18px);
+  line-height: 0.78;
+  text-align: center;
+  pointer-events: none;
+  user-select: none;
+}
+
+.bigmark {
+  display: block;
+  font-family: var(--ar-display);
+  font-weight: 800;
+  font-size: clamp(5rem, 26vw, 22rem);
+  line-height: 0.78;
+  white-space: nowrap;
+  color: rgba(246, 244, 240, 0.05);
+}
+
+@supports (-webkit-text-stroke: 1px black) {
+  .bigmark {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--hairline-void);
+  }
+}
+
+@media (max-width: 900px) {
+  .bigmarkWrap {
+    margin-block-end: clamp(-30px, -6vw, -10px);
   }
 }
