@@ -9,6 +9,7 @@ import { notFound } from "next/navigation";
 import { COMPANY } from "@/lib/content";
 import { PHONE_E164 } from "@/lib/format";
 import Motion from "@/components/Motion";
+import Loader from "@/components/Loader";
 
 /**
  * One locale. There was an "en" here and a switch in the header pointing at
@@ -151,6 +152,13 @@ export default async function LocaleLayout({
         />
       </head>
       <body>
+        {/* First thing in the document, so its inline script is the first
+            thing the parser reaches — see components/Loader for why that
+            matters. Shown only on a genuine first load: the App Router keeps
+            this layout mounted across client-side navigation, so it does
+            not reappear on every link click, only on a fresh visit or a
+            hard refresh. */}
+        <Loader />
         <a href="#main" className="skip-link">
           {ar ? "تخطَّ إلى المحتوى" : "Skip to content"}
         </a>

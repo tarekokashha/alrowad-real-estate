@@ -1,0 +1,66 @@
+/* ==========================================================================
+   The first-load screen.
+
+   No wordmark — asked for explicitly. What is here is a track and a number,
+   which fits a site whose whole argument is that its figures can be
+   checked: even the loading screen is a count, not a spinner.
+
+   THE RULE, same as everywhere else: opacity 0 by default. A reader with no
+   JavaScript never sees this — the inline script two lines below the markup
+   is the only thing that ever makes it visible, so a blocked bundle means
+   the page simply appears, instantly, uncovered. This is the one place on
+   the site that is allowed to start hidden, because nothing about it is
+   content: it has no text a screen reader would announce (aria-hidden) and
+   no fact a crawler would want (there is none to index).
+   ========================================================================== */
+
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  gap: 22px;
+  background: var(--void);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 480ms var(--settle);
+}
+
+.stage {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+}
+
+.track {
+  position: relative;
+  inline-size: clamp(140px, 18vw, 220px);
+  block-size: 2px;
+  overflow: hidden;
+  background: var(--hairline-void);
+}
+
+.fill {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inline-size: 100%;
+  background: var(--amber);
+  transform-origin: right center;
+  transform: scaleX(0);
+  /* The JS driving this sets transform directly, on every frame — this
+     transition would fight it, producing a visible stutter each time the
+     value is written. */
+  transition: none;
+}
+:global(:lang(en)) .fill {
+  transform-origin: left center;
+}
+
+.pct {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--paper-on-void);
+  font-variant-numeric: tabular-nums;
+}
