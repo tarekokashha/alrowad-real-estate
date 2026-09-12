@@ -12,11 +12,11 @@
   font-size: 14px;
   min-height: 40px;
 }
-.btn:hover { border-block-end-color: var(--bronze); }
+.btn:hover { border-block-end-color: var(--amber-deep); }
 .hint {
   font-family: var(--mono);
   font-size: 11px;
-  color: var(--bronze);
+  color: var(--amber-deep);
 }
 
 @media (max-width: 900px) {

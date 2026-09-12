@@ -40,7 +40,7 @@
   margin: 0;
   aspect-ratio: 21 / 8;
   min-height: 260px;
-  background: var(--paper-deep);
+  background: var(--paper-2);
 }
 .hero :global(img) { object-fit: cover; }
 .heroCaption {
@@ -57,7 +57,7 @@
 }
 
 .section { padding-block: var(--sec-pad); }
-.sectionAlt { background: var(--paper-deep); padding-block: var(--sec-pad); }
+.sectionAlt { background: var(--paper-2); padding-block: var(--sec-pad); }
 
 .h2 {
   font-family: var(--ar-display);
@@ -98,7 +98,7 @@
 .step:last-child { border-block-end: none; }
 .stepNum {
   font-size: 13px;
-  color: var(--bronze);
+  color: var(--amber-deep);
   padding-block-start: 5px;
 }
 .stepTitle { font-size: 20px; margin-block-end: 10px; }
@@ -117,7 +117,7 @@
 }
 .stepOutLabel { font-size: 10.5px; color: var(--structure); }
 .stepOut { font-size: 14px; color: var(--ink); line-height: 1.6; }
-.stepDays { font-size: 12px; color: var(--bronze); margin-block-start: 4px; }
+.stepDays { font-size: 12px; color: var(--amber-deep); margin-block-start: 4px; }
 
 /* ---- Docs + law ---- */
 
@@ -145,7 +145,7 @@
   font-size: 12.5px;
   line-height: 1.8;
   color: var(--structure);
-  border-inline-start: 2px solid var(--bronze);
+  border-inline-start: 2px solid var(--amber);
   padding-inline-start: 16px;
 }
 
@@ -170,7 +170,7 @@
 .viewingText { grid-column: 1 / span 5; }
 .viewingRule {
   margin-block-start: 22px;
-  border-inline-start: 2px solid var(--bronze);
+  border-inline-start: 2px solid var(--amber);
   padding-inline-start: 18px;
   font-size: 16px;
   line-height: 1.85;
@@ -187,7 +187,7 @@
   aspect-ratio: 4 / 3;
   border-radius: var(--radius-img);
   overflow: hidden;
-  background: var(--paper-deep);
+  background: var(--paper-2);
 }
 .viewingShot :global(img) { object-fit: cover; }
 
@@ -212,18 +212,18 @@
 }
 .table tbody th { color: var(--ink); white-space: normal; }
 .table tbody td { color: var(--structure); }
-.net { color: var(--bronze) !important; }
+.net { color: var(--amber-deep) !important; }
 .table tbody tr:last-child th,
 .table tbody tr:last-child td { border-block-end: none; }
 
 /* ---- Contact (night) ---- */
 
 .contact {
-  background: var(--night);
+  background: var(--void);
   color: var(--paper);
   padding-block: var(--sec-pad-major);
 }
-.contact .eyebrow { color: var(--bronze-on-night); }
+.contact .eyebrow { color: var(--amber); }
 .contactText { grid-column: 1 / span 6; }
 .h2Night {
   font-family: var(--ar-display);
@@ -234,15 +234,15 @@
 }
 .contactLede {
   margin-block-start: 18px;
-  color: var(--paper-on-night);
+  color: var(--paper-on-void);
   max-width: 48ch;
 }
 .contactWa {
   display: inline-flex;
   align-items: center;
   margin-block-start: 28px;
-  background: var(--action);
-  color: var(--paper);
+  background: var(--amber);
+  color: var(--ink);
   border-radius: var(--radius);
   padding: 14px 24px;
   font-size: 15px;
@@ -255,7 +255,7 @@
   align-items: center;
   margin-block-start: 28px;
   margin-inline-start: 14px;
-  color: var(--paper-on-night);
+  color: var(--paper-on-void);
   border-block-end: 1px solid rgba(244, 241, 234, 0.4);
   min-height: 48px;
 }
@@ -285,7 +285,7 @@
 }
 .hoursList > div:last-child { border-block-end: none; padding-block-end: 0; }
 .hoursList dt { font-size: 14px; color: var(--paper); }
-.hoursList dd { margin: 0; font-size: 14px; color: var(--paper-on-night); }
+.hoursList dd { margin: 0; font-size: 14px; color: var(--paper-on-void); }
 .hoursNote {
   margin-block-start: 16px;
   font-size: 12px;

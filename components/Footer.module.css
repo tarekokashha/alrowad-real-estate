@@ -1,10 +1,10 @@
 .footer {
-  background: var(--night);
-  color: var(--paper-on-night);
+  background: var(--void);
+  color: var(--paper-on-void);
   padding-block: clamp(48px, 8vh, 88px) 34px;
   font-size: 14px;
 }
-.footer a { color: var(--paper-on-night); }
+.footer a { color: var(--paper-on-void); }
 .footer a:hover { color: var(--paper); }
 
 .brand {

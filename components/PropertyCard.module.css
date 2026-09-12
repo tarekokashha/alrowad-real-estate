@@ -11,7 +11,7 @@
   aspect-ratio: 4 / 5;
   overflow: hidden;
   border-radius: var(--radius-img);
-  background: var(--paper-deep);
+  background: var(--paper-2);
 }
 
 .img {
@@ -29,7 +29,7 @@
 
 .code {
   font-size: 11px;
-  color: var(--bronze);
+  color: var(--amber-deep);
   letter-spacing: 0.04em;
 }
 
@@ -50,7 +50,7 @@
 .title a { color: var(--ink); }
 .title a:hover {
   color: var(--ink);
-  box-shadow: inset 0 -1px 0 var(--bronze);
+  box-shadow: inset 0 -1px 0 var(--amber);
 }
 
 .price {

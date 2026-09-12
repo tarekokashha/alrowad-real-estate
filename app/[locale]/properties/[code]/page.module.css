@@ -6,7 +6,7 @@
   color: var(--structure);
 }
 .crumb a { color: var(--structure); }
-.crumb a:hover { color: var(--bronze); }
+.crumb a:hover { color: var(--amber-deep); }
 
 /* ---- Title block --------------------------------------------------------- */
 
@@ -60,7 +60,7 @@
   aspect-ratio: 4 / 3;
   overflow: hidden;
   border-radius: var(--radius-img);
-  background: var(--paper-deep);
+  background: var(--paper-2);
 }
 .shot :global(img) { object-fit: cover; }
 
@@ -116,14 +116,14 @@
 /* The legal disclosure. Deliberately not a badge, not a tick, not green —
    a labelled value with an explanation underneath it. */
 .legalBlock {
-  background: var(--paper-deep);
-  border-inline-start: 2px solid var(--bronze);
+  background: var(--paper-2);
+  border-inline-start: 2px solid var(--amber);
   padding: 20px 22px;
   margin-block: 24px 30px;
 }
 .legalLabel {
   font-size: 11px;
-  color: var(--bronze);
+  color: var(--amber-deep);
 }
 .legalValue {
   font-size: 20px;
@@ -189,8 +189,8 @@
 .waBtn {
   display: block;
   text-align: center;
-  background: var(--action);
-  color: var(--paper);
+  background: var(--amber);
+  color: var(--ink);
   border-radius: var(--radius);
   padding: 14px 16px;
   font-size: 15px;
@@ -241,7 +241,7 @@
 /* ---- Comparables --------------------------------------------------------- */
 
 .comps {
-  background: var(--paper-deep);
+  background: var(--paper-2);
   padding-block: var(--sec-pad);
 }
 .compsHead {
@@ -251,7 +251,7 @@
   gap: 20px;
   margin-block-end: clamp(26px, 4vh, 44px);
 }
-.allLink { color: var(--bronze); font-size: var(--fs-body-2); }
+.allLink { color: var(--amber-deep); font-size: var(--fs-body-2); }
 .compsGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

@@ -52,7 +52,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-.whatsapp { color: var(--action-on-night); }
+.whatsapp { color: var(--amber-bright); }
 .whatsapp:hover { color: var(--paper); }
 
 
@@ -127,10 +127,10 @@
 .light .brand,
 .light .link,
 .light .phone { color: var(--ink); }
-.light .link:hover { color: var(--bronze); }
+.light .link:hover { color: var(--amber-deep); }
 .light .divider { background: var(--hairline); }
-.light .whatsapp { color: var(--action); }
-.light .whatsapp:hover { color: var(--bronze); }
+.light .whatsapp { color: var(--amber-deep); }
+.light .whatsapp:hover { color: var(--amber-deep); }
 
 /* The interior header never joins the entrance choreography — it belongs to
    a page the visitor navigated to deliberately. */

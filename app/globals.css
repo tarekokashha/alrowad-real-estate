@@ -5,32 +5,53 @@
    ========================================================================== */
 
 :root {
-  /* ---- Colour: "Limestone & Bronze" ---------------------------------- */
-  --paper: #f4f1ea;
-  --paper-deep: #ebe6dc;
-  --ink: #1b1a17;
-  --structure: #6e6a5f;
-  --hairline: #d6d0c4;
-  --bronze: #9a6b3f;
-  --bronze-deep: #7a5230;
-  --action: #3e6b4f;
-  --night: #14130f;
-  --bronze-on-night: #b98b5c;
-  --paper-on-night: rgba(244, 241, 234, 0.78);
-  --action-on-night: #a8c4b0;
+  /* ---- Colour: "Charcoal & Amber" ------------------------------------
+     Three grounds and one accent. The accent exists at three values because
+     one value cannot do every job: amber on paper measures 2.55:1, which is
+     fine behind a headline and illegible in a link. So the name says where
+     each belongs, and nothing has to remember the rule.
 
-  /* ---- Motion: two curves, three durations, one stagger -------------- */
+       --amber        fills, large display type, and text on the dark ground
+       --amber-bright the wash, and hover states on dark
+       --amber-deep   text and links on paper — 4.97:1, the only one that is
+
+     Measured, not guessed: scripts/verify-design.mjs recomputes all four
+     pairs from this block on every run and fails the build if one drops. */
+  --paper: #f6f4f0;
+  --paper-2: #edeae4;
+  --ink: #14130f;
+  --structure: #6b675e;
+  --hairline: #dcd7cc;
+  --void: #0a0a0a;
+  --carbon: #141414;
+  --amber: #c89033;
+  --amber-bright: #e8b54b;
+  --amber-deep: #8a6220;
+  --paper-on-void: rgba(246, 244, 240, 0.72);
+  --hairline-void: rgba(246, 244, 240, 0.14);
+
+  /* ---- Motion: two curves, four durations, one stagger --------------- */
   --arrival: cubic-bezier(0.16, 1, 0.3, 1);
   --settle: cubic-bezier(0.33, 1, 0.68, 1);
+  /* Scrub-driven motion is linear by definition: the reader's finger is the
+     easing function, and layering a curve on top of it makes the page feel
+     like it is lagging behind the scroll rather than following it. */
+  --scrub-ease: none;
   --d-micro: 200ms;
   --d-element: 400ms;
   --d-section: 800ms;
+  --d-hero: 1200ms;
   --stagger: 60ms;
 
-  /* ---- Type families ------------------------------------------------- */
-  --ar-display: "Amiri", "Times New Roman", serif;
+  /* ---- Type families -------------------------------------------------
+     Both serifs are gone. The reference has no serif anywhere, and Amiri in
+     particular reads as classical Arabic publishing — the opposite of the
+     register this site is aiming at. Tajawal is the closest Arabic face to
+     the reference's geometric grotesk and holds its shape at 18vw, which
+     the giant display word needs. */
+  --ar-display: "Tajawal", "IBM Plex Sans Arabic", system-ui, sans-serif;
   --ar-text: "IBM Plex Sans Arabic", system-ui, sans-serif;
-  --la-display: "Newsreader", Georgia, serif;
+  --la-display: "Plus Jakarta Sans", "IBM Plex Sans", system-ui, sans-serif;
   --la-text: "IBM Plex Sans", system-ui, sans-serif;
   /* Font fallback resolves per glyph: IBM Plex Mono carries no Arabic, so
      naming the Arabic text face next means digits render monospaced and any
@@ -48,8 +69,9 @@
   --gap-card: clamp(20px, 3vw, 44px);
   --sec-pad: clamp(50px, 11vh, 120px);
   --sec-pad-major: clamp(60px, 14vh, 160px);
-  --radius: 2px;
-  --radius-img: 3px;
+  --radius: 6px;
+  --radius-img: 12px;
+  --radius-card: 16px;
 
   /* ---- Type sizes. Arabic runs larger and looser than Latin. --------- */
   --fs-body: 17px;
@@ -120,25 +142,25 @@ body:lang(ar) {
 }
 
 a {
-  color: var(--bronze);
+  color: var(--amber-deep);
   text-decoration: none;
   transition: color var(--d-micro) var(--settle);
 }
 a:hover {
-  color: var(--bronze-deep);
+  color: var(--amber);
 }
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
 select:focus-visible {
-  outline: 2px solid var(--bronze);
+  outline: 2px solid var(--amber-deep);
   outline-offset: 3px;
   border-radius: var(--radius);
 }
 
 ::selection {
-  background: var(--bronze);
-  color: var(--paper);
+  background: var(--amber);
+  color: var(--ink);
 }
 
 img {
@@ -210,7 +232,7 @@ button {
 .eyebrow {
   font-family: var(--mono);
   font-size: 11px;
-  color: var(--bronze);
+  color: var(--amber-deep);
   text-transform: uppercase;
   letter-spacing: 0.16em;
   display: block;

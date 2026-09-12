@@ -1,7 +1,7 @@
 /* ---- «اعرف قسطك» — the affordability search ----------------------------- */
 
 .afford {
-  background: var(--paper-deep);
+  background: var(--paper-2);
   padding-block: clamp(44px, 8vh, 84px);
   border-block-end: 1px solid var(--hairline);
 }
@@ -56,9 +56,9 @@
 }
 
 .affordBtn {
-  background: var(--bronze);
-  color: var(--paper);
-  border: 1px solid var(--bronze);
+  background: var(--amber);
+  color: var(--ink);
+  border: 1px solid var(--amber);
   border-radius: var(--radius);
   padding: 13px 22px;
   font-size: 15px;
@@ -68,8 +68,8 @@
   transition: background var(--d-micro) var(--settle);
 }
 .affordBtn:hover:not(:disabled) {
-  background: var(--bronze-deep);
-  border-color: var(--bronze-deep);
+  background: var(--amber-deep);
+  border-color: var(--amber-deep);
 }
 .affordBtn:disabled {
   opacity: 0.4;
@@ -118,11 +118,11 @@
   padding: 0;
   font-family: var(--mono);
   font-size: 11px;
-  color: var(--bronze);
+  color: var(--amber-deep);
   cursor: pointer;
 }
 .clear:hover {
-  color: var(--bronze-deep);
+  color: var(--amber-deep);
 }
 
 .group {
@@ -165,9 +165,9 @@
   border-color: var(--structure);
 }
 .chipOn {
-  background: var(--bronze);
-  border-color: var(--bronze);
-  color: var(--paper);
+  background: var(--amber);
+  border-color: var(--ink);
+  color: var(--ink);
 }
 
 .rangeBlock {
@@ -175,7 +175,7 @@
 }
 .range {
   width: 100%;
-  accent-color: var(--bronze);
+  accent-color: var(--amber-deep);
   margin-block: 12px 6px;
   min-height: 32px;
 }
@@ -239,10 +239,10 @@
 .plan {
   margin-block-start: 12px;
   padding-block-start: 12px;
-  border-block-start: 1px solid var(--bronze);
+  border-block-start: 1px solid var(--amber);
   font-size: 12px;
   line-height: 1.8;
-  color: var(--bronze-deep);
+  color: var(--amber-deep);
 }
 
 .empty {
@@ -257,7 +257,7 @@
 .emptyCta {
   display: inline-block;
   margin-block-start: 20px;
-  color: var(--bronze);
+  color: var(--amber-deep);
 }
 
 /* ---- Responsive ----------------------------------------------------------

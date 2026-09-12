@@ -8,7 +8,7 @@ export function Logo() {
       <Mark size={38} />
       <span
         style={{
-          fontFamily: "Amiri, 'Times New Roman', serif",
+          fontFamily: "Tajawal, 'IBM Plex Sans Arabic', system-ui, sans-serif",
           fontSize: 34,
           lineHeight: 1,
           paddingBottom: 4,

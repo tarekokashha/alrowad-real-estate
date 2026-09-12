@@ -34,6 +34,17 @@ const get = async (url) => {
   return { status: res.status, text: res.ok ? await res.text() : "" };
 };
 
+/**
+ * Strip comments before scanning for dead identifiers.
+ *
+ * Without this, the paragraph in globals.css explaining *why* Amiri was
+ * dropped fails the check that Amiri was dropped. A scanner that cannot tell
+ * code from prose teaches people to stop writing prose, which is a bad trade
+ * for a regex.
+ */
+const stripComments = (text) =>
+  text.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+
 /** Every source file that could carry a colour, a token or an attribute. */
 function sources(dirs = ["app", "components", "lib"]) {
   const out = [];
@@ -48,7 +59,7 @@ function sources(dirs = ["app", "components", "lib"]) {
       const p = path.join(d, e);
       if (statSync(p).isDirectory()) {
         if (e !== "node_modules" && e !== ".next") walk(p);
-      } else if (/\.(tsx?|css)$/.test(e)) {
+      } else if (/\.(tsx?|s?css)$/.test(e)) {
         out.push(p);
       }
     }
@@ -177,7 +188,7 @@ async function checkEntranceGone() {
   const dead = ["framePath", "ENTRANCE_TIERS", "data-entrance", "AVIF_PROBE"];
   const hits = [];
   for (const file of sources()) {
-    const text = await readFile(file, "utf8");
+    const text = stripComments(await readFile(file, "utf8"));
     for (const token of dead) {
       if (text.includes(token)) hits.push(`${path.relative(ROOT, file)} → ${token}`);
     }
@@ -198,7 +209,12 @@ async function checkContrast() {
   const pairs = [
     ["ink", "paper", 4.5, "body text on paper"],
     ["paper", "void", 4.5, "text on the dark ground"],
-    ["ink", "amber", 4.5, "text on amber"],
+    // Three accent values exist precisely because of the next two rows. Amber
+    // on paper is 2.55:1 and amber-deep on amber is 1.95:1 — the palette is
+    // only safe if each value is used where its name says.
+    ["ink", "amber", 4.5, "text on an amber fill"],
+    ["amber-deep", "paper", 4.5, "accent text and links on paper"],
+    ["amber", "void", 4.5, "accent text on the dark ground"],
   ];
 
   for (const [a, b, floor, label] of pairs) {
@@ -227,7 +243,7 @@ async function checkDeadTokens() {
   ];
   const hits = [];
   for (const file of [...sources(), path.join(ROOT, "app", "globals.css")]) {
-    const text = await readFile(file, "utf8");
+    const text = stripComments(await readFile(file, "utf8"));
     for (const token of dead) {
       if (text.includes(token)) {
         hits.push(`${path.relative(ROOT, file)} → ${token}`);
