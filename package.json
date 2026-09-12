@@ -18,7 +18,8 @@
     "vercel:env": "node scripts/push-env.mjs",
     "cms:check": "node --env-file=.env --no-deprecation --import tsx scripts/verify-cms.ts",
     "storage:check": "node scripts/check-storage.mjs",
-    "verify:design": "node scripts/verify-design.mjs"
+    "verify:design": "node scripts/verify-design.mjs",
+    "dev:local": "cross-env DATABASE_URI=file:./admin-dev.db PAYLOAD_SECRET=local-dev-only-secret-not-production next dev -p 3300"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.88.0",

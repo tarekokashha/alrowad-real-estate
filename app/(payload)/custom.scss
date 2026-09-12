@@ -1,16 +1,64 @@
-/* Admin chrome, tuned to the brand so the panel does not feel like a
-   different product from the site it edits. */
-:root {
-  --theme-elevation-0: #f6f4f0;
+/* ==========================================================================
+   Admin chrome, tuned to the brand.
+
+   READ THIS BEFORE ADDING A TOKEN HERE.
+
+   Payload ships its whole stylesheet inside `@layer payload-default`. This
+   file is unlayered, so every rule in it outranks every rule Payload has,
+   whatever the specificity. That makes it powerful and easy to break things
+   with — it is why the panel arrived in this state:
+
+     · `--theme-elevation-0: #f6f4f0` was set at :root to warm the page.
+       Elevation-0 is not a background token. It is the far end of a
+       structural scale that Payload INVERTS between themes — near-white in
+       light, near-black in dark — and it is also what a primary button uses
+       for its label colour. Forcing it light in both themes painted the
+       dashboard white-on-white at 1.1:1 for anyone whose system is set to
+       dark, and it is what `--theme-bg` derives from, so the page background
+       went with it.
+
+   The rule that follows from that: brand the tokens that name a ROLE
+   (background, success), never the ones that name a POSITION IN A SCALE
+   (elevation-*), and scope anything colour-bearing to one theme at a time.
+   ========================================================================== */
+
+/* Tajawal for the wordmark, IBM Plex Sans Arabic for everything else. The
+   admin has its own root layout, so the site's font links do not reach it —
+   which is why this duplicate exists, and why it has to move whenever the
+   site's does. */
+@import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap");
+
+body,
+input,
+textarea,
+select,
+button,
+.payload-settings__language {
+  font-family: "IBM Plex Sans Arabic", system-ui, sans-serif;
+}
+
+/* Arabic is cursive: synthesised bold smears the teeth of س ش ب ت ن into an
+   unreadable band, and tracking either breaks the joins or inserts gaps a
+   native reader parses as word boundaries. Both are off, panel-wide. */
+body {
+  font-synthesis: none;
+  letter-spacing: 0;
+}
+
+/* Light only. The site's paper is warm, and the default panel white next to
+   it looks like a different product. Dark is left exactly as Payload ships
+   it — it is already good, and the brand has no dark surface to match it to
+   that would survive the contrast maths. */
+html[data-theme="light"] {
+  --theme-bg: #f6f4f0;
+  /* Amber-deep. 4.97:1 on the paper above — the lighter amber is 2.55:1 and
+     is not allowed to carry text. */
   --theme-success-500: #8a6220;
 }
 
-/* Tajawal for the wordmark in the admin chrome. The admin has its own root
-   layout, so the site's font links do not reach it — which is why this
-   duplicate exists, and why it has to move whenever the site's does. */
-@import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap");
-
-.payload-settings__language,
-body {
-  font-family: "IBM Plex Sans Arabic", system-ui, sans-serif;
+html[data-theme="dark"] {
+  /* The brighter amber, because on Payload's dark ground the deep one falls
+     to 2.4:1. Same role, different value, which is the whole point of
+     scoping these per theme. */
+  --theme-success-500: #e8b54b;
 }

@@ -7,8 +7,12 @@ import pg from "pg";
  * This app talks to Postgres directly as `alrowad_app` and never uses the
  * Supabase client library, so the PostgREST roles (`anon`, `authenticated`)
  * need no access to any of these tables. That matters: `users` holds password
- * hashes and `leads` holds real buyers' names and phone numbers, and the anon
- * key is public by design — it ships in browser code.
+ * hashes, and the anon key is public by design — it ships in browser code.
+ *
+ * The loop below covers every table in the schema, `leads` included — that
+ * collection is retired (see payload.config.ts) but its table was left in
+ * place rather than dropped, so it still needs locking down like everything
+ * else here.
  *
  * Two layers:
  *   1. Revoke every grant from the API roles.

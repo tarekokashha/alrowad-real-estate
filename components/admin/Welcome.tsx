@@ -8,23 +8,22 @@ const STALE_DAYS = 30;
 /**
  * The dashboard the client lands on.
  *
- * It does not greet him. It shows him the four things that decide whether the
- * site keeps its promises: prices that have gone stale, units published
- * without a real photograph, leads nobody has answered, and whether the price
- * index has been updated this month. A dashboard that says "welcome back"
- * teaches nothing; this one is a to-do list derived from the data.
+ * It does not greet him. It shows him the things that decide whether the site
+ * keeps its promises: prices that have gone stale, units still sitting in
+ * draft, and whether the price index has been updated this month. A
+ * dashboard that says "welcome back" teaches nothing; this one is a to-do
+ * list derived from the data.
+ *
+ * There used to be a fourth card counting unanswered leads. It is gone along
+ * with the Leads collection itself — see the note in payload.config.ts. The
+ * client now handles every enquiry inside WhatsApp, where there is nothing
+ * for this dashboard to count.
  */
 export async function Welcome() {
   const payload = await getPayload({ config });
 
-  const [units, leads, index] = await Promise.all([
+  const [units, index] = await Promise.all([
     payload.find({ collection: "units", limit: 500, depth: 0 }),
-    payload.find({
-      collection: "leads",
-      limit: 200,
-      depth: 0,
-      where: { state: { equals: "new" } },
-    }),
     payload.find({ collection: "price-index", limit: 1, sort: "-publishedAt", depth: 0 }),
   ]);
 
@@ -49,13 +48,6 @@ export async function Welcome() {
   const indexOverdue = indexAgeDays === null || indexAgeDays > 35;
 
   const tasks = [
-    {
-      count: leads.totalDocs,
-      labelAr: "طلب جديد مستني رد",
-      href: "/admin/collections/leads?where[state][equals]=new",
-      urgent: leads.totalDocs > 0,
-      noteAr: "الموقع مكتوب عليه إن متوسط الرد ١٤ دقيقة.",
-    },
     {
       count: stale.length,
       labelAr: `وحدة سعرها مامتراجعش من أكتر من ${STALE_DAYS} يوم`,

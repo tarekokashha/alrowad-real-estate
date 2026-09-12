@@ -28,3 +28,8 @@ Thumbs.db
 
 # scratch credential files
 *.tmp
+
+# Local throwaway database for exercising the admin panel without
+# touching the production one. Never committed.
+*.db
+*.db-journal

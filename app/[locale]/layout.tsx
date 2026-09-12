@@ -1,4 +1,9 @@
 import type { ReactNode } from "react";
+
+// The public site's design system. Imported here rather than in the root
+// layout so that it never reaches /admin — see app/layout.tsx for why that
+// matters more than it looks.
+import "../globals.css";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { COMPANY } from "@/lib/content";

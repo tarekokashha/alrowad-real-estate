@@ -6,11 +6,12 @@ import { postgresAdapter } from "@payloadcms/db-postgres";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { s3Storage } from "@payloadcms/storage-s3";
 import sharp from "sharp";
-import { ar } from "@payloadcms/translations/languages/ar";
+// Payload's bundled Arabic, with its tashkeel stripped and its two
+// defects corrected — see lib/admin-arabic.ts.
+import { ar } from "./lib/admin-arabic";
 
 import { Units } from "./collections/Units";
 import { Media } from "./collections/Media";
-import { Leads } from "./collections/Leads";
 import { PriceIndex } from "./collections/PriceIndex";
 import { Testimonials } from "./collections/Testimonials";
 import { Users } from "./collections/Users";
@@ -52,7 +53,7 @@ export default buildConfig({
     },
     components: {
       // The dashboard leads with the work that keeps the site honest:
-      // stale prices, unpublished units, and new leads waiting on a reply.
+      // stale prices and unpublished units.
       beforeDashboard: ["/components/admin/Welcome#Welcome"],
       // The client should see his own brand on login, not the CMS vendor's.
       graphics: {
@@ -79,16 +80,30 @@ export default buildConfig({
     supportedLanguages: { ar },
   },
 
-  localization: {
-    locales: [
-      { label: { ar: "العربية", en: "Arabic" }, code: "ar" },
-      { label: { ar: "الإنجليزية", en: "English" }, code: "en" },
-    ],
-    defaultLocale: "ar",
-    fallback: true,
-  },
+  // No `localization` block, deliberately.
+  //
+  // There was one, offering العربية and الإنجليزية. Not one field in any
+  // collection is marked `localized: true` and the database has no locale
+  // tables, so the only thing it produced was a locale switcher in the header
+  // that changed nothing when used — on a site whose public routes are Arabic
+  // and where /en permanently redirects to /ar.
+  //
+  // For the owner that control was a trap: switch to «الإنجليزية», type a
+  // unit description in English, save, and the work goes nowhere because no
+  // page reads it and no field stores it separately. Removing it is free —
+  // there is no localized data to migrate.
 
-  collections: [Units, Media, Testimonials, PriceIndex, Leads, Users],
+  // No Leads collection, deliberately.
+  //
+  // There was one — a read-only log of callback requests, meant to record
+  // WhatsApp click-throughs. It never had a public write path (no contact
+  // form, and nothing on the site ever posted to it), so in practice it was
+  // dead UI: an empty "الطلبات" screen and an "٠ طلب جديد" dashboard card
+  // that could never become anything else. The client now runs the whole
+  // conversation inside WhatsApp itself — the chat carries the unit code,
+  // the price, the legal status, and the booking, and it needs no mirror in
+  // the admin. See git history for collections/Leads.ts if that changes.
+  collections: [Units, Media, Testimonials, PriceIndex, Users],
   globals: [Settings],
 
   editor: lexicalEditor(),

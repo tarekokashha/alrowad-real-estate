@@ -222,6 +222,14 @@ export const Units: CollectionConfig = {
                       ar: "بالأرقام فقط، بدون فواصل. اكتب 1950000 والنظام هو اللي هينسّقها.",
                       en: "Digits only, no separators. The site formats it.",
                     },
+                    components: {
+                      // The description above promises the number gets
+                      // formatted. The list view is where that promise is
+                      // actually read — seven bare digits in a column of
+                      // prices is where 1,340,000 gets misread as
+                      // 13,400,000.
+                      Cell: "/components/admin/PriceCell#PriceCell",
+                    },
                   },
                 },
                 {

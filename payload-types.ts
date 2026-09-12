@@ -71,7 +71,6 @@ export interface Config {
     media: Media;
     testimonials: Testimonial;
     'price-index': PriceIndex;
-    leads: Lead;
     users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -84,7 +83,6 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
     'price-index': PriceIndexSelect<false> | PriceIndexSelect<true>;
-    leads: LeadsSelect<false> | LeadsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -94,14 +92,14 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('ar' | 'en') | ('ar' | 'en')[];
+  fallbackLocale: null;
   globals: {
     settings: Setting;
   };
   globalsSelect: {
     settings: SettingsSelect<false> | SettingsSelect<true>;
   };
-  locale: 'ar' | 'en';
+  locale: null;
   widgets: {
     collections: CollectionsWidget;
   };
@@ -329,30 +327,6 @@ export interface PriceIndex {
   createdAt: string;
 }
 /**
- * Requests from the site. The homepage promises a 14-minute median reply.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "leads".
- */
-export interface Lead {
-  id: number;
-  name?: string | null;
-  phone: string;
-  /**
-   * Arrives automatically from the page the visitor was on.
-   */
-  unitCode?: string | null;
-  bestTime?: string | null;
-  state?: ('new' | 'replied' | 'viewing' | 'contracted' | 'closed') | null;
-  note?: string | null;
-  /**
-   * Originating page.
-   */
-  source?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
@@ -418,10 +392,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'price-index';
         value: number | PriceIndex;
-      } | null)
-    | ({
-        relationTo: 'leads';
-        value: number | Lead;
       } | null)
     | ({
         relationTo: 'users';
@@ -608,21 +578,6 @@ export interface PriceIndexSelect<T extends boolean = true> {
         id?: T;
       };
   footnote?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "leads_select".
- */
-export interface LeadsSelect<T extends boolean = true> {
-  name?: T;
-  phone?: T;
-  unitCode?: T;
-  bestTime?: T;
-  state?: T;
-  note?: T;
-  source?: T;
   updatedAt?: T;
   createdAt?: T;
 }
