@@ -1,0 +1,103 @@
+/* ==========================================================================
+   The interior-page masthead. The hero's treatment at a third of the height.
+   ========================================================================== */
+
+.header {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--void);
+  display: grid;
+  align-items: end;
+  min-block-size: clamp(300px, 46vh, 460px);
+  padding-block: clamp(40px, 7vh, 80px) clamp(30px, 5vh, 56px);
+}
+
+.media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.img {
+  object-fit: cover;
+  /* Photographs are never mirrored in RTL: it flips signage and stair
+     handedness, and a local reader catches it immediately. */
+  transform: none;
+}
+
+/* One layer, doing both jobs: darkening the picture enough for the type and
+   weighting that darkness to the bottom, where the type is. Declared at its
+   final value — nothing here waits for a script. */
+.veil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(to top, rgba(10, 10, 10, 0.92) 0%, rgba(10, 10, 10, 0.38) 62%, rgba(10, 10, 10, 0.55) 100%);
+}
+
+.inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+.h1 {
+  font-family: var(--ar-display);
+  font-weight: 800;
+  font-size: clamp(2.2rem, 5vw, 4.6rem);
+  line-height: 1.14;
+  margin-block-start: 14px;
+  color: var(--paper);
+  max-width: 20ch;
+}
+:lang(ar) .h1 {
+  line-height: 1.26;
+}
+
+.lede {
+  margin-block-start: 20px;
+  max-width: 56ch;
+  color: var(--paper-on-void);
+  font-size: var(--fs-body-2);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(18px, 3vw, 48px);
+  margin-block-start: clamp(24px, 4vh, 40px);
+  padding-block-start: clamp(18px, 3vh, 28px);
+  border-block-start: 1px solid var(--hairline-void);
+}
+
+.meta > div {
+  display: grid;
+  gap: 5px;
+}
+
+.meta dt {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: rgba(246, 244, 240, 0.55);
+}
+
+.meta dd {
+  margin: 0;
+  font-size: var(--fs-body-2);
+  color: var(--paper);
+}
+
+.header :global(.eyebrow) {
+  color: var(--amber-bright);
+}
+
+@media (max-width: 900px) {
+  .header {
+    min-block-size: clamp(260px, 40vh, 360px);
+  }
+  .meta {
+    gap: 16px 26px;
+  }
+}

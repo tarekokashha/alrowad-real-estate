@@ -154,12 +154,12 @@ export default async function UnitPage({
         {/* ---- Title block ---- */}
         <section className={s.titleBlock}>
           <div className="shell grid12">
-            <div className={s.titleText} data-anim="rise">
-              <h1 className={s.h1}>
+            <div className={s.titleText}>
+              <h1 className={s.h1} data-anim="words">
                 {u.titleAr}
                 {u.gardenSize ? " بحديقة" : ""} — {u.areaAr}
               </h1>
-              <p className={s.summary}>
+              <p className={s.summary} data-anim="rise" data-delay="1">
                 {d.floorOfAr !== "—" ? `${u.floorAr} · ` : ""}
                 {u.finishing} · {u.handoverAr} · {u.saleTypeAr} من المالك
               </p>
@@ -182,12 +182,8 @@ export default async function UnitPage({
         <section className={s.gallery}>
           <div className="shell">
             <div className={s.galleryGrid}>
-              {d.gallery.map((g, i) => (
-                <figure
-                  key={g.src + i}
-                  className={`${s.shot} ${i === 0 ? s.shotLead : ""}`}
-                  data-anim="img"
-                >
+              {d.gallery.map((g, i) => {
+                const img = (
                   <Image
                     src={g.src}
                     alt={g.alt}
@@ -199,8 +195,30 @@ export default async function UnitPage({
                        on desktop and none of them may be lazy. */
                     priority={i < 3}
                   />
-                </figure>
-              ))}
+                );
+                return (
+                  <figure
+                    key={g.src + i}
+                    className={`${s.shot} ${i === 0 ? s.shotLead : ""}`}
+                    data-anim="img"
+                  >
+                    {/* Only the lead shot travels against the scroll — a grid
+                        of six thumbnails all drifting independently reads as
+                        jitter, not depth, once more than one is on screen. */}
+                    {i === 0 ? (
+                      <span
+                        className={s.shotParallax}
+                        data-anim="parallax"
+                        data-depth="0.1"
+                      >
+                        {img}
+                      </span>
+                    ) : (
+                      img
+                    )}
+                  </figure>
+                );
+              })}
             </div>
             <p className={`mono ${s.galleryCaption}`}>
               {d.photoCountAr} · التُقطت {d.photoDateAr} · بدون معالجة لونية

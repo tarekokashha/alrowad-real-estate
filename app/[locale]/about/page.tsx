@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import PageHeader from "@/components/PageHeader";
 import { COMPANY, LEGAL_STATUSES } from "@/lib/content";
 import { SOLD_TOTAL_SINCE_2011 } from "@/lib/sold";
 import { whatsappHref, PhoneNumber } from "@/lib/format";
@@ -75,38 +76,27 @@ export default async function AboutPage({
       <Header locale={locale} variant="light" />
 
       <main id="main">
-        <section className={s.masthead}>
-          <div className="shell grid12">
-            <div className={s.mastheadText}>
-              <span className="eyebrow">الشركة · تأسست ٢٠١١</span>
-              <h1 className={s.h1}>
-                مكتب واحد في حدائق أكتوبر،
-                <br />
-                ولا نعمل في غيرها
-              </h1>
-              <p className={s.lede}>
-                اسم الشركة معناه الذين يسبقون ويمسحون الأرض. بدأنا سنة ٢٠١١ حين
-                كانت المنطقة أرضًا مقسَّمة بعلامات مساحية وعدد قليل من العمارات،
-                وبقينا فيها. لا فروع لنا في التجمع ولا في الساحل، لأن معرفة متر
-                واحد جيدًا تحتاج سنوات لا مكتبًا إضافيًا.
-              </p>
-            </div>
-            <ul className={s.claims}>
-              <li>خمسة عشر عامًا في هذا النطاق</li>
-              <li>
-                <bdi className="mono">{SOLD_TOTAL_SINCE_2011}</bdi> وحدة مبيعة
-                ومسجَّلة في سجلنا العام
-              </li>
-              <li>أكثر من ١٠٠٠ عميل</li>
-              <li>٣٠ مشروعًا تعاملنا في وحداته</li>
-              <li className={s.claimNote}>
-                كل رقم منها قابل للمراجعة في{" "}
-                <Link href={`/${locale}/sold`}>سجل البيع</Link> وحدة وحدة،
-                بتاريخها.
-              </li>
-            </ul>
-          </div>
-        </section>
+        <PageHeader
+          eyebrow="الشركة · تأسست ٢٠١١"
+          title="مكتب واحد في حدائق أكتوبر، ولا نعمل في غيرها"
+          lede="اسم الشركة معناه الذين يسبقون ويمسحون الأرض. بدأنا سنة ٢٠١١ حين كانت المنطقة أرضًا مقسَّمة بعلامات مساحية وعدد قليل من العمارات، وبقينا فيها. لا فروع لنا في التجمع ولا في الساحل، لأن معرفة متر واحد جيدًا تحتاج سنوات لا مكتبًا إضافيًا."
+          image="/img/office-interior.webp"
+          imageAlt="مكتب الرواد في حدائق أكتوبر"
+        >
+          <ul className={s.claims} data-anim="rise" data-stagger data-delay="1">
+            <li>خمسة عشر عامًا في هذا النطاق</li>
+            <li>
+              <bdi className="mono">{SOLD_TOTAL_SINCE_2011}</bdi> وحدة مبيعة
+              ومسجَّلة في سجلنا العام
+            </li>
+            <li>أكثر من ١٠٠٠ عميل</li>
+            <li>٣٠ مشروعًا تعاملنا في وحداته</li>
+          </ul>
+          <p className={s.claimNote} data-anim="rise" data-delay="2">
+            كل رقم منها قابل للمراجعة في{" "}
+            <Link href={`/${locale}/sold`}>سجل البيع</Link> وحدة وحدة، بتاريخها.
+          </p>
+        </PageHeader>
 
         {/* ---- Office photography ---- */}
         <section className={s.office}>

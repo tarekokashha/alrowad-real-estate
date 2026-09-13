@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import PageHeader from "@/components/PageHeader";
 import {
   GULF_SUMMARY,
   GULF_STEPS,
@@ -34,54 +35,21 @@ export default async function GulfPage({
       <Header locale={locale} variant="light" />
 
       <main id="main">
-        <section className={s.masthead}>
-          <div className="shell grid12">
-            <div className={s.mastheadText}>
-              <span className="eyebrow">الشراء من خارج مصر</span>
-              <h1 className={s.h1}>
-                تملّك في حدائق أكتوبر
-                <br />
-                من الرياض أو جدة أو الدمام
-              </h1>
-              <p className={s.lede}>
-                ثمانية من كل عشرين عميل تعاملنا معهم خلال العامين الماضيين
-                يقيمون في السعودية أو الخليج. هذه الصفحة تشرح الإجراء كما يجري
-                فعلًا: المستندات المطلوبة، ما يمكن إنجازه بالتوكيل وما يستلزم
-                الحضور، الرسوم والضرائب بأرقامها، وحدود التملك للأجانب في القانون
-                المصري.
-              </p>
-            </div>
-            <div className={s.summary}>
-              <h2 className={s.summaryTitle}>الخلاصة قبل التفاصيل</h2>
-              <dl className={s.summaryList}>
-                {GULF_SUMMARY.map((r) => (
-                  <div key={r.labelAr}>
-                    <dt>{r.labelAr}</dt>
-                    <dd className="mono">
-                      <bdi>{r.valueAr}</bdi>
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          </div>
-        </section>
-
-        <figure className={s.hero}>
-          <Image
-            src="/img/area-street.webp"
-            alt="شارع سكني داخلي في حدائق أكتوبر: أرصفة واسعة وأشجار نخيل ومبانٍ منخفضة من الحجر الجيري"
-            fill
-            sizes="100vw"
-            priority
-            quality={82}
-          />
-          <figcaption className={`mono ${s.heroCaption}`}>
-            <span>شارع داخلي في حدائق أكتوبر</span>
-            <span>صافي عائد الإيجار المرصود 7.4% – 9.1% سنويًا</span>
-            <span>SURVEY REF {COMPANY.surveyRef}</span>
-          </figcaption>
-        </figure>
+        <PageHeader
+          eyebrow="الشراء من خارج مصر"
+          title="تملّك في حدائق أكتوبر من الرياض أو جدة أو الدمام"
+          lede="ثمانية من كل عشرين عميل تعاملنا معهم خلال العامين الماضيين يقيمون في السعودية أو الخليج. هذه الصفحة تشرح الإجراء كما يجري فعلًا: المستندات المطلوبة، ما يمكن إنجازه بالتوكيل وما يستلزم الحضور، الرسوم والضرائب بأرقامها، وحدود التملك للأجانب في القانون المصري."
+          meta={[
+            ...GULF_SUMMARY.map((r) => ({ label: r.labelAr, value: r.valueAr })),
+            {
+              label: "صافي عائد الإيجار المرصود",
+              value: "7.4% – 9.1% سنويًا",
+            },
+            { label: "مرجع المسح", value: COMPANY.surveyRef },
+          ]}
+          image="/img/area-street.webp"
+          imageAlt="شارع سكني داخلي في حدائق أكتوبر: أرصفة واسعة وأشجار نخيل ومبانٍ منخفضة من الحجر الجيري"
+        />
 
         {/* ---- Six documented stages ---- */}
         <section className={s.section}>

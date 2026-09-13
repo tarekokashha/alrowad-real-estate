@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import PageHeader from "@/components/PageHeader";
 import { COMPANY, PRICE_INDEX, INDEX_REVISIONS } from "@/lib/content";
 import {
   GUIDE_UPDATED_AR,
@@ -69,54 +69,34 @@ export default async function AreaGuidePage({
       <Header locale={locale} variant="light" />
 
       <main id="main">
-        {/* ---- Masthead ---- */}
-        <section className={s.masthead}>
-          <div className="shell grid12">
-            <div className={s.mastheadText}>
-              <span className="eyebrow">
-                دليل المنطقة · تحديث {GUIDE_UPDATED_AR}
-              </span>
-              <h1 className={s.h1}>
-                حدائق أكتوبر:
-                <br />
-                ما فيها بالاسم والرقم
-              </h1>
-              <p className={s.lede}>
-                هذه الصفحة مكتوبة لمن يفكر فعلًا في الشراء هنا: الكمبوندات
-                الموجودة على الأرض ومطوّروها، متوسط سعر المتر في كل واحد وتاريخ
-                رصده، أزمنة الوصول مقيسة بالسيارة، والمشكلات التي نراها ولا
-                يذكرها أحد. لا يوجد فيها كلام عن «الحياة الراقية».
-              </p>
-            </div>
-            <nav className={s.contents} aria-label="في هذه الصفحة">
-              <h2 className={s.contentsTitle}>في هذه الصفحة</h2>
-              <ol>
-                {GUIDE_CONTENTS.map((c) => (
-                  <li key={c.id}>
-                    <a href={`#${c.id}`}>{c.labelAr}</a>
-                  </li>
-                ))}
-              </ol>
-            </nav>
-          </div>
-        </section>
-
-        {/* ---- Full-bleed aerial with a survey caption ---- */}
-        <figure className={s.hero}>
-          <Image
-            src="/img/area-aerial.webp"
-            alt="منظر جوي لحدائق أكتوبر: مبانٍ منخفضة من الحجر الجيري وشوارع مشجّرة وهضبة الصحراء في الأفق"
-            fill
-            sizes="100vw"
-            priority
-            quality={82}
-          />
-          <figcaption className={`mono ${s.heroCaption}`}>
-            <span>حدائق أكتوبر من الجهة الغربية</span>
-            <span>الهضبة الصحراوية على مستوى +180 م</span>
-            <span>SURVEY REF {COMPANY.surveyRef}</span>
-          </figcaption>
-        </figure>
+        <PageHeader
+          eyebrow={`دليل المنطقة · تحديث ${GUIDE_UPDATED_AR}`}
+          title="حدائق أكتوبر: ما فيها بالاسم والرقم"
+          lede="هذه الصفحة مكتوبة لمن يفكر فعلًا في الشراء هنا: الكمبوندات الموجودة على الأرض ومطوّروها، متوسط سعر المتر في كل واحد وتاريخ رصده، أزمنة الوصول مقيسة بالسيارة، والمشكلات التي نراها ولا يذكرها أحد. لا يوجد فيها كلام عن «الحياة الراقية»."
+          meta={[
+            { label: "الموقع", value: "حدائق أكتوبر من الجهة الغربية" },
+            { label: "الارتفاع", value: "الهضبة الصحراوية +180 م" },
+            { label: "مرجع المسح", value: COMPANY.surveyRef },
+          ]}
+          image="/img/area-aerial.webp"
+          imageAlt="منظر جوي لحدائق أكتوبر: مبانٍ منخفضة من الحجر الجيري وشوارع مشجّرة وهضبة الصحراء في الأفق"
+        >
+          <nav
+            className={s.contents}
+            aria-label="في هذه الصفحة"
+            data-anim="rise"
+            data-delay="2"
+          >
+            <h2 className={s.contentsTitle}>في هذه الصفحة</h2>
+            <ol>
+              {GUIDE_CONTENTS.map((c) => (
+                <li key={c.id}>
+                  <a href={`#${c.id}`}>{c.labelAr}</a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        </PageHeader>
 
         {/* ---- The market, in three plain paragraphs ---- */}
         <section className={s.section}>

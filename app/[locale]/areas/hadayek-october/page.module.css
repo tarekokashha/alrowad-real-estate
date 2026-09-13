@@ -1,32 +1,19 @@
-/* ---- Masthead ------------------------------------------------------------ */
-
-.masthead { padding-block: clamp(40px, 8vh, 84px) clamp(30px, 5vh, 56px); }
-.mastheadText { grid-column: 1 / span 7; }
-
-.h1 {
-  font-family: var(--ar-display);
-  font-size: clamp(2.2rem, 4.8vw, 4.4rem);
-  line-height: 1.3;
-  margin-block-start: 14px;
-}
-
-.lede {
-  margin-block-start: 22px;
-  max-width: 58ch;
-  color: var(--structure);
-}
+/* ---- The table of contents, inside the masthead's <PageHeader> -----------
+   Rewritten for a dark, photographic ground — it used to sit beside plain
+   text on the page's own paper background; every colour below is now the
+   dark-ground token, not the light one, which the light version would have
+   been invisible against. */
 
 .contents {
-  grid-column: 9 / span 4;
-  align-self: end;
-  border-inline-start: 1px solid var(--hairline);
-  padding-inline-start: 22px;
+  margin-block-start: clamp(24px, 4vh, 40px);
+  padding-block-start: clamp(18px, 3vh, 28px);
+  border-block-start: 1px solid var(--hairline-void);
 }
 .contentsTitle {
   font-family: var(--mono);
   font-size: 11px;
   font-weight: 400;
-  color: var(--structure);
+  color: rgba(246, 244, 240, 0.55);
   margin-block-end: 14px;
 }
 .contents ol {
@@ -34,8 +21,9 @@
   margin: 0;
   padding: 0;
   counter-reset: toc;
-  display: grid;
-  gap: 9px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px clamp(18px, 3vw, 36px);
   font-size: 14px;
 }
 .contents li { counter-increment: toc; }
@@ -43,38 +31,15 @@
   content: counter(toc, decimal-leading-zero) " ";
   font-family: var(--mono);
   font-size: 11px;
-  color: var(--amber-deep);
+  color: var(--amber-bright);
 }
-.contents a { color: var(--ink); }
-.contents a:hover { color: var(--amber-deep); }
-
-/* ---- Full-bleed aerial --------------------------------------------------- */
-
-.hero {
-  position: relative;
-  margin: 0;
-  aspect-ratio: 21 / 8;
-  min-height: 280px;
-  background: var(--paper-2);
-}
-.hero :global(img) { object-fit: cover; }
-
-.heroCaption {
-  position: absolute;
-  inset-block-end: 0;
-  inset-inline: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 28px;
-  padding: 14px var(--page-pad);
-  background: linear-gradient(to top, rgba(20, 19, 15, 0.72), transparent);
-  color: rgba(244, 241, 234, 0.82);
-  font-size: 11px;
-}
+.contents a { color: var(--paper); }
+.contents a:hover { color: var(--amber-bright); }
 
 /* ---- Sections ------------------------------------------------------------ */
 
 .section { padding-block: var(--sec-pad); }
+.section:first-of-type { padding-block-start: var(--sec-pad-major); }
 .sectionAlt {
   background: var(--paper-2);
   padding-block: var(--sec-pad);

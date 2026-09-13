@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import PageHeader from "@/components/PageHeader";
 import Catalogue from "@/components/Catalogue";
 import { COMPANY } from "@/lib/content";
 import { CATALOGUE_REVIEWED_AR } from "@/lib/units";
 import { getUnits } from "@/lib/cms";
-import s from "./page.module.css";
 
 /**
  * The unit pages are statically generated. A Payload hook revalidates them
@@ -68,28 +68,17 @@ export default async function PropertiesPage({
       <Header locale={locale} variant="light" />
 
       <main id="main">
-        <section className={s.masthead}>
-          <div className="shell grid12">
-            <div className={s.mastheadText} data-anim="rise">
-              <span className="eyebrow">المعروض الآن</span>
-              <h1 className={s.h1}>وحدات معروضة في حدائق أكتوبر</h1>
-              <p className={s.lede}>
-                كل وحدة هنا شفناها بأنفسنا وقرأنا أوراقها. الحالة القانونية
-                مكتوبة على الكارت نفسه، مش جوه الصفحة.
-              </p>
-            </div>
-            <dl className={`mono ${s.mastheadMeta}`} data-anim="rise" data-delay="1">
-              <div>
-                <dt>آخر مراجعة للقائمة</dt>
-                <dd>{CATALOGUE_REVIEWED_AR}</dd>
-              </div>
-              <div>
-                <dt>مرجع النطاق</dt>
-                <dd>{COMPANY.surveyRef}</dd>
-              </div>
-            </dl>
-          </div>
-        </section>
+        <PageHeader
+          eyebrow="المعروض الآن"
+          title="وحدات معروضة في حدائق أكتوبر"
+          lede="كل وحدة هنا شفناها بأنفسنا وقرأنا أوراقها. الحالة القانونية مكتوبة على الكارت نفسه، مش جوه الصفحة."
+          meta={[
+            { label: "آخر مراجعة للقائمة", value: CATALOGUE_REVIEWED_AR },
+            { label: "مرجع النطاق", value: COMPANY.surveyRef },
+          ]}
+          image="/img/area-street.webp"
+          imageAlt="شارع سكني في حدائق أكتوبر"
+        />
 
         <Catalogue locale={locale} units={units} />
       </main>

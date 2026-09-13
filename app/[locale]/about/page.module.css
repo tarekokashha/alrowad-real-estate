@@ -1,32 +1,37 @@
-.masthead { padding-block: clamp(40px, 8vh, 84px) clamp(26px, 4vh, 46px); }
-.mastheadText { grid-column: 1 / span 7; }
-
-.h1 {
-  font-family: var(--ar-display);
-  font-size: clamp(2rem, 4.2vw, 4rem);
-  line-height: 1.3;
-  margin-block-start: 14px;
-}
-.lede { margin-block-start: 22px; max-width: 56ch; color: var(--structure); }
-
+/* ---- The claims list, inside the masthead's <PageHeader> --------------
+   Rewritten for a dark, photographic ground. It used to sit beside plain
+   text on the page's own paper background; it now sits over a photograph,
+   so every colour here is the dark-ground token, not the light one — the
+   light-background version of this list would have been invisible against
+   the image. A flex-wrap row rather than a bordered column, echoing
+   PageHeader's own .meta so the two read as one header, not a masthead with
+   a leftover block bolted under it. */
 .claims {
-  grid-column: 9 / span 4;
-  align-self: end;
   list-style: none;
-  margin: 0;
+  margin: clamp(20px, 3vh, 32px) 0 0;
   padding: 0;
-  font-size: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px clamp(20px, 3vw, 40px);
+  font-size: var(--fs-body-2);
+  color: var(--paper);
 }
 .claims li {
-  padding-block: 11px;
-  border-block-end: 1px solid var(--hairline);
+  padding-inline-end: clamp(20px, 3vw, 40px);
+  border-inline-end: 1px solid var(--hairline-void);
+}
+.claims li:last-child {
+  padding-inline-end: 0;
+  border-inline-end: 0;
 }
 .claimNote {
-  border-block-end: none !important;
+  margin-block-start: 14px;
   font-size: 12.5px;
-  color: var(--structure);
+  color: var(--paper-on-void);
   line-height: 1.8;
-  padding-block-start: 14px !important;
+}
+.claimNote a {
+  color: var(--amber-bright);
 }
 
 /* ---- Office ---- */

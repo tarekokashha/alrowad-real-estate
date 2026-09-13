@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import PageHeader from "@/components/PageHeader";
 import SoldTable from "@/components/SoldTable";
 import { SOLD_TOTAL_SINCE_2011, SOLD_SUMMARY_2026, SOLD_USES } from "@/lib/sold";
 import { getSoldRecords } from "@/lib/cms";
@@ -33,11 +34,11 @@ export default async function SoldPage({
   const sold = await getSoldRecords();
 
   const summary = [
-    { labelAr: "وحدات مبيعة", value: String(S.units) },
-    { labelAr: "وسيط سعر البيع", value: `${formatNumber(S.medianPrice)} ج.م` },
-    { labelAr: "وسيط سعر المتر", value: `${formatNumber(S.medianPerMetre)} ج.م` },
-    { labelAr: "وسيط مدة البيع", value: `${S.medianDays} يومًا` },
-    { labelAr: "نسبة التفاوض عن السعر المعلن", value: S.negotiationAr },
+    { label: `وحدات مبيعة (${S.yearAr})`, value: String(S.units) },
+    { label: "وسيط سعر البيع", value: `${formatNumber(S.medianPrice)} ج.م` },
+    { label: "وسيط سعر المتر", value: `${formatNumber(S.medianPerMetre)} ج.م` },
+    { label: "وسيط مدة البيع", value: `${S.medianDays} يومًا` },
+    { label: "نسبة التفاوض عن السعر المعلن", value: S.negotiationAr },
   ];
 
   return (
@@ -45,39 +46,22 @@ export default async function SoldPage({
       <Header locale={locale} variant="light" />
 
       <main id="main">
-        <section className={s.masthead}>
-          <div className="shell grid12" data-anim="rise">
-            <div className={s.mastheadText}>
-              <span className="eyebrow">سجل عام · يُحدَّث بعد كل تعاقد</span>
-              <h1 className={s.h1}>
-                كل وحدة بعناها،
-                <br />
-                بتاريخها وسعرها
-              </h1>
-              <p className={s.lede}>
-                من ٢٠١١ إلى اليوم سجّلنا{" "}
-                <bdi className="mono">{SOLD_TOTAL_SINCE_2011}</bdi> وحدة. هذه
-                الصفحة هي ذلك الرقم مفتوحًا: كود الوحدة، منطقتها، مساحتها، سعر
-                بيعها الفعلي، وتاريخ إتمام التعاقد. تقدر تقارن بها أي سعر معروض
-                عليك اليوم.
-              </p>
-            </div>
-
-            <div className={s.summary}>
-              <h2 className={s.summaryTitle}>ملخص {S.yearAr} حتى الآن</h2>
-              <dl className={s.summaryList}>
-                {summary.map((r) => (
-                  <div key={r.labelAr}>
-                    <dt>{r.labelAr}</dt>
-                    <dd className="mono">
-                      <bdi>{r.value}</bdi>
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          </div>
-        </section>
+        <PageHeader
+          eyebrow="سجل عام · يُحدَّث بعد كل تعاقد"
+          title="كل وحدة بعناها، بتاريخها وسعرها"
+          lede={
+            <>
+              من ٢٠١١ إلى اليوم سجّلنا{" "}
+              <bdi className="mono">{SOLD_TOTAL_SINCE_2011}</bdi> وحدة. هذه
+              الصفحة هي ذلك الرقم مفتوحًا: كود الوحدة، منطقتها، مساحتها، سعر
+              بيعها الفعلي، وتاريخ إتمام التعاقد. تقدر تقارن بها أي سعر معروض
+              عليك اليوم.
+            </>
+          }
+          meta={summary}
+          image="/img/area-landscape.webp"
+          imageAlt="منظر عام لحدائق أكتوبر"
+        />
 
         <section className={s.tableSection}>
           <div className="shell-wide">
