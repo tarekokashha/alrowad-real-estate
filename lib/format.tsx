@@ -150,3 +150,25 @@ export function Measure({
 export function Latin({ children }: { children: ReactNode }) {
   return <bdi dir="ltr">{children}</bdi>;
 }
+
+const AR_MONTHS = [
+  "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو",
+  "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر",
+];
+
+/**
+ * The inverse of the "٢٨ أغسطس ٢٠٢٦" form used throughout the site (see
+ * lib/cms's arabicDate). Used to sort by an Arabic date string when only the
+ * formatted string survived — comparing the strings themselves, or just
+ * their leading day number, both produce the wrong order across months.
+ * Returns 0 (not a valid timestamp) if the string cannot be parsed.
+ */
+export function parseArabicDate(value: string): number {
+  const western = value.replace(/\d/g, (d) => d).replace(/[٠-٩]/g, (d) => String(EASTERN.indexOf(d)));
+  const [dayStr, month, yearStr] = western.trim().split(/\s+/);
+  const day = Number(dayStr);
+  const monthIndex = AR_MONTHS.indexOf(month);
+  const year = Number(yearStr);
+  if (!dayStr || monthIndex < 0 || !year || Number.isNaN(day)) return 0;
+  return new Date(year, monthIndex, day).getTime();
+}

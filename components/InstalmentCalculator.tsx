@@ -1,86 +1,76 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import RangeSlider from "./RangeSlider";
 import { formatNumber } from "@/lib/format";
 import { yearsLabel } from "@/lib/units";
 import s from "./InstalmentCalculator.module.css";
 
 /**
- * Interest-free, because that is how owner and developer plans in this market
- * actually work: monthly = (price − deposit) / months. Nothing is hidden in a
- * rate, so nothing needs to be disclosed in small print.
+ * Unit.dc.html's own sidebar calculator — one specific unit, no interest:
+ * down = price × pct/100, monthly = (price − down) / (years × 12).
  */
 export default function InstalmentCalculator({
   price,
   maxYears,
-  defaultPct = 30,
 }: {
   price: number;
   maxYears: number;
-  defaultPct?: number;
 }) {
-  const [pct, setPct] = useState(defaultPct);
-  const [years, setYears] = useState(Math.min(maxYears, 5));
+  const [pct, setPct] = useState(30);
+  const [years, setYears] = useState(maxYears);
 
-  const down = Math.round((price * pct) / 100);
-  const months = years * 12;
-  const remaining = price - down;
-  const monthly = Math.round(remaining / months);
+  const { down, monthly, months } = useMemo(() => {
+    const down = Math.round(price * (pct / 100));
+    const months = years * 12;
+    const monthly = Math.round((price - down) / months);
+    return { down, monthly, months };
+  }, [price, pct, years]);
 
   return (
-    <div className={s.calc}>
-      <h3 className={s.title}>اعرف قسطك</h3>
+    <div className={s.card}>
+      <h3 className={s.title}>احسب قسطك على الوحدة دي</h3>
 
-      <div className={s.control}>
-        <label htmlFor="down-pct" className={s.label}>
-          المقدم
-          <span className="mono">
-            <bdi>{formatNumber(down)}</bdi> ج.م · <bdi dir="ltr">{pct}%</bdi>
-          </span>
-        </label>
-        <input
-          id="down-pct"
-          type="range"
-          min={10}
-          max={60}
-          step={5}
-          value={pct}
-          onChange={(e) => setPct(Number(e.target.value))}
-          className={s.range}
-        />
-      </div>
-
-      <div className={s.control}>
-        <label htmlFor="years" className={s.label}>
-          سنين التقسيط
-          <span className="mono">
-            <bdi>{years}</bdi> {yearsLabel(years)}
-          </span>
-        </label>
-        <input
-          id="years"
-          type="range"
-          min={1}
-          max={maxYears}
-          step={1}
-          value={years}
-          onChange={(e) => setYears(Number(e.target.value))}
-          className={s.range}
-        />
-      </div>
+      <RangeSlider
+        label="المقدم"
+        value={pct}
+        min={20}
+        max={70}
+        dragStep={5}
+        keyStep={5}
+        format={(v) => String(v)}
+        unit="%"
+        onChange={setPct}
+      />
+      <RangeSlider
+        label="مدة التقسيط"
+        value={years}
+        min={1}
+        max={Math.max(1, maxYears)}
+        dragStep={1}
+        keyStep={1}
+        format={(v) => `${v} ${yearsLabel(v)}`}
+        onChange={setYears}
+      />
 
       <div className={s.result}>
-        <span className={s.resultLabel}>القسط الشهري</span>
-        <p className={s.monthly}>
-          <bdi className="mono">{formatNumber(monthly)}</bdi> ج.م
-        </p>
-        <p className={`mono ${s.remaining}`}>
-          المتبقي <bdi>{formatNumber(remaining)}</bdi> ج.م على{" "}
-          <bdi>{months}</bdi> شهرًا
-        </p>
+        <div className={s.row}>
+          <span>المقدم</span>
+          <bdi className="mono">{formatNumber(down)} ج.م</bdi>
+        </div>
+        <div className={s.row}>
+          <span>عدد الأقساط</span>
+          <bdi className="mono">{formatNumber(months)}</bdi>
+        </div>
+        <div className={s.monthlyRow}>
+          <span>القسط الشهري</span>
+          <bdi className={s.monthly}>{formatNumber(monthly)} ج.م</bdi>
+        </div>
       </div>
 
-      <p className={s.note}>بدون فوائد — كما هو متفق مع المالك</p>
+      <p className={s.disclaimer}>
+        تقدير بدون فوائد بناءً على خطة المالك أو المطور. الأرقام النهائية في العقد.
+      </p>
     </div>
   );
 }

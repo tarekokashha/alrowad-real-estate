@@ -3,6 +3,7 @@ import Image from "next/image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageHeader from "@/components/PageHeader";
+import TimelineRail from "@/components/gulf/TimelineRail";
 import {
   GULF_SUMMARY,
   GULF_STEPS,
@@ -12,7 +13,6 @@ import {
   GULF_YIELDS,
   GULF_HOURS,
 } from "@/lib/gulf";
-import { COMPANY } from "@/lib/content";
 import { whatsappHref, PHONE_INTL, PHONE_E164 } from "@/lib/format";
 import s from "./page.module.css";
 
@@ -30,77 +30,93 @@ export default async function GulfPage({
 }) {
   const { locale } = await params;
 
+  const summary = [
+    ...GULF_SUMMARY.map((r) => ({
+      label: r.labelAr,
+      value: <bdi>{r.valueAr}</bdi>,
+      bronze: r.labelAr === "الحضور الشخصي",
+    })),
+    { label: "صافي عائد الإيجار المرصود", value: <bdi>7.4% – 9.1% سنويًا</bdi>, bronze: false },
+  ];
+
   return (
     <>
-      <Header locale={locale} variant="light" />
+      <Header locale={locale} variant="interior" active="gulf" />
 
       <main id="main">
         <PageHeader
           eyebrow="الشراء من خارج مصر"
-          title="تملّك في حدائق أكتوبر من الرياض أو جدة أو الدمام"
+          title={
+            <>
+              تملّك في حدائق أكتوبر من{" "}
+              <span style={{ color: "var(--bronze)" }}>الرياض أو جدة أو الدمام</span>
+            </>
+          }
           lede="ثمانية من كل عشرين عميل تعاملنا معهم خلال العامين الماضيين يقيمون في السعودية أو الخليج. هذه الصفحة تشرح الإجراء كما يجري فعلًا: المستندات المطلوبة، ما يمكن إنجازه بالتوكيل وما يستلزم الحضور، الرسوم والضرائب بأرقامها، وحدود التملك للأجانب في القانون المصري."
-          meta={[
-            ...GULF_SUMMARY.map((r) => ({ label: r.labelAr, value: r.valueAr })),
-            {
-              label: "صافي عائد الإيجار المرصود",
-              value: "7.4% – 9.1% سنويًا",
-            },
-            { label: "مرجع المسح", value: COMPANY.surveyRef },
-          ]}
-          image="/img/area-street.webp"
-          imageAlt="شارع سكني داخلي في حدائق أكتوبر: أرصفة واسعة وأشجار نخيل ومبانٍ منخفضة من الحجر الجيري"
+          stats={
+            <div className={s.statGrid}>
+              {summary.map((it, i) => (
+                <div key={it.label} data-anim="rise" data-delay={i + 1} className={s.statCell}>
+                  <span className={s.statLabel}>{it.label}</span>
+                  <span className={`${s.statValue} ${it.bronze ? s.bronze : ""}`}>{it.value}</span>
+                </div>
+              ))}
+            </div>
+          }
+          image="/img/area-landscape.webp"
+          imageAlt="ممشى داخلي في حدائق أكتوبر بين مبانٍ من الحجر الجيري وأشجار زيتون"
+          imageHeight="clamp(280px, 56vh, 620px)"
         />
 
         {/* ---- Six documented stages ---- */}
         <section className={s.section}>
-          <div className="shell">
-            <h2 className={s.h2}>مراحل الشراء عن بُعد</h2>
-            <p className={s.sectionLede}>
-              ست مراحل، لكل منها مخرَج موثَّق ترسله إليك نسخة منه في نفس اليوم.
-              لا ننتقل من مرحلة إلى التي بعدها قبل أن تصلك أوراق التي قبلها.
-              المسؤول عن هذا الملف شخص واحد من البداية إلى التسجيل، ويعمل بتوقيت
-              الخليج عند الحاجة.
-            </p>
-            <ol className={s.steps}>
-              {GULF_STEPS.map((st) => (
-                <li key={st.nAr} className={s.step}>
+          <h2 className={s.h2}>مراحل الشراء عن بُعد</h2>
+          <p className={s.sectionLede}>
+            ست مراحل، لكل منها مخرَج موثَّق ترسله إليك نسخة منه في نفس اليوم.
+            لا ننتقل من مرحلة إلى التي بعدها قبل أن تصلك أوراق التي قبلها.
+            المسؤول عن هذا الملف شخص واحد من البداية إلى التسجيل، ويعمل بتوقيت
+            الخليج عند الحاجة.
+          </p>
+          <TimelineRail>
+            {GULF_STEPS.map((st, i) => (
+              <div key={st.nAr} data-anim="rise" data-delay={i + 1} className={s.step}>
+                <span className={`${s.dot} ${i === GULF_STEPS.length - 1 ? s.dotFilled : ""}`} />
+                <div className={s.stepBody}>
                   <span className={`mono ${s.stepNum}`}>{st.nAr}</span>
-                  <div className={s.stepBody}>
-                    <h3 className={s.stepTitle}>{st.titleAr}</h3>
-                    <p>{st.bodyAr}</p>
-                  </div>
-                  <div className={s.stepMeta}>
-                    <span className={`mono ${s.stepOutLabel}`}>المخرَج الموثَّق</span>
-                    <span className={s.stepOut}>{st.outputAr}</span>
-                    <span className={`mono ${s.stepDays}`}>{st.daysAr}</span>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </div>
+                  <h3 className={s.stepTitle}>{st.titleAr}</h3>
+                  <p>{st.bodyAr}</p>
+                </div>
+                <div className={s.stepMeta}>
+                  <span className={s.stepOutLabel}>المخرَج الموثَّق</span>
+                  <span className={s.stepOut}>{st.outputAr}</span>
+                  <span className={`mono ${s.stepDays}`}>{st.daysAr}</span>
+                </div>
+              </div>
+            ))}
+          </TimelineRail>
         </section>
 
         {/* ---- Documents + ownership limits ---- */}
         <section className={s.sectionAlt}>
-          <div className="shell grid12">
+          <div className={s.docsGrid}>
             <div className={s.docsCol}>
               <h2 className={s.h2}>المستندات المطلوبة منك</h2>
               <p className={s.sectionLede}>
                 كل ما يلزم لإتمام الشراء والتسجيل دون حضورك. التوكيل هو المستند
                 الوحيد الذي يحتاج توثيقًا في الخارج.
               </p>
-              <dl className={s.docs}>
-                {GULF_DOCS.map((d) => (
-                  <div key={d.titleAr}>
-                    <dt>{d.titleAr}</dt>
-                    <dd>{d.noteAr}</dd>
+              <div className={s.docs}>
+                {GULF_DOCS.map((d, i) => (
+                  <div key={d.titleAr} className={`${s.doc} ${i === 1 ? s.docHighlight : ""}`}>
+                    <span className={s.docTitle}>{d.titleAr}</span>
+                    <span className={s.docNote}>{d.noteAr}</span>
                   </div>
                 ))}
-              </dl>
+              </div>
             </div>
 
             <div className={s.lawCol}>
-              <h2 className={s.h3}>حدود التملك في القانون المصري</h2>
+              <h3 className={s.h3}>حدود التملك في القانون المصري</h3>
               <p className={s.lawP}>
                 للأجانب غير المصريين: تملك ما لا يجاوز وحدتين للسكن الخاص، ولا
                 تزيد مساحة الوحدة على <bdi className="mono">4,000</bdi> م²، وألا
@@ -117,27 +133,21 @@ export default async function GulfPage({
                 الأجانب تُعدَّل من وقت لآخر — استشر محاميك قبل أي التزام.
               </p>
 
-              <h2 className={`${s.h3} ${s.h3Spaced}`}>
+              <h3 className={`${s.h3} ${s.h3Spaced}`}>
                 التكلفة الكاملة على وحدة بـ <bdi className="mono">2,000,000</bdi> ج.م
-              </h2>
-              <table className={s.costs}>
-                <tbody>
-                  {GULF_COSTS.map((c) => (
-                    <tr key={c.labelAr}>
-                      <th scope="row">{c.labelAr}</th>
-                      <td className="mono">
-                        <bdi>{c.valueAr}</bdi>
-                      </td>
-                    </tr>
-                  ))}
-                  <tr className={s.costTotal}>
-                    <th scope="row">الإجمالي التقديري</th>
-                    <td className="mono">
-                      <bdi>{GULF_COST_TOTAL_AR}</bdi>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              </h3>
+              <div className={s.costs}>
+                {GULF_COSTS.map((c) => (
+                  <div key={c.labelAr} className={s.costRow}>
+                    <span>{c.labelAr}</span>
+                    <bdi className="mono">{c.valueAr}</bdi>
+                  </div>
+                ))}
+                <div className={`${s.costRow} ${s.costTotal}`}>
+                  <span>الإجمالي التقديري</span>
+                  <bdi className="mono">{GULF_COST_TOTAL_AR}</bdi>
+                </div>
+              </div>
               <p className={s.footnote}>
                 لا توجد رسوم خفية ولا «مصاريف إدارية» عندنا. العمولة تُدفع عند
                 التعاقد فقط.
@@ -148,7 +158,7 @@ export default async function GulfPage({
 
         {/* ---- Remote viewing ---- */}
         <section className={s.section}>
-          <div className="shell grid12">
+          <div className={s.viewingGridOuter}>
             <div className={s.viewingText}>
               <h2 className={s.h2}>المعاينة عن بُعد كما نجريها</h2>
               <p className={s.sectionLede}>
@@ -172,9 +182,9 @@ export default async function GulfPage({
                 { src: "/img/unit-01-kitchen.webp", alt: "معاينة المطبخ وعدادات المياه" },
                 { src: "/img/unit-03-stair.webp", alt: "معاينة السلم والمدخل" },
                 { src: "/img/unit-04-exterior.webp", alt: "معاينة واجهة العمارة والشارع" },
-              ].map((g) => (
-                <div key={g.src} className={s.viewingShot}>
-                  <Image src={g.src} alt={g.alt} fill sizes="(max-width:900px) 50vw, 25vw" quality={80} />
+              ].map((g, i) => (
+                <div key={g.src} className={`${s.viewingShot} ${i % 2 === 1 ? s.viewingShotDown : ""}`}>
+                  <Image src={g.src} alt={g.alt} fill sizes="(max-width:900px) 50vw, 25vw" quality={80} className="kenBurns" />
                 </div>
               ))}
             </div>
@@ -183,85 +193,78 @@ export default async function GulfPage({
 
         {/* ---- Observed yields ---- */}
         <section className={s.sectionAlt}>
-          <div className="shell">
-            <h2 className={s.h2}>العائد المرصود، لا العائد الموعود</h2>
-            <p className={s.sectionLede}>
-              أرقام مأخوذة من وحدات نديرها أو نتابع إيجارها فعلًا داخل النطاق.
-              صافي العائد محسوب بعد خصم الصيانة والفترات الفارغة وأجر الإدارة،
-              لا قبلها.
-            </p>
-            <div className={s.tableWrap}>
-              <table className={s.table}>
-                <thead>
-                  <tr>
-                    <th scope="col">نوع الوحدة والمنطقة</th>
-                    <th scope="col">ثمن الشراء</th>
-                    <th scope="col">الإيجار الشهري</th>
-                    <th scope="col">إجمالي العائد</th>
-                    <th scope="col">صافي العائد</th>
-                    <th scope="col">أشهر فارغة سنويًا</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {GULF_YIELDS.map((y) => (
-                    <tr key={y.nameAr}>
-                      <th scope="row">{y.nameAr}</th>
-                      <td className="mono"><bdi>{y.priceAr}</bdi></td>
-                      <td className="mono"><bdi>{y.rentAr}</bdi></td>
-                      <td className="mono"><bdi>{y.grossAr}</bdi></td>
-                      <td className={`mono ${s.net}`}><bdi>{y.netAr}</bdi></td>
-                      <td className="mono"><bdi>{y.vacancyAr}</bdi></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          <h2 className={s.h2}>العائد المرصود، لا العائد الموعود</h2>
+          <p className={s.sectionLede}>
+            أرقام مأخوذة من وحدات نديرها أو نتابع إيجارها فعلًا داخل النطاق.
+            صافي العائد محسوب بعد خصم الصيانة والفترات الفارغة وأجر الإدارة،
+            لا قبلها.
+          </p>
+          <div className={s.tableWrap}>
+            <div className={s.tableMin}>
+              <div className={`${s.row} ${s.head}`}>
+                <span>نوع الوحدة والمنطقة</span>
+                <span>ثمن الشراء</span>
+                <span>الإيجار الشهري</span>
+                <span>إجمالي العائد</span>
+                <span>صافي العائد</span>
+                <span>أشهر فارغة سنويًا</span>
+              </div>
+              {GULF_YIELDS.map((y) => (
+                <div key={y.nameAr} className={s.row}>
+                  <span className={s.yName}>{y.nameAr}</span>
+                  <bdi className="mono">{y.priceAr}</bdi>
+                  <bdi className="mono">{y.rentAr}</bdi>
+                  <bdi className="mono">{y.grossAr}</bdi>
+                  <bdi className={`mono ${s.net}`}>{y.netAr}</bdi>
+                  <bdi className="mono">{y.vacancyAr}</bdi>
+                </div>
+              ))}
             </div>
-            <p className={s.footnote}>
-              العائد بالجنيه المصري. لا نُدرج في هذه الأرقام أي توقع لارتفاع سعر
-              الوحدة نفسها، لأنه توقع لا رصد.
-            </p>
           </div>
+          <p className={s.footnote}>
+            العائد بالجنيه المصري. لا نُدرج في هذه الأرقام أي توقع لارتفاع سعر
+            الوحدة نفسها، لأنه توقع لا رصد.
+          </p>
         </section>
 
         {/* ---- Contact (night band) ---- */}
         <section className={s.contact}>
-          <div className="shell grid12">
+          <div className={s.contactGrid}>
             <div className={s.contactText}>
-              <span className="eyebrow">جهة الاتصال</span>
-              <h2 className={s.h2Night}>
-                مسؤول واحد لملفك من أول رسالة إلى التسجيل
-              </h2>
+              <span className={s.contactEyebrow}>جهة الاتصال</span>
+              <h2 className={s.h2Night}>مسؤول واحد لملفك من أول رسالة إلى التسجيل</h2>
               <p className={s.contactLede}>
                 لا مركز اتصال ولا نموذج بيانات. اكتب لنا المنطقة والميزانية
                 والغرض — سكن أم استثمار — ويصلك في اليوم نفسه ملف مبدئي بثلاث
                 وحدات مطابقة وأوراقها.
               </p>
-              <a
-                className={s.contactWa}
-                href={whatsappHref(
-                  "السلام عليكم، أرغب في الاستفسار عن التملك في حدائق أكتوبر من خارج مصر. المنطقة والميزانية والغرض:",
-                )}
-                rel="noopener"
-              >
-                واتساب · <bdi dir="ltr">{PHONE_INTL}</bdi>
-              </a>
-              <a className={s.contactCall} href={`tel:${PHONE_E164}`}>
-                اتصال مباشر
-              </a>
+              <div className={s.contactCtas}>
+                <a
+                  className={s.contactWa}
+                  href={whatsappHref(
+                    "السلام عليكم، أرغب في الاستفسار عن التملك في حدائق أكتوبر من خارج مصر. المنطقة والميزانية والغرض:",
+                  )}
+                  target="_blank"
+                  rel="noopener"
+                >
+                  واتساب · <bdi className="mono">{PHONE_INTL}</bdi>
+                </a>
+                <a className={s.contactCall} href={`tel:${PHONE_E164}`}>
+                  اتصال مباشر
+                </a>
+              </div>
             </div>
 
             <div className={s.hours}>
               <h3 className={s.hoursTitle}>مواعيد العمل بتوقيتك</h3>
-              <dl className={s.hoursList}>
-                {GULF_HOURS.map((h) => (
-                  <div key={h.cityAr}>
-                    <dt>{h.cityAr}</dt>
-                    <dd className="mono">
-                      <bdi dir="ltr">{h.hoursAr}</bdi>
-                    </dd>
-                  </div>
-                ))}
-              </dl>
+              {GULF_HOURS.map((h) => (
+                <div key={h.cityAr} className={s.hoursRow}>
+                  <span>{h.cityAr}</span>
+                  <bdi className="mono" dir="ltr">
+                    {h.hoursAr}
+                  </bdi>
+                </div>
+              ))}
               <p className={s.hoursNote}>
                 خارج هذه المواعيد يصلك رد على واتساب في أول ساعة من الصباح.
               </p>

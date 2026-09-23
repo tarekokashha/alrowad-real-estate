@@ -1,26 +1,27 @@
 .btn {
+  white-space: nowrap;
   display: inline-flex;
-  align-items: baseline;
-  gap: 12px;
-  background: none;
-  border: 0;
-  border-block-end: 1px solid var(--hairline);
-  padding: 6px 0;
-  margin-block-start: 14px;
-  cursor: pointer;
-  color: var(--ink);
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px dashed rgba(27, 26, 23, 0.3);
+  background: var(--surface);
+  font-family: inherit;
   font-size: 14px;
+  color: var(--ink);
+  cursor: pointer;
   min-height: 40px;
 }
-.btn:hover { border-block-end-color: var(--amber-deep); }
+.btn:hover {
+  border-color: var(--bronze);
+}
 .hint {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--amber-deep);
+  color: var(--bronze);
 }
 
 @media (max-width: 900px) {
-  /* Copying the unit code is how a buyer quotes it back over WhatsApp. */
-  .btn { min-height: 44px; }
-  .hint { font-size: 12.5px; }
+  .btn {
+    min-height: 44px;
+  }
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageHeader from "@/components/PageHeader";
+import StatStrip from "@/components/StatStrip";
 import SoldTable from "@/components/SoldTable";
 import { SOLD_TOTAL_SINCE_2011, SOLD_SUMMARY_2026, SOLD_USES } from "@/lib/sold";
 import { getSoldRecords } from "@/lib/cms";
@@ -34,21 +35,35 @@ export default async function SoldPage({
   const sold = await getSoldRecords();
 
   const summary = [
-    { label: `وحدات مبيعة (${S.yearAr})`, value: String(S.units) },
-    { label: "وسيط سعر البيع", value: `${formatNumber(S.medianPrice)} ج.م` },
-    { label: "وسيط سعر المتر", value: `${formatNumber(S.medianPerMetre)} ج.م` },
-    { label: "وسيط مدة البيع", value: `${S.medianDays} يومًا` },
-    { label: "نسبة التفاوض عن السعر المعلن", value: S.negotiationAr },
+    {
+      label: `وحدات مبيعة (${S.yearAr})`,
+      value: (
+        <bdi>
+          <span data-anim="counter" data-to={S.units}>
+            {S.units}
+          </span>
+        </bdi>
+      ),
+      big: true,
+    },
+    { label: "وسيط سعر البيع", value: <><bdi>{formatNumber(S.medianPrice)}</bdi> <span>ج.م</span></> },
+    { label: "وسيط سعر المتر", value: <><bdi>{formatNumber(S.medianPerMetre)}</bdi> <span>ج.م</span></> },
+    { label: "وسيط مدة البيع", value: <><bdi>{S.medianDays}</bdi> <span>يومًا</span></> },
+    { label: "نسبة التفاوض عن السعر المعلن", value: <bdi>{S.negotiationAr}</bdi> },
   ];
 
   return (
     <>
-      <Header locale={locale} variant="light" />
+      <Header locale={locale} variant="interior" active="sold" />
 
       <main id="main">
         <PageHeader
           eyebrow="سجل عام · يُحدَّث بعد كل تعاقد"
-          title="كل وحدة بعناها، بتاريخها وسعرها"
+          title={
+            <>
+              كل وحدة بعناها، <span style={{ color: "var(--bronze)" }}>بتاريخها وسعرها</span>
+            </>
+          }
           lede={
             <>
               من ٢٠١١ إلى اليوم سجّلنا{" "}
@@ -58,9 +73,7 @@ export default async function SoldPage({
               عليك اليوم.
             </>
           }
-          meta={summary}
-          image="/img/area-landscape.webp"
-          imageAlt="منظر عام لحدائق أكتوبر"
+          stats={<StatStrip items={summary} />}
         />
 
         <section className={s.tableSection}>

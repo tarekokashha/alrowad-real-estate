@@ -23,8 +23,8 @@ export default function CopyCode({ code }: { code: string }) {
 
   return (
     <button type="button" className={s.btn} onClick={copy}>
-      <span className="mono">{code}</span>
-      <span className={s.hint}>{copied ? "تم النسخ" : "نسخ الكود"}</span>
+      <bdi className="mono">{code}</bdi>
+      <span className={s.hint}>{copied ? "اتنسخ ✓" : "انسخ الكود"}</span>
     </button>
   );
 }

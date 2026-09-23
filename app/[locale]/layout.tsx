@@ -9,7 +9,6 @@ import { notFound } from "next/navigation";
 import { COMPANY } from "@/lib/content";
 import { PHONE_E164 } from "@/lib/format";
 import Motion from "@/components/Motion";
-import Loader from "@/components/Loader";
 
 /**
  * One locale. There was an "en" here and a switch in the header pointing at
@@ -142,7 +141,7 @@ export default async function LocaleLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;600;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
         />
         <script
           type="application/ld+json"
@@ -152,19 +151,16 @@ export default async function LocaleLayout({
         />
       </head>
       <body>
-        {/* First thing in the document, so its inline script is the first
-            thing the parser reaches — see components/Loader for why that
-            matters. Shown only on a genuine first load: the App Router keeps
-            this layout mounted across client-side navigation, so it does
-            not reappear on every link click, only on a fresh visit or a
-            hard refresh. */}
-        <Loader />
         <a href="#main" className="skip-link">
           {ar ? "تخطَّ إلى المحتوى" : "Skip to content"}
         </a>
-        <div className="grain" aria-hidden="true" />
-        {/* One motion owner for every [data-anim] on the page, mounted
-            once. It renders nothing — see components/Motion. */}
+        {/* The scroll progress bar — bronze, 2px, filling from the right on
+            every page. Driven by components/Motion's own per-frame tick, not
+            a stylesheet rule, so a blocked bundle simply leaves it at rest. */}
+        <div className="progressBar" data-progress aria-hidden="true" />
+        {/* One motion owner for the whole site — reveals, parallax, the
+            header's scroll behaviour, the progress bar and the custom
+            cursor. It renders nothing — see components/Motion. */}
         <Motion />
         {children}
       </body>

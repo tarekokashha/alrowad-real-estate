@@ -1,113 +1,69 @@
-import Image from "next/image";
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import type { Unit } from "@/lib/units";
-import { Price, PricePerMetre, Measure } from "@/lib/format";
+import { formatNumber } from "@/lib/format";
 import s from "./PropertyCard.module.css";
 
-/**
- * The card is: one image at a fixed ratio, then a typeset stack below it.
- *
- * It is NOT bordered, shadowed, rounded past 4px, badged over the photo,
- * carrying a heart icon, or carrying a `🛏️ 3 · 🚿 2 · 📐 150m²` icon row.
- * The metadata is typeset, not iconified — that one decision is most of the
- * distance between this and every template in the market.
- *
- * The legal status sits above the name, before the price, because it is the
- * thing the buyer is actually afraid of. Never a green tick: a tick is a
- * claim, a labelled value is a disclosure.
- *
- * Every card in a grid uses the SAME aspect ratio. Mixing ratios within one
- * grid is the fastest way to make AI-generated photography look fake.
- */
+/** A unit card — Units.dc.html's grid item, and the six featured rows on
+ *  the homepage before it: 4:3 photo with a bottom gradient and the legal
+ *  status, code and handover overlaid on it; price, size and an optional
+ *  tinted instalment-plan line underneath. */
 export default function PropertyCard({
   unit,
-  locale,
+  href,
+  planLine,
+  delaySec = 0,
   priority = false,
-  depth,
 }: {
   unit: Unit;
-  locale: string;
+  href: string;
+  planLine?: string | null;
+  delaySec?: number;
   priority?: boolean;
-  /** Parallax strength for the photograph inside the frame. The caller
-   *  varies it by column so a row of cards does not travel as one slab —
-   *  which is the difference between depth and a sliding panel. */
-  depth?: number;
 }) {
-  const href = `/${locale}/properties/${unit.code.toLowerCase()}`;
+  const sizeLabel = unit.gardenSize
+    ? `${unit.size} م² + حديقة ${unit.gardenSize} م²`
+    : `${unit.size} م²`;
+  const meta = [unit.floorAr, unit.finishing].filter(Boolean).join(" · ");
 
   return (
-    <article className={s.card}>
-      {/* Two layers, and they are doing different jobs.
-          The outer one arrives once: the clip opens from the inline-start
-          edge while the picture eases down out of a slight over-scale, so the
-          photograph settles out of its own frame the way a camera would find
-          it. A card that fades in reads as a carousel; this reads as a shot.
-          The inner one never stops: the picture is taller than its frame and
-          travels against the scroll for as long as the card is on screen.
-          Both attributes are inert until <Motion /> wires them, so a crawler
-          and a reduced-motion reader see an ordinary photograph. */}
-      <Link
-        href={href}
-        className={s.media}
-        tabIndex={-1}
-        aria-hidden="true"
-        data-anim="img"
-      >
-        <span
-          className={s.parallax}
-          data-anim="parallax"
-          data-depth={depth ?? 0.12}
-        >
-          <Image
-            src={unit.image}
-            alt={unit.imageAlt}
-            fill
-            sizes="(max-width: 900px) 100vw, (max-width: 1100px) 50vw, 33vw"
-            quality={80}
-            priority={priority}
-            className={s.img}
-          />
-        </span>
-      </Link>
+    <Link href={href} data-anim="rise" data-hover="" className={s.card}>
+      <div className={s.media}>
+        {/* Plain img: the grid can hold anywhere from a handful of units to
+            the full catalogue, and next/image's per-page priority budget
+            does not fit an unbounded list. */}
+        <img
+          src={unit.image}
+          alt={unit.imageAlt}
+          loading={priority ? "eager" : "lazy"}
+          className={`${s.img} kenBurns`}
+          style={{ "--kb-dur": "18s", "--kb-delay": `${-delaySec}s` } as CSSProperties}
+        />
+        <div className={s.gradient} aria-hidden="true" />
+        <span className={s.legalPill}>{unit.legalStatus}</span>
+        <bdi className={`mono ${s.codeTag}`}>{unit.code}</bdi>
+        <span className={s.handoverTag}>{unit.handoverAr}</span>
+      </div>
 
       <div className={s.body}>
-        <span className={`mono ${s.code}`}>{unit.code}</span>
-        <span className={s.legal}>{unit.legalStatus}</span>
-
-        <h3 className={s.title}>
-          <Link href={href}>
-            {unit.titleAr}
-            <br />
-            {unit.areaAr}
-          </Link>
-        </h3>
-
-        <p className={s.price}>
-          <Price value={unit.price} />
-        </p>
-
-        <p className={`mono ${s.metrics}`}>
-          <PricePerMetre price={unit.price} area={unit.size} />
-          {" · "}
-          <Measure value={unit.size} unit="م²" />
-          {unit.gardenSize ? (
-            <>
-              {" + "}
-              <Measure value={unit.gardenSize} unit="م² حديقة" />
-            </>
-          ) : unit.floorAr ? (
-            <> · {unit.floorAr}</>
-          ) : null}
-        </p>
-
-        <p className={s.spec}>
-          {unit.finishing} · {unit.handoverAr} · {unit.saleTypeAr}
-        </p>
-
-        <p className={`mono ${s.checked}`}>
-          آخر تحديث للسعر: {unit.priceCheckedAr}
-        </p>
+        <div className={s.titleRow}>
+          <span className={s.title}>{unit.titleAr}</span>
+          <span className={s.size}>{sizeLabel}</span>
+        </div>
+        <span className={s.area}>{unit.areaAr}</span>
+        <div className={s.priceRow}>
+          <span>
+            <bdi className={s.price}>{formatNumber(unit.price)}</bdi>{" "}
+            <span className={s.currency}>ج.م</span>
+          </span>
+          <span className={`mono ${s.perM}`}>
+            <bdi>{formatNumber(Math.round(unit.price / unit.size))}</bdi> ج.م/م²
+          </span>
+        </div>
+        {planLine ? <div className={s.plan}>{planLine}</div> : null}
+        <div className={s.meta}>{meta}</div>
+        <div className={s.checked}>السعر اتراجع {unit.priceCheckedAr}</div>
       </div>
-    </article>
+    </Link>
   );
 }

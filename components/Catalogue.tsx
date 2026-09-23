@@ -2,313 +2,226 @@
 
 import { useMemo, useState } from "react";
 import PropertyCard from "./PropertyCard";
+import RangeSlider from "./RangeSlider";
 import {
-  facetsFor,
   planFor,
-  yearsLabel,
   unitsLabel,
+  yearsLabel,
   type Unit,
 } from "@/lib/units";
-import { formatNumber, whatsappHref } from "@/lib/format";
+import { formatNumber, parseArabicDate } from "@/lib/format";
 import s from "./Catalogue.module.css";
 
-type Sort = "newest" | "priceAsc" | "priceDesc" | "perMetreAsc";
-
-const SORTS: { key: Sort; labelAr: string }[] = [
-  { key: "newest", labelAr: "الأحدث إضافة" },
-  { key: "priceAsc", labelAr: "السعر من الأقل" },
-  { key: "priceDesc", labelAr: "السعر من الأعلى" },
-  { key: "perMetreAsc", labelAr: "سعر المتر من الأقل" },
+type SortKey = "new" | "low" | "high" | "size";
+const SORTS: { key: SortKey; labelAr: string }[] = [
+  { key: "new", labelAr: "الأحدث مراجعة" },
+  { key: "low", labelAr: "الأقل سعرًا" },
+  { key: "high", labelAr: "الأعلى سعرًا" },
+  { key: "size", labelAr: "الأكبر مساحة" },
 ];
 
-function toggle<T>(list: T[], value: T): T[] {
-  return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
+function count<T>(list: T[], pick: (x: T) => boolean) {
+  return list.filter(pick).length;
 }
 
 /**
- * `units` arrives from the server rather than being imported, because the
- * inventory now lives in the CMS and this component runs in the browser.
+ * Units.dc.html: chip filters over the region, type and legal status; a
+ * sort segmented control; an affordability toggle that reveals the two
+ * drag sliders and tints every matching card with its plan line; and the
+ * result grid, client-side over the server-rendered inventory.
  */
-export default function Catalogue({
-  locale,
-  units,
-}: {
-  locale: string;
-  units: Unit[];
-}) {
-  const {
-    areas: AREAS,
-    types: TYPES,
-    legals: LEGAL_VALUES,
-    finishings: FINISHINGS,
-    priceMin: PRICE_MIN,
-    priceMax: PRICE_MAX,
-  } = useMemo(() => facetsFor(units), [units]);
+export default function Catalogue({ locale, units }: { locale: string; units: Unit[] }) {
+  const [area, setArea] = useState<string>("all");
+  const [type, setType] = useState<string>("all");
+  const [legal, setLegal] = useState<string>("all");
+  const [sort, setSort] = useState<SortKey>("new");
+  const [afford, setAfford] = useState(false);
+  const [dep, setDep] = useState(600_000);
+  const [mon, setMon] = useState(22_000);
 
-  const [areas, setAreas] = useState<string[]>([]);
-  const [types, setTypes] = useState<string[]>([]);
-  const [legals, setLegals] = useState<string[]>([]);
-  const [finishes, setFinishes] = useState<string[]>([]);
-  const [maxPrice, setMaxPrice] = useState(PRICE_MAX);
-  const [sort, setSort] = useState<Sort>("newest");
+  const areaChips = useMemo(() => {
+    const areas = [...new Set(units.map((u) => u.areaKey))];
+    return [
+      { key: "all", labelAr: "كل المناطق" },
+      ...areas.map((a) => ({ key: a, labelAr: `${a} · ${count(units, (u) => u.areaKey === a)}` })),
+    ];
+  }, [units]);
 
-  // «اعرف قسطك» — the affordability search.
-  const [deposit, setDeposit] = useState("");
-  const [monthly, setMonthly] = useState("");
-  const [affordOn, setAffordOn] = useState(false);
+  const typeChips = useMemo(() => {
+    const types = [...new Set(units.map((u) => u.type))];
+    return [
+      { key: "all", labelAr: "كل الأنواع" },
+      ...types.map((t) => ({ key: t, labelAr: `${t} · ${count(units, (u) => u.type === t)}` })),
+    ];
+  }, [units]);
 
-  const depositNum = Number(deposit.replace(/[^\d]/g, "")) || 0;
-  const monthlyNum = Number(monthly.replace(/[^\d]/g, "")) || 0;
-  const affordActive = affordOn && depositNum > 0 && monthlyNum > 0;
+  const legalChips = useMemo(() => {
+    const legals = [...new Set(units.map((u) => u.legalStatus))];
+    return [
+      { key: "all", labelAr: "الكل" },
+      ...legals.map((l) => ({ key: l, labelAr: `${l} · ${count(units, (u) => u.legalStatus === l)}` })),
+    ];
+  }, [units]);
 
   const results = useMemo(() => {
-    let out: (Unit & { plan?: ReturnType<typeof planFor> })[] = units.filter((u) => {
-      if (areas.length && !areas.includes(u.areaKey)) return false;
-      if (types.length && !types.includes(u.type)) return false;
-      if (legals.length && !legals.includes(u.legalStatus)) return false;
-      if (finishes.length && !finishes.includes(u.finishing)) return false;
-      if (u.price > maxPrice) return false;
-      return true;
-    });
+    let list = units
+      .filter((u) => area === "all" || u.areaKey === area)
+      .filter((u) => type === "all" || u.type === type)
+      .filter((u) => legal === "all" || u.legalStatus === legal)
+      .map((u) => ({ unit: u, plan: afford ? planFor(u, dep, mon) : null }));
 
-    if (affordActive) {
-      out = out
-        .map((u) => ({ ...u, plan: planFor(u, depositNum, monthlyNum) }))
-        .filter((u) => u.plan !== null);
-    }
+    if (afford) list = list.filter((x) => x.plan !== null);
 
-    const sorted = [...out];
-    if (sort === "priceAsc") sorted.sort((a, b) => a.price - b.price);
-    else if (sort === "priceDesc") sorted.sort((a, b) => b.price - a.price);
-    else if (sort === "perMetreAsc")
-      sorted.sort((a, b) => a.price / a.size - b.price / b.size);
-    return sorted;
-  }, [units, areas, types, legals, finishes, maxPrice, sort, affordActive, depositNum, monthlyNum]);
+    const sorters: Record<SortKey, (a: (typeof list)[number], b: (typeof list)[number]) => number> = {
+      new: (a, b) => parseArabicDate(b.unit.priceCheckedAr) - parseArabicDate(a.unit.priceCheckedAr),
+      low: (a, b) => a.unit.price - b.unit.price,
+      high: (a, b) => b.unit.price - a.unit.price,
+      size: (a, b) => b.unit.size - a.unit.size,
+    };
+    return [...list].sort(sorters[sort]);
+  }, [units, area, type, legal, sort, afford, dep, mon]);
 
-  const clearAll = () => {
-    setAreas([]);
-    setTypes([]);
-    setLegals([]);
-    setFinishes([]);
-    setMaxPrice(PRICE_MAX);
-    setAffordOn(false);
-  };
-
-  const anyFilter =
-    areas.length || types.length || legals.length || finishes.length ||
-    maxPrice < PRICE_MAX || affordActive;
+  const showReset = area !== "all" || type !== "all" || legal !== "all" || afford;
 
   return (
-    <>
-      {/* ---- «اعرف قسطك» --------------------------------------------------
-          Egyptians buy by instalment capacity, not by sticker price. Starting
-          from the buyer's own money rather than the unit's price is the one
-          search no competitor in the October zone offers. */}
-      <section id="affordability" className={s.afford}>
-        <div className="shell grid12">
-          <div className={s.affordIntro}>
-            <span className="eyebrow">اعرف قسطك</span>
-            <h2 className={s.affordH2}>ابدأ من فلوسك، لا من سعر الوحدة</h2>
-            <p className={s.affordLede}>
-              اكتب المقدَّم اللي معاك والقسط اللي تقدر عليه، وإحنا نطلّع لك
-              الوحدات اللي تنفع فعلًا، بخطة سداد مكتوبة لكل وحدة.
-            </p>
+    <section className={s.section}>
+      <div className={s.panel}>
+        <div className={s.filterGrid}>
+          <span className={s.filterLabel}>المنطقة</span>
+          <div className={s.chips}>
+            {areaChips.map((c) => (
+              <button
+                key={c.key}
+                onClick={() => setArea(c.key)}
+                className={`${s.chip} ${area === c.key ? s.chipOn : ""}`}
+              >
+                {c.labelAr}
+              </button>
+            ))}
           </div>
 
-          <div className={s.affordForm}>
-            <div className={s.field}>
-              <label htmlFor="deposit">المقدَّم المتاح (ج.م)</label>
-              <input
-                id="deposit"
-                type="text"
-                inputMode="numeric"
-                dir="ltr"
-                value={deposit}
-                placeholder="400,000"
-                onChange={(e) => setDeposit(e.target.value)}
-              />
-            </div>
-            <div className={s.field}>
-              <label htmlFor="monthly">القسط الشهري (ج.م)</label>
-              <input
-                id="monthly"
-                type="text"
-                inputMode="numeric"
-                dir="ltr"
-                value={monthly}
-                placeholder="20,000"
-                onChange={(e) => setMonthly(e.target.value)}
-              />
-            </div>
-            <button
-              type="button"
-              className={s.affordBtn}
-              onClick={() => setAffordOn((v) => !v)}
-              aria-pressed={affordOn}
-              disabled={!depositNum || !monthlyNum}
-            >
-              {affordOn ? "إلغاء الحساب" : "اعرف الوحدات"}
-            </button>
+          <span className={s.filterLabel}>النوع</span>
+          <div className={s.chips}>
+            {typeChips.map((c) => (
+              <button
+                key={c.key}
+                onClick={() => setType(c.key)}
+                className={`${s.chip} ${type === c.key ? s.chipOn : ""}`}
+              >
+                {c.labelAr}
+              </button>
+            ))}
           </div>
 
-          <p className={s.affordNote}>
-            الحساب بأقصى مدة تقسيط متاحة لكل وحدة وبأقل مقدَّم يقبله المالك (لا
-            يقل عن <bdi dir="ltr">20%</bdi>)، بدون فوائد. الأرقام تقديرية حتى
-            نراجع خطة المالك معك.
-          </p>
-        </div>
-      </section>
-
-      {/* ---- Filters + grid ---- */}
-      <section className={s.body}>
-        <div className="shell grid12">
-          <aside className={s.rail} aria-label="الفلاتر">
-            <div className={s.railHead}>
-              <h2 className={s.railTitle}>الفلاتر</h2>
-              {anyFilter ? (
-                <button type="button" className={s.clear} onClick={clearAll}>
-                  مسح الكل
-                </button>
-              ) : null}
-            </div>
-
-            <ChipGroup
-              legend="المنطقة"
-              options={AREAS}
-              selected={areas}
-              onToggle={(v) => setAreas((a) => toggle(a, v))}
-            />
-            <ChipGroup
-              legend="النوع"
-              options={TYPES}
-              selected={types}
-              onToggle={(v) => setTypes((a) => toggle(a, v))}
-            />
-            <ChipGroup
-              legend="الحالة القانونية"
-              options={LEGAL_VALUES}
-              selected={legals}
-              onToggle={(v) => setLegals((a) => toggle(a, v))}
-            />
-            <ChipGroup
-              legend="التشطيب"
-              options={FINISHINGS}
-              selected={finishes}
-              onToggle={(v) => setFinishes((a) => toggle(a, v))}
-            />
-
-            <div className={s.rangeBlock}>
-              <label htmlFor="maxprice" className={s.legend}>
-                أقصى سعر: <bdi className="mono">{formatNumber(maxPrice)}</bdi> ج.م
-              </label>
-              <input
-                id="maxprice"
-                type="range"
-                min={PRICE_MIN}
-                max={PRICE_MAX}
-                step={10000}
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(Number(e.target.value))}
-                className={s.range}
-              />
-              <div className={`mono ${s.rangeEnds}`} dir="ltr">
-                <span>{formatNumber(PRICE_MIN)}</span>
-                <span>{formatNumber(PRICE_MAX)}</span>
-              </div>
-            </div>
-          </aside>
-
-          <div className={s.results}>
-            <div className={s.resultsHead}>
-              <p className={s.count}>
-                <bdi className="mono">{results.length}</bdi>{" "}
-                {unitsLabel(results.length)}
-              </p>
-              <label className={s.sortWrap}>
-                <span className={s.sortLabel}>الترتيب</span>
-                <select
-                  value={sort}
-                  onChange={(e) => setSort(e.target.value as Sort)}
-                  className={s.sort}
-                >
-                  {SORTS.map((o) => (
-                    <option key={o.key} value={o.key}>
-                      {o.labelAr}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            </div>
-
-            {results.length === 0 ? (
-              /* Written copy, not an illustration — and it offers a way out. */
-              <div className={s.empty}>
-                <h3 className={s.emptyTitle}>مفيش وحدة مطابقة للفلاتر دي</h3>
-                <p>
-                  وسّع أقصى سعر أو امسح الفلاتر — أو كلّمنا على واتساب وإحنا
-                  ندوّر لك.
-                </p>
-                <a
-                  className={s.emptyCta}
-                  href={whatsappHref(
-                    "السلام عليكم، بدور على وحدة في حدائق أكتوبر ومش لاقي المطلوب على الموقع",
-                  )}
-                  rel="noopener"
-                >
-                  كلّمنا على واتساب ←
-                </a>
-              </div>
-            ) : (
-              <div className={s.grid} data-anim="rise" data-stagger>
-                {results.map((u, i) => (
-                  <div key={u.code} className={s.cell}>
-                    <PropertyCard unit={u} locale={locale} priority={i < 3} />
-                    {u.plan ? (
-                      <p className={`mono ${s.plan}`}>
-                        خطتك: مقدم{" "}
-                        <bdi>{formatNumber(u.plan.minDown)}</bdi> وقسط{" "}
-                        <bdi>{formatNumber(u.plan.monthly)}</bdi> على{" "}
-                        <bdi>{u.plan.years}</bdi> {yearsLabel(u.plan.years)}
-                      </p>
-                    ) : null}
-                  </div>
-                ))}
-              </div>
-            )}
+          <span className={s.filterLabel}>الحالة القانونية</span>
+          <div className={s.chips}>
+            {legalChips.map((c) => (
+              <button
+                key={c.key}
+                onClick={() => setLegal(c.key)}
+                className={`${s.chip} ${legal === c.key ? s.chipOn : ""}`}
+              >
+                {c.labelAr}
+              </button>
+            ))}
           </div>
         </div>
-      </section>
-    </>
-  );
-}
 
-function ChipGroup({
-  legend,
-  options,
-  selected,
-  onToggle,
-}: {
-  legend: string;
-  options: readonly string[];
-  selected: string[];
-  onToggle: (v: string) => void;
-}) {
-  return (
-    <fieldset className={s.group}>
-      <legend className={s.legend}>{legend}</legend>
-      <div className={s.chips}>
-        {options.map((o) => (
-          <button
-            key={o}
-            type="button"
-            className={`${s.chip} ${selected.includes(o) ? s.chipOn : ""}`}
-            aria-pressed={selected.includes(o)}
-            onClick={() => onToggle(o)}
-          >
-            {o}
+        <hr className={s.hr} />
+
+        <div className={s.sortRow}>
+          <div className={s.sortTrack}>
+            {SORTS.map((so) => (
+              <button
+                key={so.key}
+                onClick={() => setSort(so.key)}
+                className={`${s.sortChip} ${sort === so.key ? s.sortChipOn : ""}`}
+              >
+                {so.labelAr}
+              </button>
+            ))}
+          </div>
+          <button onClick={() => setAfford((v) => !v)} className={s.affordToggle}>
+            <span>ابحث بالمقدم والقسط</span>
+            <span className={`${s.switch} ${afford ? s.switchOn : ""}`}>
+              <span className={s.switchDot} />
+            </span>
           </button>
+        </div>
+
+        {afford ? (
+          <div className={s.affordPanel}>
+            <RangeSlider
+              label="المقدم المتاح"
+              value={dep}
+              min={150_000}
+              max={2_000_000}
+              dragStep={10_000}
+              keyStep={50_000}
+              format={formatNumber}
+              unit="ج.م"
+              onChange={setDep}
+            />
+            <RangeSlider
+              label="القسط الشهري"
+              value={mon}
+              min={5_000}
+              max={60_000}
+              dragStep={500}
+              keyStep={1_000}
+              format={formatNumber}
+              unit="ج.م"
+              onChange={setMon}
+            />
+          </div>
+        ) : null}
+      </div>
+
+      <div className={s.resultLine}>
+        <div className={s.resultCount}>
+          <span className={s.count}>{results.length}</span>
+          <span className={s.countLabel}>
+            {unitsLabel(results.length)} من {units.length}
+          </span>
+        </div>
+        {showReset ? (
+          <button
+            onClick={() => {
+              setArea("all");
+              setType("all");
+              setLegal("all");
+              setAfford(false);
+            }}
+            className={s.reset}
+          >
+            مسح الفلاتر
+          </button>
+        ) : null}
+      </div>
+
+      <div className={s.grid}>
+        {results.map(({ unit, plan }, i) => (
+          <PropertyCard
+            key={unit.code}
+            unit={unit}
+            href={`/${locale}/properties/${unit.code}`}
+            priority={i < 3}
+            delaySec={(i % 6) * 2.3}
+            planLine={
+              plan
+                ? `مقدم ${formatNumber(plan.minDown)} · شهري ${formatNumber(plan.monthly)} × ${unit.maxYears} ${yearsLabel(unit.maxYears)}`
+                : null
+            }
+          />
         ))}
       </div>
-    </fieldset>
+
+      {results.length === 0 ? (
+        <div className={s.empty}>
+          مفيش وحدة مطابقة دلوقتي. غيّر الفلاتر، أو ابعتلنا على واتساب ونبلغك أول ما تنزل
+          وحدة مناسبة.
+        </div>
+      ) : null}
+    </section>
   );
 }

@@ -1,131 +1,120 @@
 .card {
-  display: flex;
-  flex-direction: column;
-  /* No border, no shadow. Elevation is expressed with a hairline where a
-     boundary is genuinely needed — not stamped on every block. */
+  display: block;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-card);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.4s ease;
+}
+.card:hover {
+  color: var(--ink);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .media {
   position: relative;
-  display: block;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 4/3;
   overflow: hidden;
-  border-radius: var(--radius-img);
-  background: var(--paper-2);
 }
-
-/* The travelling layer. Taller than the frame and offset upward by half the
-   overflow, so the picture can move against the scroll in both directions
-   without ever exposing an edge. Motion moves this; the frame above clips it. */
-.parallax {
-  position: absolute;
-  inset-inline: 0;
-  inset-block-start: -9%;
-  block-size: 118%;
-  display: block;
-}
-
 .img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  transition: transform 700ms var(--settle);
 }
-
-/* Pointer only. On a touch screen :hover latches after a tap and the card
-   stays in its hover state until something else is touched — so the lift
-   reads as a stuck card rather than as feedback. */
-@media (hover: hover) and (pointer: fine) {
-  .card:hover .img {
-    transform: scale(1.05);
-  }
-  .card:hover .media {
-    box-shadow: 0 18px 44px rgba(10, 10, 10, 0.16);
-  }
-  .card:hover .price {
-    transform: translateY(-2px);
-    color: var(--amber-deep);
-  }
+.gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(20, 16, 12, 0.7), rgba(20, 16, 12, 0) 50%);
 }
-
-.media {
-  transition: box-shadow var(--d-element) var(--settle);
+.legalPill {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  padding: 6px 12px;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.92);
+  font-size: 12px;
+  color: var(--ink);
+}
+.codeTag {
+  position: absolute;
+  bottom: 14px;
+  left: 16px;
+  direction: ltr;
+  font-size: 12px;
+  color: var(--bg);
+}
+.handoverTag {
+  position: absolute;
+  bottom: 12px;
+  right: 16px;
+  font-size: 13px;
+  color: var(--bg);
 }
 
 .body {
-  padding-block-start: 18px;
+  padding: 20px 22px 22px;
   display: grid;
-  gap: 7px;
-  text-align: start;
+  gap: 10px;
 }
-
-.code {
-  font-size: 11px;
-  color: var(--amber-deep);
-  letter-spacing: 0.04em;
+.titleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
 }
-
-.legal {
-  font-size: 13px;
-  color: var(--structure);
-}
-
 .title {
-  font-family: var(--ar-display);
-  font-weight: 700;
-  font-size: 25px;
-  line-height: 1.4;
-  /* Forced to two lines so prices and legal-status rows share one baseline
-     across the row. Ragged card heights are what make a grid look assembled. */
-  min-height: 2.8em;
-  margin-block-start: 2px;
-}
-.title a { color: var(--ink); }
-.title a:hover {
+  font-family: var(--display);
+  font-size: 23px;
   color: var(--ink);
-  box-shadow: inset 0 -1px 0 var(--amber);
 }
-
-.price {
-  font-size: 20px;
-  font-weight: 700;
-  font-family: var(--ar-display);
-  margin-block-start: 4px;
-  transition:
-    transform var(--d-element) var(--settle),
-    color var(--d-element) var(--settle);
-}
-
-.metrics {
-  font-size: 13px;
-  color: var(--structure);
-}
-
-.spec {
+.size {
+  color: var(--muted);
   font-size: 14px;
-  color: var(--ink);
+  white-space: nowrap;
 }
-
+.area {
+  color: var(--muted);
+  font-size: 14px;
+}
+.priceRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.price {
+  font-family: var(--display);
+  font-size: 29px;
+  color: var(--bronze);
+}
+.currency {
+  font-size: 14px;
+  color: var(--ink-2);
+}
+.perM {
+  font-size: 12px;
+  color: var(--muted);
+}
+.plan {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--surface-tint);
+  font-size: 13px;
+  color: var(--bronze-deep);
+}
+.meta {
+  font-size: 13px;
+  color: var(--ink-2);
+  border-top: 1px solid var(--line-soft);
+  padding-top: 12px;
+}
 .checked {
-  font-size: 11px;
-  color: var(--structure);
-  padding-block-start: 4px;
-}
-
-:global([lang="en"]) .title { font-family: var(--la-display); line-height: 1.18; }
-:global([lang="en"]) .media { aspect-ratio: 3 / 2; }
-
-@media (max-width: 900px) {
-  /* On a phone the card is the full width of the screen, so there is room —
-     the small type was sized for a three-across desktop grid and simply
-     carried over. The unit code and the price-checked date are the two lines
-     that make this card different from a competitor's, so they are the last
-     things that should be hard to read. */
-  .code { font-size: 12.5px; }
-  .checked { font-size: 12.5px; }
-  .legal { font-size: 14px; }
-  .metrics { font-size: 14px; }
-
-  /* The two-line clamp keeps every card in a row on the same baseline. It was
-     dropped while the mobile grid was a single column and there was no row to
-     align to; now that cards sit two across it earns its place again. */
-  .title { font-size: 20px; }
+  font-size: 12px;
+  color: var(--muted);
 }

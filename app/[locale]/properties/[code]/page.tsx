@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PropertyCard from "@/components/PropertyCard";
+import Gallery from "@/components/Gallery";
 import InstalmentCalculator from "@/components/InstalmentCalculator";
 import CopyCode from "@/components/CopyCode";
-import { yearsLabel } from "@/lib/units";
 import { getUnits, getUnit } from "@/lib/cms";
 import {
   detailFor,
@@ -15,10 +14,7 @@ import {
   DRIVE_TIMES,
   DRIVE_CONDITIONS_AR,
 } from "@/lib/unit-detail";
-import { COMPANY } from "@/lib/content";
 import {
-  Price,
-  PricePerMetre,
   Measure,
   formatNumber,
   whatsappHref,
@@ -28,17 +24,9 @@ import {
 } from "@/lib/format";
 import s from "./page.module.css";
 
-/**
- * The unit pages are statically generated. A Payload hook revalidates them
- * the moment the client saves, which is the fast path; this is the slow one,
- * covering anything written straight to the database or a hook that failed.
- * Five minutes is short enough that nothing looks broken and long enough
- * that the database is not queried on every request.
- */
 export const revalidate = 300;
 
 export async function generateStaticParams() {
-  // Built from the CMS, so a unit the client publishes gets its own page.
   return (await getUnits()).map((u) => ({ code: u.code.toLowerCase() }));
 }
 
@@ -79,6 +67,8 @@ export default async function UnitPage({
   const comps = comparablesFor(u, await getUnits());
   const perMetre = Math.round(u.price / u.size);
   const enquiry = unitEnquiry(u.code, `${u.titleAr} — ${u.areaAr}`, u.size);
+  const heading = `${u.titleAr}${u.gardenSize && !u.titleAr.includes("حديقة") ? " بحديقة" : ""} — ${u.areaAr}`;
+  const maxRoom = Math.max(...d.roomAreas.map((r) => r.area));
 
   /* The 22 Egyptian spec fields, in the order a buyer reads them.
      `الحالة القانونية` and `تاريخ آخر تحديث للسعر` are the two no
@@ -135,156 +125,105 @@ export default async function UnitPage({
 
   return (
     <>
-      <Header locale={locale} variant="light" />
+      <Header locale={locale} variant="interior" active="units" />
 
       <main id="main">
-        {/* ---- Breadcrumb ---- */}
         <nav className={s.crumb} aria-label="مسار التنقل">
-          <div className="shell">
-            <Link href={`/${locale}`}>الرئيسية</Link>
-            <span aria-hidden="true"> / </span>
-            <Link href={`/${locale}/properties`}>الوحدات</Link>
-            <span aria-hidden="true"> / </span>
-            <span>{u.areaAr}</span>
-            <span aria-hidden="true"> / </span>
-            <span className="mono">{u.code}</span>
-          </div>
+          <Link href={`/${locale}`}>الرئيسية</Link>
+          <span aria-hidden="true">/</span>
+          <Link href={`/${locale}/properties`}>الوحدات</Link>
+          <span aria-hidden="true">/</span>
+          <span>{u.areaAr}</span>
+          <span aria-hidden="true">/</span>
+          <bdi className="mono">{u.code}</bdi>
         </nav>
 
-        {/* ---- Title block ---- */}
         <section className={s.titleBlock}>
-          <div className="shell grid12">
-            <div className={s.titleText}>
-              <h1 className={s.h1} data-anim="words">
-                {u.titleAr}
-                {u.gardenSize ? " بحديقة" : ""} — {u.areaAr}
-              </h1>
-              <p className={s.summary} data-anim="rise" data-delay="1">
-                {d.floorOfAr !== "—" ? `${u.floorAr} · ` : ""}
-                {u.finishing} · {u.handoverAr} · {u.saleTypeAr} من المالك
-              </p>
+          <div className={s.titleText}>
+            <div className={s.legalPill} data-anim="rise">
+              {u.legalStatus}
             </div>
-            <div className={s.titlePrice} data-anim="rise" data-delay="1">
-              <p className={s.price}>
-                <Price value={u.price} />
-              </p>
-              <p className={`mono ${s.perMetre}`}>
-                <PricePerMetre price={u.price} area={u.size} /> · آخر تحديث للسعر{" "}
-                {u.priceCheckedAr}
-              </p>
-              <CopyCode code={u.code} />
-            </div>
-          </div>
-        </section>
-
-        {/* ---- Gallery. Fixed ratios, and a caption stating when the
-                photographs were taken and that they are ungraded. ---- */}
-        <section className={s.gallery}>
-          <div className="shell">
-            <div className={s.galleryGrid}>
-              {d.gallery.map((g, i) => {
-                const img = (
-                  <Image
-                    src={g.src}
-                    alt={g.alt}
-                    fill
-                    sizes={i === 0 ? "(max-width: 900px) 100vw, 66vw" : "(max-width: 900px) 50vw, 33vw"}
-                    quality={80}
-                    /* The lead shot spans two rows with two more stacked
-                       beside it, so the first three are all above the fold
-                       on desktop and none of them may be lazy. */
-                    priority={i < 3}
-                  />
-                );
-                return (
-                  <figure
-                    key={g.src + i}
-                    className={`${s.shot} ${i === 0 ? s.shotLead : ""}`}
-                    data-anim="img"
-                  >
-                    {/* Only the lead shot travels against the scroll — a grid
-                        of six thumbnails all drifting independently reads as
-                        jitter, not depth, once more than one is on screen. */}
-                    {i === 0 ? (
-                      <span
-                        className={s.shotParallax}
-                        data-anim="parallax"
-                        data-depth="0.1"
-                      >
-                        {img}
-                      </span>
-                    ) : (
-                      img
-                    )}
-                  </figure>
-                );
-              })}
-            </div>
-            <p className={`mono ${s.galleryCaption}`}>
-              {d.photoCountAr} · التُقطت {d.photoDateAr} · بدون معالجة لونية
+            <h1 className={s.h1} data-anim="rise" data-delay="1">
+              {heading}
+            </h1>
+            <p className={s.summary} data-anim="rise" data-delay="2">
+              {[u.floorAr, u.finishing, u.handoverAr, `${u.saleTypeAr} من المالك`]
+                .filter(Boolean)
+                .join(" · ")}
             </p>
           </div>
+          <div className={s.titlePrice} data-anim="rise" data-delay="2">
+            <div className={s.price}>
+              <bdi>{formatNumber(u.price)}</bdi> <span>ج.م</span>
+            </div>
+            <div className={`mono ${s.perMetre}`}>
+              <bdi dir="ltr">{formatNumber(perMetre)}</bdi> ج.م/م² · آخر تحديث للسعر{" "}
+              {u.priceCheckedAr}
+            </div>
+            <CopyCode code={u.code} />
+          </div>
         </section>
 
-        {/* ---- Spec + sidebar ---- */}
+        <div className="shell">
+          <Gallery images={d.gallery.map((g) => ({ src: g.src, alt: g.alt }))} heading={heading} photoDateAr={d.photoDateAr} />
+        </div>
+
         <section className={s.specSection}>
           <div className="shell grid12">
-            <div className={s.specCol} data-anim="rise">
+            <div className={s.specCol}>
               <h2 className={s.h2}>بيانات الوحدة</h2>
 
-              {/* The legal disclosure, above the table rather than buried in
-                  it. This block is the whole strategy in one component. */}
-              <div className={s.legalBlock}>
-                <span className={`mono ${s.legalLabel}`}>الحالة القانونية</span>
+              <div className={s.legalBlock} data-anim="rise">
+                <span className={s.legalLabel}>الحالة القانونية</span>
                 <p className={s.legalValue}>{u.legalStatus}</p>
                 <p className={s.legalNote}>{d.legalNote}</p>
               </div>
 
-              <table className={s.spec}>
-                <tbody>
-                  {spec.map(([k, v]) => (
-                    <tr key={k}>
-                      <th scope="row">{k}</th>
-                      <td>{typeof v === "string" ? <bdi>{v}</bdi> : v}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <div className={s.spec}>
+                {spec.map(([k, v]) => (
+                  <div key={k} className={s.specRow}>
+                    <span className={s.specKey}>{k}</span>
+                    <bdi className={s.specVal}>{v}</bdi>
+                  </div>
+                ))}
+              </div>
 
-              {/* ---- Rooms ---- */}
               <h2 className={`${s.h2} ${s.h2Spaced}`}>الرسم والمساحات</h2>
               <p className={s.lede}>
                 المساحات مأخوذة من رسم المالك ومطابَقة بالشريط على الأرض يوم
                 المعاينة. الفرق بين المساحة المباعة والمساحة الصافية مكتوب أسفل
                 الجدول.
               </p>
-              <table className={s.rooms}>
-                <caption className="sr-only">مساحة كل غرفة على حدة</caption>
-                <tbody>
-                  {d.roomAreas.map((r) => (
-                    <tr key={r.nameAr}>
-                      <th scope="row">{r.nameAr}</th>
-                      <td>
-                        <Measure value={r.area} unit="م²" />
-                      </td>
-                    </tr>
-                  ))}
-                  <tr className={s.roomsTotal}>
-                    <th scope="row">الصافي داخل الوحدة</th>
-                    <td>
-                      <Measure value={d.netArea} unit="م²" />
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div className={s.rooms}>
+                {d.roomAreas.map((r) => (
+                  <div key={r.nameAr} className={s.roomRow}>
+                    <span className={s.roomName}>{r.nameAr}</span>
+                    <div className={s.roomTrack}>
+                      <div
+                        data-anim="wipe"
+                        className={s.roomBar}
+                        style={{ width: `${(r.area / maxRoom) * 100}%` }}
+                      />
+                    </div>
+                    <span className={`mono ${s.roomArea}`}>
+                      <bdi>{r.area}</bdi> م²
+                    </span>
+                  </div>
+                ))}
+                <div className={s.roomsTotal}>
+                  <span>الصافي داخل الوحدة</span>
+                  <span className="mono">
+                    <bdi>{d.netArea}</bdi> م²
+                  </span>
+                </div>
+              </div>
               <p className={s.footnote}>
-                المساحة المباعة <Measure value={u.size} unit="م²" />{" "}
-                وتشمل نصيب الوحدة من الحوائط والمناور والسلم. الفرق{" "}
-                <Measure value={(u.size - d.netArea).toFixed(1)} unit="م²" />.
+                المساحة المباعة <Measure value={u.size} unit="م²" /> وتشمل نصيب
+                الوحدة من الحوائط والمناور والسلم. الفرق{" "}
+                <Measure value={Number((u.size - d.netArea).toFixed(1))} unit="م²" />.
               </p>
             </div>
 
-            {/* ---- Sticky sidebar ---- */}
             <aside className={s.side}>
               <InstalmentCalculator price={u.price} maxYears={u.maxYears} />
 
@@ -294,42 +233,33 @@ export default async function UnitPage({
                   زار الوحدة فريقنا في {u.visitedAr}، واللي شافها بنفسه هو اللي
                   هيرد عليك وهيروح معاك المعاينة.
                 </p>
-                <a
-                  className={s.waBtn}
-                  href={whatsappHref(enquiry)}
-                  rel="noopener"
-                >
+                <a className={s.waBtn} href={whatsappHref(enquiry)} target="_blank" rel="noopener">
                   واتساب مباشر — <bdi dir="ltr">{PHONE_LOCAL}</bdi>
                 </a>
                 <a className={s.callLink} href={`tel:${PHONE_E164}`}>
                   اتصال
                 </a>
-                <p className={`mono ${s.agentMeta}`}>
-                  الرد ٢٤/٧ — بالعربية والإنجليزية
-                </p>
+                <p className={s.agentMeta}>الرد ٢٤/٧ — بالعربية والإنجليزية</p>
               </div>
 
               <div className={s.drive}>
                 <h3 className={s.driveTitle}>أزمنة الوصول</h3>
-                <table className={s.driveTable}>
-                  <tbody>
-                    {DRIVE_TIMES.map((t) => (
-                      <tr key={t.toAr}>
-                        <th scope="row">{t.toAr}</th>
-                        <td>
-                          <Measure value={t.minutes} unit="د" />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <div className={s.driveList}>
+                  {DRIVE_TIMES.map((t) => (
+                    <div key={t.toAr} className={s.driveRow}>
+                      <span>{t.toAr}</span>
+                      <span className="mono">
+                        <bdi>{t.minutes}</bdi> د
+                      </span>
+                    </div>
+                  ))}
+                </div>
                 <p className={s.driveNote}>{DRIVE_CONDITIONS_AR}</p>
               </div>
             </aside>
           </div>
         </section>
 
-        {/* ---- Comparables ---- */}
         <section className={s.comps}>
           <div className="shell">
             <div className={s.compsHead}>
@@ -338,9 +268,14 @@ export default async function UnitPage({
                 كل الوحدات ←
               </Link>
             </div>
-            <div className={s.compsGrid} data-anim="rise" data-stagger>
-              {comps.map((c) => (
-                <PropertyCard key={c.code} unit={c} locale={locale} />
+            <div className={s.compsGrid}>
+              {comps.map((c, i) => (
+                <PropertyCard
+                  key={c.code}
+                  unit={c}
+                  href={`/${locale}/properties/${c.code}`}
+                  delaySec={i * 4}
+                />
               ))}
             </div>
           </div>

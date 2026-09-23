@@ -1,95 +1,100 @@
 /* ==========================================================================
-   الرواد — design tokens
-   Single source of truth. Nothing in the codebase hard-codes a colour,
-   a curve or a duration; everything reads from here.
+   الرواد — design tokens (limestone / ink / bronze)
+
+   Single source of truth for the redesign. Everything below reads from the
+   client's high-fidelity design handoff (a 3D scroll-driven site built
+   against this exact repo's content) — colours, type, spacing, radii,
+   shadows and easing are final, not placeholders.
+
+   The site is Arabic-only (see app/[locale]/layout.tsx — /en redirects to
+   /ar), so unlike the previous system there is no lang(ar) token switch:
+   every value here already assumes RTL Arabic at native size and leading.
    ========================================================================== */
 
 :root {
-  /* ---- Colour: "Charcoal & Amber" ------------------------------------
-     Three grounds and one accent. The accent exists at three values because
-     one value cannot do every job: amber on paper measures 2.55:1, which is
-     fine behind a headline and illegible in a link. So the name says where
-     each belongs, and nothing has to remember the rule.
+  /* ---- Grounds --------------------------------------------------------- */
+  --bg: #f4f1ea; /* limestone — page background */
+  --bg-alt: #eae4d6; /* alternate section band */
+  --surface: #ffffff; /* cards, panels, tables */
+  --surface-tint: #f6efe5; /* legal-status block, tinted result boxes */
+  --surface-soft: #f8f5ef; /* slider panel */
+  --surface-soft-2: #faf8f3; /* table header row */
 
-       --amber        fills, large display type, and text on the dark ground
-       --amber-bright the wash, and hover states on dark
-       --amber-deep   text and links on paper — 4.97:1, the only one that is
+  /* ---- Ink --------------------------------------------------------------*/
+  --ink: #1b1a17; /* primary text, dark buttons, active chips */
+  --ink-2: #4a443b; /* body copy */
+  --muted: #6b6358; /* labels, meta, captions */
+  --faint: #8c8475; /* tertiary meta only, ≥12px */
 
-     Measured, not guessed: scripts/verify-design.mjs recomputes all four
-     pairs from this block on every run and fails the build if one drops. */
-  --paper: #f6f4f0;
-  --paper-2: #edeae4;
-  --ink: #14130f;
-  --structure: #6b675e;
-  --hairline: #dcd7cc;
-  --void: #0a0a0a;
-  --carbon: #141414;
-  --amber: #c89033;
-  --amber-bright: #e8b54b;
-  --amber-deep: #8a6220;
-  --paper-on-void: rgba(246, 244, 240, 0.72);
-  --hairline-void: rgba(246, 244, 240, 0.14);
+  /* ---- Bronze accent — three values, three jobs. Never interchange them. */
+  --bronze: #8a5a2e; /* accent text, links, eyebrows, prices */
+  --bronze-fill: #9a6b3f; /* slider fill, thumb border, marquee band, CTA fill */
+  --bronze-deep: #6b4423; /* darkest legal segment, text on tint */
 
-  /* ---- Motion: two curves, four durations, one stagger --------------- */
-  --arrival: cubic-bezier(0.16, 1, 0.3, 1);
-  --settle: cubic-bezier(0.33, 1, 0.68, 1);
-  /* Scrub-driven motion is linear by definition: the reader's finger is the
-     easing function, and layering a curve on top of it makes the page feel
-     like it is lagging behind the scroll rather than following it. */
-  --scrub-ease: none;
-  --d-micro: 200ms;
-  --d-element: 400ms;
-  --d-section: 800ms;
-  --d-hero: 1200ms;
-  --stagger: 60ms;
+  /* ---- Night — the dark band used once per page ------------------------ */
+  --night: #12100d;
+  --night-text: #efe8dc;
+  --night-muted: #a39a8b;
+  --night-muted-2: #cfc6b8;
+  --gold: #e0a868; /* accent on night: buttons, labels */
 
-  /* ---- Type families -------------------------------------------------
-     Both serifs are gone. The reference has no serif anywhere, and Amiri in
-     particular reads as classical Arabic publishing — the opposite of the
-     register this site is aiming at. Tajawal is the closest Arabic face to
-     the reference's geometric grotesk and holds its shape at 18vw, which
-     the giant display word needs. */
-  --ar-display: "Tajawal", "IBM Plex Sans Arabic", system-ui, sans-serif;
-  --ar-text: "IBM Plex Sans Arabic", system-ui, sans-serif;
-  --la-display: "Plus Jakarta Sans", "IBM Plex Sans", system-ui, sans-serif;
-  --la-text: "IBM Plex Sans", system-ui, sans-serif;
-  /* Font fallback resolves per glyph: IBM Plex Mono carries no Arabic, so
-     naming the Arabic text face next means digits render monospaced and any
-     Arabic word in the same element renders in the proper reading face —
-     instead of dropping to a generic system monospace that has no relation
-     to the rest of the page. */
-  --mono: "IBM Plex Mono", "IBM Plex Sans Arabic", ui-monospace, Menlo,
-    Consolas, monospace;
+  --green: #2e6b3f; /* positive % — price index, yields */
 
-  /* ---- Layout -------------------------------------------------------- */
-  --page-pad: clamp(20px, 4vw, 64px);
+  /* ---- Hairlines --------------------------------------------------------*/
+  --line: rgba(27, 26, 23, 0.1);
+  --line-soft: rgba(27, 26, 23, 0.08);
+  --line-strong: rgba(27, 26, 23, 0.14);
+  --line-night: rgba(239, 232, 220, 0.12);
+  --line-night-soft: rgba(239, 232, 220, 0.1);
+  --line-night-strong: rgba(239, 232, 220, 0.14);
+
+  /* ---- Type -------------------------------------------------------------
+     Google Fonts: Reem Kufi (400/500/600/700), IBM Plex Sans Arabic
+     (300/400/500/600), IBM Plex Mono (400/500). Display carries the
+     headlines and every big number; text is the reading face; mono is
+     codes, ids and tabular figures. */
+  --display: "Reem Kufi", "IBM Plex Sans Arabic", sans-serif;
+  --text: "IBM Plex Sans Arabic", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", "IBM Plex Sans Arabic", ui-monospace, Menlo, Consolas,
+    monospace;
+
+  /* ---- Motion ------------------------------------------------------------
+     One curve for structural reveals, one for the loader curtain. Scrubbed
+     motion (camera, parallax, sliders) is driven directly by scroll or
+     pointer position and carries no easing of its own. */
+  --ease-arrival: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-loader: cubic-bezier(0.77, 0, 0.18, 1);
+  --d-reveal: 1.1s;
+  --d-hero: 1.3s;
+  --stagger: 0.08s;
+
+  /* ---- Layout ------------------------------------------------------------*/
   --maxw: 1440px;
   --maxw-wide: 1560px;
-  --gap-col: clamp(24px, 4vw, 56px);
-  --gap-card: clamp(20px, 3vw, 44px);
-  --sec-pad: clamp(50px, 11vh, 120px);
-  --sec-pad-major: clamp(60px, 14vh, 160px);
-  --radius: 6px;
-  --radius-img: 12px;
-  --radius-card: 16px;
+  --page-pad: clamp(20px, 5vw, 72px);
+  --sec-pad: clamp(70px, 12vh, 150px);
+  --sec-pad-major: clamp(80px, 14vh, 160px);
+  --gap-card: clamp(18px, 2vw, 28px);
+  --gap-split: clamp(28px, 5vw, 96px);
 
-  /* ---- Type sizes. Arabic runs larger and looser than Latin. --------- */
+  /* ---- Radius ------------------------------------------------------------*/
+  --r-pill: 99px;
+  --r-card: 14px;
+  --r-card-sm: 10px;
+  --r-panel: 18px;
+  --r-hero-img: 18px;
+  --r-tile: 12px;
+
+  /* ---- Shadow ------------------------------------------------------------*/
+  --shadow-card: 0 14px 40px rgba(60, 40, 20, 0.07);
+  --shadow-card-hover: 0 30px 70px rgba(60, 40, 20, 0.18);
+  --shadow-panel: 0 20px 60px rgba(60, 40, 20, 0.07);
+  --shadow-thumb: 0 6px 16px rgba(60, 40, 20, 0.2);
+
+  /* ---- Type sizes: shared body defaults, section titles set their own
+     clamp() per the handoff's per-screen numbers. */
   --fs-body: 17px;
-  --lh-body: 1.55;
-  --fs-body-2: 16px;
-  --lh-display: 1.04;
-  --lh-h2: 1.08;
-}
-
-/* Arabic needs 5–15% more size and 15–20% more leading than Latin at the
-   same nominal step. This is the token switch, not an eyeballed override. */
-:root:lang(ar),
-[lang="ar"] {
-  --fs-body: 19px;
-  --lh-body: 1.8;
-  --fs-body-2: 17px;
-  --lh-display: 1.32;
-  --lh-h2: 1.34;
+  --lh-body: 1.85;
 }
 
 /* ==========================================================================
@@ -106,60 +111,43 @@ html,
 body {
   margin: 0;
   padding: 0;
-  background: var(--paper);
+  background: var(--bg);
 }
 
 body {
+  overflow-x: clip;
   color: var(--ink);
-  font-family: var(--la-text);
+  font-family: var(--text);
   font-size: var(--fs-body);
   line-height: var(--lh-body);
-  /* Arabic is cursive — synthesised bold smears the teeth of س ش ب ت ن
-     into an unreadable band. Real weights only, everywhere. */
+  /* Arabic is cursive — a synthesised bold smears the teeth of س ش ب ت ن into
+     an unreadable band. Every weight used here is a real weight in the face. */
   font-synthesis: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-wrap: pretty;
 }
 
-[lang="ar"] body,
-body:lang(ar) {
-  font-family: var(--ar-text);
-}
-
-/* Tracking on Arabic either breaks the cursive joins or inserts gaps a
-   native reader parses as word boundaries. Never, with no exceptions —
-   including the eyebrow labels and buttons where designers reflexively add it. */
-:lang(ar) {
-  letter-spacing: 0;
-}
-
-/* Justification produces rivers in Arabic: browsers cannot do kashida. */
-:lang(ar) p,
-:lang(ar) li {
-  text-align: start;
-}
-
 a {
-  color: var(--amber-deep);
+  color: var(--ink);
   text-decoration: none;
-  transition: color var(--d-micro) var(--settle);
+  transition: color 0.3s ease;
 }
 a:hover {
-  color: var(--amber);
+  color: var(--bronze);
 }
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
-select:focus-visible {
-  outline: 2px solid var(--amber-deep);
+[role="slider"]:focus-visible {
+  outline: 2px solid var(--bronze);
   outline-offset: 3px;
-  border-radius: var(--radius);
+  border-radius: 4px;
 }
 
 ::selection {
-  background: var(--amber);
-  color: var(--ink);
+  background: var(--bronze);
+  color: var(--bg);
 }
 
 img {
@@ -172,12 +160,15 @@ h2,
 h3,
 h4 {
   margin: 0;
-  font-weight: 400;
+  font-family: var(--display);
+  font-weight: 600;
+  line-height: 1.08;
   text-wrap: balance;
 }
 
 p {
   margin: 0;
+  text-align: start;
 }
 
 table {
@@ -208,7 +199,7 @@ button {
 .grid12 {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  gap: var(--gap-col);
+  gap: var(--gap-split);
 }
 @media (max-width: 900px) {
   .grid12 {
@@ -216,44 +207,19 @@ button {
   }
   .grid12 > * {
     grid-column: 1 / -1 !important;
-    /* A grid item defaults to min-width:auto, meaning it refuses to shrink
-       below its content. One wide table inside it therefore widens the item,
-       then the grid, then the page — and the whole document scrolls sideways
-       instead of the table doing it. Overriding to 0 keeps the overflow where
-       it belongs. */
     min-width: 0;
   }
 }
 
-/* Eyebrow labels. Arabic has no uppercase, so the Latin treatment
-   (uppercase + tracking) has no Arabic equivalent — it is re-solved with
-   colour and the mono face instead. */
+/* Eyebrow: «٠٣ — الفكرة» — an Arabic-Indic section number, an em dash, and
+   the label, in bronze. No mono face and no uppercase here; those belong to
+   codes and ids, not to prose labels. */
 .eyebrow {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--amber-deep);
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
+  font-family: var(--text);
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--bronze);
   display: block;
-}
-:lang(ar) .eyebrow {
-  font-size: 12px;
-  text-transform: none;
-  letter-spacing: 0;
-}
-
-/* Arabic loses legibility faster than Latin as size drops: the difference
-   between ب ت ث is dots, and between ح خ ج a single dot's position — detail
-   that survives a desktop monitor and disappears on a phone held at arm's
-   length in Cairo daylight. So the small labels go up on small screens
-   rather than down, which is the opposite of the usual instinct. */
-@media (max-width: 900px) {
-  .eyebrow {
-    font-size: 12px;
-  }
-  :lang(ar) .eyebrow {
-    font-size: 13px;
-  }
 }
 
 .mono {
@@ -261,30 +227,10 @@ button {
   font-variant-numeric: tabular-nums;
 }
 
-/* Units read as words. Never monospaced — see <Measure>. */
-.measure-unit {
-  font-family: var(--ar-text);
-}
-:lang(en) .measure-unit {
-  font-family: var(--la-text);
-}
-
 .rule {
   border: 0;
-  border-top: 1px solid var(--hairline);
+  border-top: 1px solid var(--line);
   margin: 0;
-}
-
-/* The single global texture. It unifies AI-generated photography shot at
-   different times of day, which is the whole reason it is here. Static —
-   animating a full-viewport layer repaints every frame. */
-.grain {
-  position: fixed;
-  inset: 0;
-  z-index: 9998;
-  pointer-events: none;
-  opacity: 0.035;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 .sr-only {
@@ -305,27 +251,67 @@ button {
   top: 0;
   z-index: 10000;
   background: var(--ink);
-  color: var(--paper);
+  color: var(--bg);
   padding: 12px 18px;
+  border-radius: var(--r-pill);
 }
 .skip-link:focus {
-  inset-inline-start: 0;
+  inset-inline-start: 20px;
+  top: 20px;
+}
+
+/* Every photo on the site keeps moving even when the page does not: scale
+   1.04 → 1.13 with a slight drift, ease-in-out, looping. Apply via the
+   `.kenBurns` class plus the `--kb-dur` / `--kb-delay` custom properties
+   (set inline per image) rather than a raw inline `animation` shorthand, so
+   `prefers-reduced-motion` below can turn it off with one rule. */
+@keyframes kb {
+  0% {
+    transform: scale(1.04) translate(0, 0);
+  }
+  50% {
+    transform: scale(1.13) translate(-1.5%, -1%);
+  }
+  100% {
+    transform: scale(1.04) translate(0, 0);
+  }
+}
+.kenBurns {
+  animation: kb var(--kb-dur, 20s) ease-in-out infinite;
+  animation-delay: var(--kb-delay, 0s);
+}
+
+.progressBar {
+  position: fixed;
+  top: 0;
+  inset-inline: 0;
+  height: 2px;
+  background: var(--bronze);
+  transform-origin: right center;
+  transform: scaleX(0);
+  z-index: 60;
+  pointer-events: none;
+}
+
+/* The custom cursor (fine pointers only) hides the native one while active. */
+@media (pointer: fine) {
+  html.cur-on,
+  html.cur-on * {
+    cursor: none !important;
+  }
 }
 
 /* ==========================================================================
-   Motion
+   Motion scaffolding
 
-   Almost nothing lives here. The animations themselves are in
-   <Motion />, because GSAP sets its own starting states at init — which is
-   what lets this stylesheet contain no rule that hides anything. If the
-   bundle never arrives the page is simply static and whole.
-
-   What is left is the handful of things GSAP cannot express: a mask a line
-   can travel behind, a default for a custom property, and Lenis's own
-   requirements.
+   Structural CSS the animation engine (components/Motion.tsx) depends on —
+   masks a line or a word can travel behind, marquee track layout, and a
+   default for the scrub-fill custom property. THE RULE, unchanged from the
+   previous system: additive, never gating. Nothing here parks content at
+   opacity 0 — every starting state is set by GSAP at init, so a reader whose
+   bundle never arrives sees the finished page, not a blank one.
    ========================================================================== */
 
-/* Lenis takes over the scroll; these are its documented requirements. */
 html.lenis,
 html.lenis body {
   height: auto;
@@ -337,14 +323,6 @@ html.lenis body {
   overscroll-behavior: contain;
 }
 
-/* `clip` rather than `hidden`. Both stop sideways overflow, but `hidden`
-   makes the body a scroll container, which breaks position:sticky and moves
-   every ScrollTrigger boundary onto the wrong element. */
-body {
-  overflow-x: clip;
-}
-
-/* data-anim="lines": each line needs a mask to arrive from behind. */
 [data-anim="lines"] .line {
   display: block;
   overflow: hidden;
@@ -353,16 +331,10 @@ body {
   display: block;
 }
 
-/* data-anim="words": Motion wraps each word in a mask at runtime. The mask is
-   inline-block so it can clip a word that is mid-line, and the whole element
-   needs a little vertical room or the descenders of the word above are
-   trimmed as it travels. */
 [data-anim="words"] .w-mask {
   display: inline-block;
   overflow: hidden;
   vertical-align: bottom;
-  /* Arabic drops below the baseline further than Latin — the tail of a ج or
-     a ي is cut clean off by a mask sized to the em box alone. */
   padding-block-end: 0.14em;
   margin-block-end: -0.14em;
 }
@@ -370,8 +342,6 @@ body {
   display: inline-block;
 }
 
-/* data-anim="marquee": the track carries two identical runs and wraps after
-   travelling exactly one of them. */
 [data-anim="marquee"] {
   overflow: hidden;
 }
@@ -381,37 +351,24 @@ body {
   will-change: transform;
 }
 
-/* data-anim="img": the clip has to have something to clip. */
 [data-anim="img"] {
   overflow: hidden;
 }
 
-/* data-anim="fill": --f is how full each item is, 0 to 1.
-   It defaults to 1, and that default is the whole safety argument — with no
-   JavaScript every item renders solid and finished rather than as an empty
-   outline. Motion only ever animates it away from 1 and back. */
 [data-anim="fill"] > * {
   --f: 1;
 }
 
-/* Scrubbed elements are repainted on most frames; the ones that are not get
-   no hint, because a permanent will-change on a large element costs memory
-   for nothing. */
 [data-anim="hero"] [data-hero-img],
 [data-anim="parallax"] :is(img, picture, figure, video) {
   will-change: transform;
 }
 
-/* The pointer-driven cases hand the compositor a hint only while the pointer
-   is actually over them — a permanent one on every card costs memory for
-   nothing. */
 [data-anim="tilt"]:hover,
 [data-anim="magnet"]:hover {
   will-change: transform;
 }
 
-/* Belt and braces. Motion builds nothing under `reduce`, but a reader can
-   turn the preference on after the tweens have already run. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -420,6 +377,9 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
+  }
+  .kenBurns {
+    animation: none !important;
   }
   [data-anim],
   [data-anim] > * {
