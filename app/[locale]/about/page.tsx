@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageHeader from "@/components/PageHeader";
-import { COMPANY, LEGAL_STATUSES } from "@/lib/content";
+import { COMPANY, LEGAL_STATUSES, TOTAL_LISTED } from "@/lib/content";
 import { SOLD_TOTAL_SINCE_2011 } from "@/lib/sold";
 import { whatsappHref, PhoneNumber } from "@/lib/format";
 import s from "./page.module.css";
@@ -44,11 +43,10 @@ const TEAM = [
 ] as const;
 
 const OPERATIONS = [
-  { labelAr: "وحدات زرناها ووثّقناها", valueAr: "177" },
-  { labelAr: "وحدات رفضنا عرضها", valueAr: "42" },
-  { labelAr: "معروض حاليًا", valueAr: "135" },
-  { labelAr: "تعاقدات هذا العام", valueAr: "31" },
-  { labelAr: "متوسط زمن الرد على واتساب", valueAr: "14 دقيقة" },
+  { labelAr: "وحدات زرناها ووثّقناها", value: 177, bronze: false },
+  { labelAr: "وحدات رفضنا عرضها", value: 42, bronze: true },
+  { labelAr: "معروض حاليًا", value: 135, bronze: false },
+  { labelAr: "تعاقدات هذا العام", value: 31, bronze: false },
 ] as const;
 
 const CREDENTIALS = [
@@ -58,11 +56,13 @@ const CREDENTIALS = [
   { labelAr: "جهة القيد", valueAr: "سجل تجاري ٦ أكتوبر — الجيزة", mono: false },
   { labelAr: "البطاقة الضريبية", valueAr: COMPANY.taxCard, mono: true },
   { labelAr: "رقم تسجيل الوساطة العقارية", valueAr: COMPANY.brokerageRegistration, mono: true },
-  { labelAr: "سند التسجيل", valueAr: "القرار الوزاري ٥٧٨ لسنة ٢٠٢٥", mono: false },
+  { labelAr: "سند التسجيل", valueAr: COMPANY.brokerageDecreeAr, mono: false },
   { labelAr: "تاريخ التسجيل", valueAr: "١٤ فبراير ٢٠٢٦", mono: false },
   { labelAr: "عنوان المكتب المسجَّل", valueAr: COMPANY.addressAr, mono: false },
   { labelAr: "المسؤول عن الإفصاح", valueAr: "مدير الشركة", mono: false },
 ] as const;
+
+const LEGAL_COLOURS = ["#6B4423", "var(--bronze)", "var(--bronze-fill)", "#C7A57E"];
 
 export default async function AboutPage({
   params,
@@ -73,66 +73,75 @@ export default async function AboutPage({
 
   return (
     <>
-      <Header locale={locale} variant="light" />
+      <Header locale={locale} variant="interior" active="about" />
 
       <main id="main">
         <PageHeader
           eyebrow="الشركة · تأسست ٢٠١١"
-          title="مكتب واحد في حدائق أكتوبر، ولا نعمل في غيرها"
-          lede="اسم الشركة معناه الذين يسبقون ويمسحون الأرض. بدأنا سنة ٢٠١١ حين كانت المنطقة أرضًا مقسَّمة بعلامات مساحية وعدد قليل من العمارات، وبقينا فيها. لا فروع لنا في التجمع ولا في الساحل، لأن معرفة متر واحد جيدًا تحتاج سنوات لا مكتبًا إضافيًا."
-          image="/img/office-interior.webp"
-          imageAlt="مكتب الرواد في حدائق أكتوبر"
-        >
-          <ul className={s.claims} data-anim="rise" data-stagger data-delay="1">
-            <li>خمسة عشر عامًا في هذا النطاق</li>
-            <li>
-              <bdi className="mono">{SOLD_TOTAL_SINCE_2011}</bdi> وحدة مبيعة
-              ومسجَّلة في سجلنا العام
-            </li>
-            <li>أكثر من ١٠٠٠ عميل</li>
-            <li>٣٠ مشروعًا تعاملنا في وحداته</li>
-          </ul>
-          <p className={s.claimNote} data-anim="rise" data-delay="2">
-            كل رقم منها قابل للمراجعة في{" "}
-            <Link href={`/${locale}/sold`}>سجل البيع</Link> وحدة وحدة، بتاريخها.
-          </p>
-        </PageHeader>
-
-        {/* ---- Office photography ---- */}
-        <section className={s.office}>
-          <div className="shell">
-            <div className={s.officeGrid}>
-              <figure className={s.officeLead}>
-                <Image
-                  src="/img/office-interior.webp"
-                  alt="داخل مكتب الرواد بحدائق أكتوبر: مكاتب خشبية وحائط من الحجر الجيري وضوء نهاري"
-                  fill
-                  sizes="(max-width: 900px) 100vw, 58vw"
-                  priority
-                  quality={80}
-                />
-              </figure>
-              <figure className={s.officeSide}>
-                <Image
-                  src="/img/office-meeting.webp"
-                  alt="غرفة اجتماعات بالمكتب وعليها رسم هندسي لوحدة"
-                  fill
-                  sizes="(max-width: 900px) 100vw, 38vw"
-                  quality={80}
-                />
-              </figure>
+          title={
+            <>
+              مكتب واحد في حدائق أكتوبر،{" "}
+              <span style={{ color: "var(--bronze)" }}>ولا نعمل في غيرها</span>
+            </>
+          }
+          lede={
+            <div className={s.ledeStack}>
+              <p>
+                اسم الشركة معناه الذين يسبقون ويمسحون الأرض. بدأنا سنة ٢٠١١ حين
+                كانت المنطقة أرضًا مقسَّمة بعلامات مساحية وعدد قليل من
+                العمارات، وبقينا فيها. لا فروع لنا في التجمع ولا في الساحل،
+                لأن معرفة متر واحد جيدًا تحتاج سنوات لا مكتبًا إضافيًا.
+              </p>
+              <p className={s.claimNote}>
+                كل رقم هنا قابل للمراجعة في{" "}
+                <Link href={`/${locale}/sold`}>سجل البيع</Link> وحدة وحدة، بتاريخها.
+              </p>
             </div>
-            <p className={`mono ${s.officeCaption}`}>
+          }
+          stats={
+            <div className={s.claims}>
+              <div data-anim="rise" data-delay="1" className={s.claim}>
+                <span data-anim="counter" data-to={15} className={s.claimNum}>
+                  0
+                </span>
+                <span className={s.claimLabel}>عامًا في هذا النطاق</span>
+              </div>
+              <div data-anim="rise" data-delay="2" className={s.claim}>
+                <span
+                  data-anim="counter"
+                  data-to={SOLD_TOTAL_SINCE_2011}
+                  className={`${s.claimNum} ${s.bronze}`}
+                >
+                  0
+                </span>
+                <span className={s.claimLabel}>وحدة مبيعة ومسجَّلة في سجلنا العام</span>
+              </div>
+              <div data-anim="rise" data-delay="3" className={s.claim}>
+                <span className={s.claimNum}>+1000</span>
+                <span className={s.claimLabel}>عميل</span>
+              </div>
+              <div data-anim="rise" data-delay="4" className={s.claim}>
+                <span data-anim="counter" data-to={30} className={s.claimNum}>
+                  0
+                </span>
+                <span className={s.claimLabel}>مشروعًا تعاملنا في وحداته</span>
+              </div>
+            </div>
+          }
+          image="/img/office-interior.webp"
+          imageAlt="داخل مكتب الرواد بحدائق أكتوبر: مكاتب خشبية وحائط من الحجر الجيري وضوء نهاري"
+          imageHeight="clamp(300px, 64vh, 700px)"
+          imageCaption={
+            <>
               <span>المكتب · {COMPANY.addressAr}</span>
               <span>صور بتاريخ أغسطس ٢٠٢٦</span>
-              <span>{COMPANY.surveyRef}</span>
-            </p>
-          </div>
-        </section>
+            </>
+          }
+        />
 
         {/* ---- How we work ---- */}
         <section className={s.section}>
-          <div className="shell grid12">
+          <div className={s.workGrid}>
             <div className={s.prose}>
               <h2 className={s.h2}>كيف نعمل، وما لا نفعله</h2>
               <p>
@@ -157,16 +166,24 @@ export default async function AboutPage({
 
             <aside className={s.ops}>
               <h3 className={s.opsTitle}>أرقام التشغيل ٢٠٢٦</h3>
-              <dl className={s.opsList}>
-                {OPERATIONS.map((o) => (
-                  <div key={o.labelAr}>
-                    <dt>{o.labelAr}</dt>
-                    <dd className="mono">
-                      <bdi>{o.valueAr}</bdi>
-                    </dd>
-                  </div>
-                ))}
-              </dl>
+              {OPERATIONS.map((o) => (
+                <div key={o.labelAr} className={s.opsRow}>
+                  <span>{o.labelAr}</span>
+                  <span
+                    data-anim="counter"
+                    data-to={o.value}
+                    className={o.bronze ? s.opsBronze : undefined}
+                  >
+                    0
+                  </span>
+                </div>
+              ))}
+              <div className={s.opsRow}>
+                <span>متوسط زمن الرد على واتساب</span>
+                <span>
+                  <bdi>14</bdi> دقيقة
+                </span>
+              </div>
               <p className={s.opsNote}>حتى ٢ سبتمبر ٢٠٢٦.</p>
             </aside>
           </div>
@@ -174,33 +191,29 @@ export default async function AboutPage({
 
         {/* ---- Desks ---- */}
         <section className={s.sectionAlt}>
-          <div className="shell">
-            <h2 className={s.h2}>من ستتكلم معه فعلًا</h2>
-            <p className={s.sectionLede}>
-              أربعة ملفات عمل، لكل ملف مسؤول واحد ورقم مباشر. اللي بيرد عليك هو
-              نفسه اللي بيزور الوحدة معاك وبيقرأ أوراقها.
-            </p>
-            <div className={s.team}>
-              {TEAM.map((t) => (
-                <article key={t.roleAr} className={s.desk}>
-                  <span className={`mono ${s.deskRole}`}>{t.roleAr}</span>
-                  <h3 className={s.deskTitle}>{t.titleAr}</h3>
-                  <p className={s.deskNote}>{t.noteAr}</p>
-                  <PhoneNumber className={`mono ${s.deskPhone}`} />
-                </article>
-              ))}
-            </div>
+          <h2 className={s.h2}>من ستتكلم معه فعلًا</h2>
+          <p className={s.sectionLede}>
+            أربعة ملفات عمل، لكل ملف مسؤول واحد ورقم مباشر. اللي بيرد عليك هو
+            نفسه اللي بيزور الوحدة معاك وبيقرأ أوراقها.
+          </p>
+          <div className={s.team}>
+            {TEAM.map((t, i) => (
+              <article key={t.roleAr} data-anim="rise" data-delay={i + 1} className={s.desk}>
+                <span className={s.deskRole}>{t.roleAr}</span>
+                <h3 className={s.deskTitle}>{t.titleAr}</h3>
+                <p className={s.deskNote}>{t.noteAr}</p>
+                <PhoneNumber className={`mono ${s.deskPhone}`} />
+              </article>
+            ))}
           </div>
         </section>
 
         {/* ---- Credentials. The whole reason this page exists. ---- */}
         <section id="credentials" className={s.credentials}>
-          <div className="shell grid12">
+          <div className={s.credGrid}>
             <div className={s.credIntro}>
-              <span className="eyebrow">الشرعية القانونية</span>
-              <h2 className={s.h2Night}>
-                أرقامنا الرسمية منشورة، وليست عند الطلب
-              </h2>
+              <span className={s.credEyebrow}>الشرعية القانونية</span>
+              <h2 className={s.h2Night}>أرقامنا الرسمية منشورة، وليست عند الطلب</h2>
               <p className={s.credLede}>
                 القرار الوزاري ٥٧٨ لسنة ٢٠٢٥ أوجب على العاملين في الوساطة
                 العقارية التسجيل في سجل رسمي والالتزام بقواعد إفصاح محددة. نحن
@@ -212,67 +225,66 @@ export default async function AboutPage({
               </p>
             </div>
 
-            <table className={s.credTable}>
-              <tbody>
-                {CREDENTIALS.map((c) => (
-                  <tr key={c.labelAr}>
-                    <th scope="row">{c.labelAr}</th>
-                    <td className={c.mono ? "mono" : undefined}>
-                      <bdi dir={c.mono ? "ltr" : undefined}>{c.valueAr}</bdi>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            <p className={s.credNote}>
-              تُراجع هذه البيانات مع كل تجديد سنوي، وآخر مراجعة لها في أغسطس
-              ٢٠٢٦.
-            </p>
+            <div className={s.credList}>
+              {CREDENTIALS.map((c) => (
+                <div key={c.labelAr} className={s.credRow}>
+                  <span className={s.credLabel}>{c.labelAr}</span>
+                  <span className={c.mono ? `mono ${s.credGold}` : s.credVal}>
+                    <bdi dir={c.mono ? "ltr" : undefined}>{c.valueAr}</bdi>
+                  </span>
+                </div>
+              ))}
+              <p className={s.credNote}>
+                تُراجع هذه البيانات مع كل تجديد سنوي، وآخر مراجعة لها في أغسطس
+                ٢٠٢٦.
+              </p>
+            </div>
           </div>
         </section>
 
-        {/* ---- The legal-status disclosure ------------------------------
-                Moved here from the homepage, where it was one of three
-                long-form argument blocks pushing the units below the fold.
-                It belongs with the credentials: both answer the same
-                question, which is whether anything on this site can be
-                checked. ---- */}
+        {/* ---- The legal-status disclosure ---- */}
         <section className={s.section}>
-          <div className="shell grid12">
-            <div className={s.credIntro}>
+          <div className={s.discGrid}>
+            <div className={s.prose}>
               <span className="eyebrow">الإفصاح</span>
-              <h2 className={s.h2}>
-                حالة الوحدة القانونية مكتوبة قبل أن تسأل عنها
-              </h2>
-              <p className={s.sectionLede}>
+              <h2 className={s.h2}>حالة الوحدة القانونية مكتوبة قبل أن تسأل عنها</h2>
+              <p>
                 في كل صفحة وحدة سطر اسمه «الحالة القانونية»، وفيه القيمة كما
                 هي: مسجل بالشهر العقاري، أو حكم صحة ونفاذ، أو عقد ابتدائي موثق،
                 أو عقد ابتدائي عرفي. لا نضع علامة صحيحة خضراء مكان الورقة —
                 العلامة ادّعاء، والسطر إفصاح.
               </p>
-              <p className={s.sectionLede}>
+              <p>
                 ننشر العرفي كما ننشر المسجل. الفارق في السعر وفي المخاطرة، ومن
                 حقك تعرفهما قبل الحجز.
               </p>
             </div>
 
-            <table className={s.credTable} data-anim="rise" data-delay="1">
-              <tbody>
-                {LEGAL_STATUSES.map((l) => (
-                  <tr key={l.status}>
-                    <th scope="row">{l.status}</th>
-                    <td className="mono">{l.count} وحدة معروضة</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className={s.legalCards}>
+              {LEGAL_STATUSES.map((l, i) => (
+                <div key={l.status} data-anim="rise" data-delay={i + 1} className={s.legalCard}>
+                  <span className={s.legalStatus}>{l.status}</span>
+                  <span className="mono">
+                    <bdi>{l.count}</bdi> وحدة معروضة
+                  </span>
+                  <div className={s.legalTrack}>
+                    <div
+                      className={s.legalFill}
+                      style={{
+                        width: `${(l.count / TOTAL_LISTED) * 100}%`,
+                        background: LEGAL_COLOURS[i],
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
         {/* ---- Visit ---- */}
-        <section className={s.visit}>
-          <div className="shell grid12">
+        <section className={s.visitSection}>
+          <div className={s.visit}>
             <div className={s.visitText}>
               <h2 className={s.h2}>المكتب مفتوح، وتقدر تيجي بدون موعد</h2>
               <p className={s.sectionLede}>
@@ -281,34 +293,31 @@ export default async function AboutPage({
               </p>
               <a
                 className={s.visitWa}
-                href={whatsappHref(
-                  "السلام عليكم، حابب أعدي على المكتب في حدائق أكتوبر",
-                )}
+                href={whatsappHref("السلام عليكم، حابب أعدي على المكتب في حدائق أكتوبر")}
+                target="_blank"
                 rel="noopener"
               >
-                واتساب · 010 9809 8026
+                واتساب · <bdi className="mono">010 9809 8026</bdi>
               </a>
             </div>
-            <dl className={s.visitInfo}>
+            <div className={s.visitInfo}>
               <div>
-                <dt>العنوان</dt>
-                <dd>{COMPANY.addressAr}</dd>
+                <span>العنوان</span>
+                <span>{COMPANY.addressAr}</span>
               </div>
               <div>
-                <dt>المواعيد</dt>
-                <dd className="mono">
-                  <bdi>{COMPANY.officeHoursAr}</bdi>
-                </dd>
+                <span>المواعيد</span>
+                <bdi>{COMPANY.officeHoursAr}</bdi>
               </div>
               <div>
-                <dt>واتساب</dt>
-                <dd>٢٤/٧</dd>
+                <span>واتساب</span>
+                <span>٢٤/٧</span>
               </div>
               <div>
-                <dt>لغات العمل</dt>
-                <dd>العربية والإنجليزية</dd>
+                <span>لغات العمل</span>
+                <span>العربية والإنجليزية</span>
               </div>
-            </dl>
+            </div>
           </div>
         </section>
       </main>

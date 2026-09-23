@@ -1,0 +1,32 @@
+.wrap {
+  position: relative;
+  margin-top: clamp(60px, 10vh, 120px);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(120px, 30vw, 520px);
+  line-height: 0.95;
+  text-align: center;
+  user-select: none;
+}
+.outline {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(27, 26, 23, 0.18);
+}
+@supports not (-webkit-text-stroke: 1px black) {
+  .outline {
+    color: rgba(27, 26, 23, 0.1);
+  }
+}
+.fill {
+  position: absolute;
+  inset: 0;
+  color: var(--bronze-fill);
+  clip-path: inset(0 0 0 100%);
+  will-change: clip-path;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fill {
+    clip-path: inset(0 0 0 0);
+  }
+}

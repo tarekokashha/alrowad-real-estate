@@ -1,0 +1,131 @@
+.section {
+  padding-top: clamp(32px, 5vh, 48px);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.lead {
+  flex: 2 1 520px;
+  height: clamp(300px, 58vh, 620px);
+  position: relative;
+  border: 0;
+  padding: 0;
+  border-radius: var(--r-panel);
+  overflow: hidden;
+  cursor: zoom-in;
+  background: var(--bg-alt);
+}
+.leadParallax {
+  position: absolute;
+  inset: -8% 0;
+  display: block;
+}
+
+.thumbs {
+  flex: 1 1 340px;
+  height: clamp(300px, 58vh, 620px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
+}
+.thumb {
+  position: relative;
+  border: 0;
+  padding: 0;
+  border-radius: var(--r-tile);
+  overflow: hidden;
+  cursor: zoom-in;
+  background: var(--bg-alt);
+}
+.more {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(20, 16, 12, 0.45);
+  color: var(--bg);
+  font-size: 16px;
+}
+
+.caption {
+  margin: 14px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: none;
+  max-height: none;
+  border: 0;
+  background: rgba(18, 16, 13, 0.94);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  padding: 20px clamp(16px, 3vw, 40px);
+  color: var(--night-text);
+}
+/* Only laid out as a grid while actually shown — the closed <dialog> stays
+   display:none via the UA stylesheet either way, but Firefox's [open]
+   selector avoids a flash of grid layout before showModal() runs. */
+.lightbox[open] {
+  display: grid;
+}
+.lightbox::backdrop {
+  background: transparent;
+}
+.lbHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.lbClose {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid var(--line-night-strong);
+  background: transparent;
+  color: var(--night-text);
+  font-size: 22px;
+  cursor: pointer;
+}
+.lbStage {
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  padding: 16px 0;
+}
+.lbImg {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 10px;
+}
+.lbNav {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+.lbBtn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 1px solid var(--line-night-strong);
+  background: transparent;
+  color: var(--night-text);
+  font-size: 22px;
+  cursor: pointer;
+}
+
+@media (max-width: 700px) {
+  .thumbs {
+    height: clamp(220px, 40vh, 380px);
+  }
+}

@@ -30,7 +30,7 @@ export const COMPANY = {
   commercialRegistry: "124567",
   taxCard: "644-312-890",
   brokerageRegistration: "RB-2026-0413",
-  brokerageDecreeAr: "القرار الوزاري ٥٧٨/٢٠٢٥",
+  brokerageDecreeAr: "القرار الوزاري ٥٧٨ لسنة ٢٠٢٥",
   surveyRef: "HO-800-B12",
 } as const;
 
@@ -127,38 +127,24 @@ export const TESTIMONIALS = [
   },
 ];
 
+/** The interior header's nav (Site Nav.dc.html). The landing page's own
+ *  header swaps «الرئيسية» for an in-page «اعرف قسطك» anchor — see Header.tsx. */
 export const NAV = [
-  { labelAr: "الوحدات", href: "/ar/properties" },
-  { labelAr: "حدائق أكتوبر", href: "/ar/areas/hadayek-october" },
-  { labelAr: "تم البيع", href: "/ar/sold" },
-  { labelAr: "للمستثمرين", href: "/ar/gulf" },
-  { labelAr: "من نحن", href: "/ar/about" },
+  { key: "home", labelAr: "الرئيسية", href: "/ar" },
+  { key: "units", labelAr: "الوحدات", href: "/ar/properties" },
+  { key: "sold", labelAr: "سجل البيع", href: "/ar/sold" },
+  { key: "gulf", labelAr: "الشراء من الخليج", href: "/ar/gulf" },
+  { key: "about", labelAr: "من نحن", href: "/ar/about" },
 ] as const;
 
+/** The shared night footer's single link column (Site Footer.dc.html), plus
+ *  one addition of our own: the area guide has no page in the design bundle
+ *  to link from, so it goes at the end of the same list rather than
+ *  disappearing from the site's navigation entirely. */
 export const FOOTER_LINKS = [
-  {
-    titleAr: "العقارات",
-    links: [
-      { labelAr: "كل الوحدات", href: "/ar/properties" },
-      { labelAr: "اعرف قسطك", href: "/ar/properties#affordability" },
-      { labelAr: "تم البيع", href: "/ar/sold" },
-      { labelAr: "مؤشر سعر المتر", href: "/ar/areas/hadayek-october#index" },
-    ],
-  },
-  {
-    titleAr: "المناطق",
-    links: [
-      { labelAr: "حدائق أكتوبر", href: "/ar/areas/hadayek-october" },
-      { labelAr: "٦ أكتوبر", href: "/ar/areas/6-october" },
-      { labelAr: "الشيخ زايد", href: "/ar/areas/sheikh-zayed" },
-    ],
-  },
-  {
-    titleAr: "الشركة",
-    links: [
-      { labelAr: "من نحن", href: "/ar/about" },
-      { labelAr: "الشرعية القانونية", href: "/ar/about#credentials" },
-      { labelAr: "للمستثمرين من الخليج", href: "/ar/gulf" },
-    ],
-  },
+  { labelAr: "الوحدات المعروضة", href: "/ar/properties" },
+  { labelAr: "سجل البيع", href: "/ar/sold" },
+  { labelAr: "الشراء من خارج مصر", href: "/ar/gulf" },
+  { labelAr: "من نحن والشرعية القانونية", href: "/ar/about" },
+  { labelAr: "دليل حدائق أكتوبر", href: "/ar/areas/hadayek-october" },
 ] as const;

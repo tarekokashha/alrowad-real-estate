@@ -1,19 +1,18 @@
 /* ---- The table of contents, inside the masthead's <PageHeader> -----------
-   Rewritten for a dark, photographic ground — it used to sit beside plain
-   text on the page's own paper background; every colour below is now the
-   dark-ground token, not the light one, which the light version would have
-   been invisible against. */
+   Sits in the aside column beside the lede and meta list, on the masthead's
+   plain limestone ground — same ground as every other interior page's
+   PageHeader, no photo behind the type here. */
 
 .contents {
   margin-block-start: clamp(24px, 4vh, 40px);
   padding-block-start: clamp(18px, 3vh, 28px);
-  border-block-start: 1px solid var(--hairline-void);
+  border-block-start: 1px solid var(--line);
 }
 .contentsTitle {
   font-family: var(--mono);
   font-size: 11px;
   font-weight: 400;
-  color: rgba(246, 244, 240, 0.55);
+  color: var(--muted);
   margin-block-end: 14px;
 }
 .contents ol {
@@ -31,42 +30,43 @@
   content: counter(toc, decimal-leading-zero) " ";
   font-family: var(--mono);
   font-size: 11px;
-  color: var(--amber-bright);
+  color: var(--bronze);
 }
-.contents a { color: var(--paper); }
-.contents a:hover { color: var(--amber-bright); }
 
 /* ---- Sections ------------------------------------------------------------ */
 
 .section { padding-block: var(--sec-pad); }
 .section:first-of-type { padding-block-start: var(--sec-pad-major); }
 .sectionAlt {
-  background: var(--paper-2);
+  background: var(--bg-alt);
   padding-block: var(--sec-pad);
 }
 
 .h2 {
-  font-family: var(--ar-display);
+  font-family: var(--display);
   font-size: clamp(1.8rem, 2.8vw, 2.8rem);
   line-height: 1.34;
+  color: var(--ink);
 }
 .h3 {
-  font-family: var(--ar-display);
+  font-family: var(--display);
+  font-weight: 500;
   font-size: clamp(1.3rem, 1.9vw, 1.7rem);
   margin-block: 36px 16px;
+  color: var(--ink);
 }
 
 .sectionLede {
   margin-block-start: 18px;
   max-width: 56ch;
-  color: var(--structure);
+  color: var(--ink-2);
 }
 
 .footnote {
   margin-block-start: 16px;
   font-size: 13px;
   line-height: 1.9;
-  color: var(--structure);
+  color: var(--muted);
   max-width: 62ch;
 }
 
@@ -79,21 +79,22 @@
   max-width: 62ch;
 }
 .rule {
-  border-inline-start: 2px solid var(--amber);
+  border-inline-start: 2px solid var(--bronze);
   padding-inline-start: 20px;
 }
 
 .summary {
   grid-column: 9 / span 4;
   align-self: start;
-  border: 1px solid var(--hairline);
+  border: 1px solid var(--line);
+  border-radius: var(--r-panel);
   padding: 24px 22px;
 }
 .summaryTitle {
   font-family: var(--mono);
   font-size: 11px;
   font-weight: 400;
-  color: var(--structure);
+  color: var(--muted);
   margin-block-end: 18px;
 }
 .summaryList { display: grid; gap: 14px; }
@@ -103,16 +104,16 @@
   align-items: baseline;
   gap: 14px;
   padding-block-end: 12px;
-  border-block-end: 1px solid var(--hairline);
+  border-block-end: 1px solid var(--line);
 }
 .summaryList > div:last-child { border-block-end: none; padding-block-end: 0; }
-.summaryList dt { font-size: 13px; color: var(--structure); }
+.summaryList dt { font-size: 13px; color: var(--muted); }
 .summaryList dd { margin: 0; font-size: 15px; color: var(--ink); }
 .summaryNote {
   margin-block-start: 18px;
   font-size: 11.5px;
   line-height: 1.8;
-  color: var(--structure);
+  color: var(--muted);
 }
 
 /* ---- Tables -------------------------------------------------------------- */
@@ -123,8 +124,8 @@
   overflow-x: auto;
   overscroll-behavior-x: contain;
   background:
-    linear-gradient(to right, var(--paper) 32%, rgba(244, 241, 234, 0)) left center / 44px 100% no-repeat local,
-    linear-gradient(to left, var(--paper) 32%, rgba(244, 241, 234, 0)) right center / 44px 100% no-repeat local,
+    linear-gradient(to right, var(--bg) 32%, rgba(244, 241, 234, 0)) left center / 44px 100% no-repeat local,
+    linear-gradient(to left, var(--bg) 32%, rgba(244, 241, 234, 0)) right center / 44px 100% no-repeat local,
     radial-gradient(farthest-side at 0 50%, rgba(27, 26, 23, 0.14), rgba(27, 26, 23, 0)) left center / 15px 100% no-repeat scroll,
     radial-gradient(farthest-side at 100% 50%, rgba(27, 26, 23, 0.14), rgba(27, 26, 23, 0)) right center / 15px 100% no-repeat scroll;
 }
@@ -137,20 +138,20 @@
 .table th, .table td {
   text-align: start;
   padding: 14px 18px 14px 0;
-  border-block-end: 1px solid var(--hairline);
+  border-block-end: 1px solid var(--line);
   font-weight: 400;
   vertical-align: baseline;
 }
 .table thead th {
   font-family: var(--mono);
   font-size: 11px;
-  color: var(--structure);
-  border-block-end-color: var(--ink);
+  color: var(--muted);
+  border-block-end-color: var(--line-strong);
   padding-block: 10px;
   white-space: nowrap;
 }
 .table tbody th { color: var(--ink); }
-.table tbody td { color: var(--structure); }
+.table tbody td { color: var(--ink-2); }
 .table tbody tr:last-child th,
 .table tbody tr:last-child td { border-block-end: none; }
 
@@ -160,7 +161,7 @@
 .districts { grid-column: 7 / span 6; margin: 0; }
 .district {
   padding-block: 20px;
-  border-block-end: 1px solid var(--hairline);
+  border-block-end: 1px solid var(--line);
 }
 .district:last-child { border-block-end: none; }
 .district dt {
@@ -171,12 +172,12 @@
   margin-block-end: 8px;
 }
 .districtName { font-size: 18px; color: var(--ink); }
-.districtPpm { font-size: 13px; color: var(--amber-deep); white-space: nowrap; }
+.districtPpm { font-size: 13px; color: var(--bronze); white-space: nowrap; }
 .district dd {
   margin: 0;
   font-size: 14.5px;
   line-height: 1.85;
-  color: var(--structure);
+  color: var(--ink-2);
 }
 
 /* ---- Price by type -------------------------------------------------------- */
@@ -191,11 +192,11 @@
   align-items: baseline;
   gap: 16px;
   padding-block: 12px;
-  border-block-end: 1px solid var(--hairline);
+  border-block-end: 1px solid var(--line);
 }
 .premium > div:last-child { border-block-end: none; }
-.premium dt { font-size: 15px; }
-.premium dd { margin: 0; font-size: 15px; color: var(--amber-deep); }
+.premium dt { font-size: 15px; color: var(--ink-2); }
+.premium dd { margin: 0; font-size: 15px; color: var(--bronze); }
 
 /* ---- Access --------------------------------------------------------------- */
 
@@ -208,14 +209,14 @@
 .services {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--gap-col);
+  gap: var(--gap-card);
   margin-block-start: 34px;
 }
 .serviceTitle {
   font-family: var(--mono);
   font-size: 11px;
   font-weight: 400;
-  color: var(--amber-deep);
+  color: var(--bronze);
   padding-block-end: 12px;
   border-block-end: 1px solid var(--ink);
   margin-block-end: 16px;
@@ -227,22 +228,23 @@
   display: grid;
   gap: 10px;
   font-size: 15px;
+  color: var(--ink-2);
 }
 
 /* ---- Cautions (night band) ------------------------------------------------ */
 
 .cautions {
-  background: var(--void);
-  color: var(--paper);
+  background: var(--night);
+  color: var(--night-text);
   padding-block: var(--sec-pad-major);
 }
-.cautions .h2 { color: var(--paper); }
-.cautions .eyebrow { color: var(--amber); }
+.cautions .h2 { color: var(--night-text); }
+.cautions .eyebrow { color: var(--gold); }
 
 .cautionsIntro { grid-column: 1 / span 4; }
 .cautionsLede {
   margin-block-start: 18px;
-  color: var(--paper-on-void);
+  color: var(--night-muted-2);
   max-width: 40ch;
 }
 
@@ -256,22 +258,22 @@
   display: flex;
   gap: 20px;
   padding-block: 24px;
-  border-block-end: 1px solid rgba(244, 241, 234, 0.14);
+  border-block-end: 1px solid var(--line-night-strong);
 }
 .cautionList li:last-child { border-block-end: none; }
 .cautionNum {
   font-size: 12px;
-  color: var(--amber);
+  color: var(--gold);
   flex: none;
   padding-block-start: 5px;
 }
 .cautionTitle {
   font-size: 19px;
   margin-block-end: 10px;
-  color: var(--paper);
+  color: var(--night-text);
 }
 .cautionList p {
-  color: var(--paper-on-void);
+  color: var(--night-muted-2);
   font-size: 15px;
   line-height: 1.85;
   max-width: 56ch;
@@ -283,17 +285,19 @@
 .faq { grid-column: 6 / span 7; display: grid; gap: 0; }
 .faqItem {
   padding-block: 24px;
-  border-block-end: 1px solid var(--hairline);
+  border-block-end: 1px solid var(--line);
 }
 .faqItem:first-child { padding-block-start: 0; }
 .faqItem:last-child { border-block-end: none; }
 .faqQ {
-  font-family: var(--ar-display);
+  font-family: var(--display);
+  font-weight: 500;
   font-size: 21px;
   margin-block-end: 12px;
+  color: var(--ink);
 }
 .faqItem p {
-  color: var(--structure);
+  color: var(--ink-2);
   font-size: 15.5px;
   line-height: 1.9;
   max-width: 62ch;
@@ -302,18 +306,19 @@
 /* ---- Close ----------------------------------------------------------------- */
 
 .close {
-  background: var(--paper-2);
+  background: var(--bg-alt);
   padding-block: var(--sec-pad);
   text-align: center;
 }
 .closeTitle {
-  font-family: var(--ar-display);
+  font-family: var(--display);
   font-size: clamp(1.7rem, 2.6vw, 2.4rem);
+  color: var(--ink);
 }
 .closeLede {
   margin: 16px auto 0;
   max-width: 46ch;
-  color: var(--structure);
+  color: var(--ink-2);
 }
 .closeActions {
   margin-block-start: 28px;
@@ -324,9 +329,9 @@
   flex-wrap: wrap;
 }
 .closeWa {
-  background: var(--amber);
-  color: var(--ink);
-  border-radius: var(--radius);
+  background: var(--ink);
+  color: var(--bg);
+  border-radius: var(--r-pill);
   padding: 14px 24px;
   font-size: 15px;
   font-weight: 500;
@@ -334,8 +339,8 @@
   display: inline-flex;
   align-items: center;
 }
-.closeWa:hover { background: #355c43; color: var(--paper); }
-.closeLink { color: var(--amber-deep); font-size: 15px; }
+.closeWa:hover { background: var(--bronze); color: var(--bg); }
+.closeLink { color: var(--bronze); font-size: 15px; }
 
 /* ---- Responsive ------------------------------------------------------------ */
 
@@ -347,11 +352,10 @@
   .contents {
     border-inline-start: none;
     padding-inline-start: 0;
-    border-block-start: 1px solid var(--hairline);
+    border-block-start: 1px solid var(--line);
     padding-block-start: 22px;
     margin-block-start: 28px;
   }
-  .hero { aspect-ratio: 4 / 3; }
   .summary { margin-block-start: 32px; }
   .districts, .priceTable, .accessTable, .cautionList, .faq {
     margin-block-start: 28px;

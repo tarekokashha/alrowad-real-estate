@@ -1,0 +1,90 @@
+.section {
+  position: relative;
+  height: 280vh;
+}
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  perspective: 1400px;
+  padding: 0 var(--page-pad);
+  background: var(--bg);
+}
+
+.eyebrow {
+  position: absolute;
+  top: clamp(90px, 13vh, 130px);
+  right: var(--page-pad);
+}
+
+.card {
+  position: absolute;
+  width: min(1000px, 90vw);
+  padding: clamp(32px, 5vw, 72px);
+  border-radius: var(--r-panel);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-panel);
+  transform-origin: 50% 0;
+  will-change: transform, opacity;
+}
+.cardTwo {
+  border: 2px solid var(--bronze-fill);
+  transform: translateY(110vh);
+  transform-origin: 50% 100%;
+  box-shadow: 0 -20px 60px rgba(27, 26, 23, 0.12);
+}
+
+.quoteMark {
+  font-family: var(--display);
+  font-size: 90px;
+  line-height: 0.6;
+  color: var(--bronze);
+}
+.quote {
+  margin: 10px 0 32px;
+  font-size: clamp(20px, 2.2vw, 32px);
+  line-height: 1.75;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+.foot {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+}
+.name {
+  font-family: var(--display);
+  font-size: 20px;
+  color: var(--ink);
+}
+.detail {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section {
+    height: auto;
+  }
+  .stage {
+    position: relative;
+    height: auto;
+    display: grid;
+    gap: 24px;
+    padding-block: clamp(70px, 12vh, 150px);
+    perspective: none;
+  }
+  .card,
+  .cardTwo {
+    position: relative;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}

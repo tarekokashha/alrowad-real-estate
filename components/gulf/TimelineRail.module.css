@@ -1,0 +1,24 @@
+.wrap {
+  position: relative;
+  margin-top: 56px;
+  padding-right: clamp(40px, 5vw, 72px);
+}
+.rail {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  right: clamp(11px, 1.4vw, 19px);
+  width: 2px;
+  background: var(--line);
+}
+.fill {
+  position: absolute;
+  inset: 0;
+  background: var(--bronze);
+  transform-origin: top;
+  transform: scaleY(0);
+}
+.list {
+  display: grid;
+  gap: 18px;
+}

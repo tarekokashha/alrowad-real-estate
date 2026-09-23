@@ -66,7 +66,7 @@ export default async function AreaGuidePage({
 
   return (
     <>
-      <Header locale={locale} variant="light" />
+      <Header locale={locale} variant="interior" />
 
       <main id="main">
         <PageHeader

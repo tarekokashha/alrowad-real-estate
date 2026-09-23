@@ -1,328 +1,189 @@
-/* ---- «اعرف قسطك» — the affordability search ----------------------------- */
-
-.afford {
-  background: var(--paper-2);
-  padding-block: clamp(44px, 8vh, 84px);
-  border-block-end: 1px solid var(--hairline);
+.section {
+  padding: clamp(48px, 8vh, 80px) var(--page-pad) clamp(80px, 12vh, 140px);
 }
 
-.affordIntro {
-  grid-column: 1 / span 5;
-}
-
-.affordH2 {
-  font-family: var(--ar-display);
-  font-size: clamp(1.7rem, 2.6vw, 2.5rem);
-  line-height: 1.34;
-  margin-block-start: 12px;
-}
-
-.affordLede {
-  margin-block-start: 16px;
-  max-width: 46ch;
-}
-
-.affordForm {
-  grid-column: 7 / span 6;
+.panel {
   display: grid;
-  grid-template-columns: 1fr 1fr auto;
-  gap: 18px;
-  align-items: end;
+  gap: 20px;
+  padding: clamp(20px, 2.4vw, 32px);
+  border-radius: var(--r-panel);
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  box-shadow: 0 20px 60px rgba(60, 40, 20, 0.06);
 }
 
-.field {
+.filterGrid {
   display: grid;
-  gap: 8px;
+  grid-template-columns: minmax(76px, 120px) minmax(0, 1fr);
+  gap: 14px 16px;
+  align-items: start;
 }
-.field label {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--structure);
+.filterLabel {
+  font-size: 14px;
+  color: var(--muted);
+  padding-top: 9px;
 }
-.field input {
-  font: inherit;
-  font-family: var(--mono);
-  font-size: 18px;
-  background: transparent;
-  border: 0;
-  border-block-end: 1px solid var(--ink);
-  padding: 8px 2px;
-  color: var(--ink);
-  border-radius: 0;
-  min-height: 44px;
-}
-.field input::placeholder {
-  color: var(--hairline);
-}
-
-.affordBtn {
-  background: var(--amber);
-  color: var(--ink);
-  border: 1px solid var(--amber);
-  border-radius: var(--radius);
-  padding: 13px 22px;
-  font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
-  min-height: 48px;
-  transition: background var(--d-micro) var(--settle);
-}
-.affordBtn:hover:not(:disabled) {
-  background: var(--amber-deep);
-  border-color: var(--amber-deep);
-}
-.affordBtn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.affordNote {
-  grid-column: 7 / span 6;
-  margin-block-start: 18px;
-  font-size: 13px;
-  line-height: 1.85;
-  color: var(--structure);
-}
-
-/* ---- Filter rail + results grid ------------------------------------------ */
-
-.body {
-  padding-block: var(--sec-pad);
-}
-
-.rail {
-  grid-column: 1 / span 3;
-  align-self: start;
-  position: sticky;
-  top: 92px;
-}
-
-.railHead {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  padding-block-end: 14px;
-  border-block-end: 1px solid var(--ink);
-  margin-block-end: 24px;
-}
-.railTitle {
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 400;
-  color: var(--ink);
-}
-.clear {
-  background: none;
-  border: 0;
-  padding: 0;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--amber-deep);
-  cursor: pointer;
-}
-.clear:hover {
-  color: var(--amber-deep);
-}
-
-.group {
-  border: 0;
-  margin: 0 0 24px;
-  padding: 0;
-}
-.legend {
-  display: block;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--structure);
-  margin-block-end: 11px;
-  padding: 0;
-}
-
 .chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 7px;
+  gap: 8px;
 }
-
 .chip {
-  background: transparent;
-  border: 1px solid var(--hairline);
-  border-radius: var(--radius);
-  padding: 7px 12px;
-  font-size: 13px;
+  padding: 9px 16px;
+  border-radius: var(--r-pill);
+  border: 1px solid rgba(27, 26, 23, 0.16);
+  background: var(--surface);
   color: var(--ink);
+  font-family: inherit;
+  font-size: 14px;
   cursor: pointer;
-  /* WCAG 2.2 puts the floor at 24px; a thumb on a mid-range Android needs
-     more than the floor, so tap targets here are 40px+. */
-  min-height: 40px;
-  transition:
-    background var(--d-micro) var(--settle),
-    border-color var(--d-micro) var(--settle),
-    color var(--d-micro) var(--settle);
+  transition: border-color 0.2s;
 }
 .chip:hover {
-  border-color: var(--structure);
+  border-color: var(--bronze);
 }
-.chipOn {
-  background: var(--amber);
+.chipOn,
+.chipOn:hover {
   border-color: var(--ink);
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.hr {
+  height: 1px;
+  background: var(--line-soft);
+  border: 0;
+  margin: 0;
+}
+
+.sortRow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+.sortTrack {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--r-pill);
+  background: var(--bg);
+}
+.sortChip {
+  padding: 9px 16px;
+  border-radius: var(--r-pill);
+  border: 0;
+  background: transparent;
+  color: var(--ink-2);
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+.sortChipOn {
+  background: var(--surface);
+  box-shadow: 0 2px 8px rgba(60, 40, 20, 0.12);
   color: var(--ink);
 }
 
-.rangeBlock {
-  margin-block-start: 30px;
+.affordToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px 10px 12px;
+  border-radius: var(--r-pill);
+  border: 1px solid rgba(27, 26, 23, 0.16);
+  background: var(--surface);
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  cursor: pointer;
 }
-.range {
-  width: 100%;
-  accent-color: var(--amber-deep);
-  margin-block: 12px 6px;
-  min-height: 32px;
+.switch {
+  position: relative;
+  width: 44px;
+  height: 26px;
+  border-radius: var(--r-pill);
+  background: rgba(27, 26, 23, 0.15);
+  flex: 0 0 auto;
+  transition: background 0.2s;
 }
-.rangeEnds {
+.switchOn {
+  background: var(--bronze);
+}
+.switchDot {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--surface);
+  transition: transform 0.2s;
+}
+.switchOn .switchDot {
+  transform: translateX(-18px);
+}
+
+.affordPanel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 20px 48px;
+  padding: 22px;
+  border-radius: var(--r-card);
+  background: var(--surface-soft);
+}
+
+.resultLine {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
-  font-size: 11px;
-  color: var(--structure);
+  align-items: baseline;
+  gap: 16px;
+  margin: 40px 0 24px;
 }
-
-.results {
-  grid-column: 4 / span 9;
-}
-
-.resultsHead {
+.resultCount {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
-  gap: 20px;
-  padding-block-end: 16px;
-  border-block-end: 1px solid var(--ink);
-  margin-block-end: clamp(24px, 4vh, 40px);
+  gap: 12px;
 }
 .count {
-  font-size: 15px;
+  font-family: var(--display);
+  font-size: clamp(40px, 4vw, 60px);
+  line-height: 1;
+  color: var(--bronze);
+  direction: ltr;
 }
-.sortWrap {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
+.countLabel {
+  font-size: 17px;
+  color: var(--ink-2);
 }
-.sortLabel {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--structure);
-}
-.sort {
-  font: inherit;
-  font-size: 14px;
-  background: transparent;
+.reset {
   border: 0;
-  border-block-end: 1px solid var(--hairline);
-  color: var(--ink);
-  padding: 6px 2px;
-  min-height: 40px;
+  background: none;
+  padding: 6px 0;
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--bronze);
+  border-bottom: 1px solid var(--bronze);
   cursor: pointer;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--gap-card);
-}
-.cell {
-  display: flex;
-  flex-direction: column;
-}
-
-/* The written plan, printed on the card when the affordability search runs.
-   This is the answer to the question the buyer actually asked. */
-.plan {
-  margin-block-start: 12px;
-  padding-block-start: 12px;
-  border-block-start: 1px solid var(--amber);
-  font-size: 12px;
-  line-height: 1.8;
-  color: var(--amber-deep);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: clamp(18px, 2vw, 28px);
 }
 
 .empty {
-  padding-block: clamp(40px, 8vh, 90px);
-  max-width: 46ch;
-}
-.emptyTitle {
-  font-family: var(--ar-display);
-  font-size: clamp(1.4rem, 2.2vw, 2rem);
-  margin-block-end: 12px;
-}
-.emptyCta {
-  display: inline-block;
-  margin-block-start: 20px;
-  color: var(--amber-deep);
-}
-
-/* ---- Responsive ----------------------------------------------------------
-   The rail becomes a normal block above the grid rather than a sticky column;
-   a sticky sidebar on a 412px screen is just lost space. */
-
-@media (max-width: 1100px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .affordForm {
-    grid-template-columns: 1fr 1fr;
-  }
-  .affordBtn {
-    grid-column: 1 / -1;
-  }
-}
-
-@media (max-width: 900px) {
-  .rail {
-    position: static;
-    margin-block-end: 36px;
-  }
-  /* Two across. This is the page a buyer browses, and one card per screen
-     turns twelve units into twelve screens of scrolling — the card is nice
-     but nobody reaches the twelfth. Half width still fits the price on one
-     line at 360px. */
-  .grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 22px 14px;
-  }
-  .affordForm {
-    grid-template-columns: 1fr;
-  }
-  .resultsHead {
-    flex-wrap: wrap;
-  }
-
-  /* Filters are the whole point of this page on a phone, so every control
-     gets the full 44px band and the labels get a size worth reading. */
-  .chip {
-    min-height: 44px;
-    padding: 8px 14px;
-  }
-  .range {
-    /* A 32px slider is a fiddly thing to drag with a thumb. */
-    min-height: 44px;
-  }
-  .rangeEnds {
-    font-size: 12.5px;
-  }
-  .sort {
-    min-height: 44px;
-  }
-
-  /* The labels that say what each filter does. At 11px they were the smallest
-     text on a page whose whole job is filtering. */
-  .legend,
-  .railTitle,
-  .sortLabel {
-    font-size: 12.5px;
-  }
-  .rail label,
-  .rail dt,
-  .rail bdi {
-    font-size: 12.5px;
-  }
+  margin-top: 8px;
+  padding: 48px 28px;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--r-card);
+  font-size: 17px;
+  line-height: 1.8;
+  color: var(--ink-2);
+  text-align: center;
 }

@@ -1,0 +1,84 @@
+.field {
+  display: grid;
+  gap: 10px;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.label {
+  font-size: 15px;
+  color: var(--ink-2);
+}
+
+.value {
+  font-family: var(--display);
+  font-size: clamp(22px, 2.4vw, 32px);
+  color: var(--ink);
+  white-space: nowrap;
+}
+.unit {
+  font-family: var(--text);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.track {
+  position: relative;
+  block-size: 44px;
+  display: flex;
+  align-items: center;
+  touch-action: none;
+  cursor: pointer;
+}
+
+.rail {
+  position: absolute;
+  inset-inline: 0;
+  top: 20px;
+  height: 4px;
+  border-radius: var(--r-pill);
+  background: rgba(27, 26, 23, 0.12);
+  pointer-events: none;
+}
+
+.fill {
+  position: absolute;
+  top: 20px;
+  right: 0;
+  height: 4px;
+  border-radius: var(--r-pill);
+  background: var(--bronze-fill);
+  pointer-events: none;
+}
+
+.thumb {
+  position: absolute;
+  top: 20px;
+  translate: 0 -50%;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--bronze-fill);
+  box-shadow: var(--shadow-thumb);
+  cursor: grab;
+}
+.thumb:active {
+  cursor: grabbing;
+}
+.thumb:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-thumb), 0 0 0 6px rgba(154, 107, 63, 0.22);
+}
+
+.limits {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--muted);
+}

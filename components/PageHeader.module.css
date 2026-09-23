@@ -1,103 +1,88 @@
-/* ==========================================================================
-   The interior-page masthead. The hero's treatment at a third of the height.
-   ========================================================================== */
-
 .header {
   position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  background: var(--void);
+  background: var(--bg);
+  padding-top: clamp(130px, 18vh, 190px);
+  padding-bottom: clamp(40px, 6vh, 72px);
+}
+
+.grid {
   display: grid;
-  align-items: end;
-  min-block-size: clamp(300px, 46vh, 460px);
-  padding-block: clamp(40px, 7vh, 80px) clamp(30px, 5vh, 56px);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr));
+  gap: var(--gap-split);
+  align-items: start;
 }
 
-.media {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
+.titleCol {
+  display: grid;
+  gap: 20px;
+  align-content: start;
 }
-
-.img {
-  object-fit: cover;
-  /* Photographs are never mirrored in RTL: it flips signage and stair
-     handedness, and a local reader catches it immediately. */
-  transform: none;
-}
-
-/* One layer, doing both jobs: darkening the picture enough for the type and
-   weighting that darkness to the bottom, where the type is. Declared at its
-   final value — nothing here waits for a script. */
-.veil {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background:
-    linear-gradient(to top, rgba(10, 10, 10, 0.92) 0%, rgba(10, 10, 10, 0.38) 62%, rgba(10, 10, 10, 0.55) 100%);
-}
-
-.inner {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-}
-
 .h1 {
-  font-family: var(--ar-display);
-  font-weight: 800;
-  font-size: clamp(2.2rem, 5vw, 4.6rem);
-  line-height: 1.14;
-  margin-block-start: 14px;
-  color: var(--paper);
-  max-width: 20ch;
-}
-:lang(ar) .h1 {
-  line-height: 1.26;
+  margin: 0;
+  /* Reem Kufi draws a shadda well above the letter it marks — tall enough,
+     at this display size, to climb into the eyebrow's line above when a
+     title's first word happens to carry one (e.g. «تملّك»). The line-box
+     doesn't reserve room for it on its own, so give the whole block a
+     little headroom rather than depending on which word a given page opens
+     with. */
+  padding-top: 0.32em;
+  font-size: clamp(46px, 6.4vw, 104px);
+  line-height: 1.05;
+  color: var(--ink);
 }
 
+.asideCol {
+  display: grid;
+  gap: clamp(24px, 4vh, 40px);
+  align-content: start;
+  padding-top: clamp(8px, 1.5vh, 18px);
+}
 .lede {
-  margin-block-start: 20px;
-  max-width: 56ch;
-  color: var(--paper-on-void);
-  font-size: var(--fs-body-2);
+  margin: 0;
+  max-width: 52ch;
+  font-size: clamp(17px, 1.4vw, 20px);
+  line-height: 1.8;
+  color: var(--ink-2);
 }
 
 .meta {
   display: flex;
   flex-wrap: wrap;
-  gap: clamp(18px, 3vw, 48px);
-  margin-block-start: clamp(24px, 4vh, 40px);
-  padding-block-start: clamp(18px, 3vh, 28px);
-  border-block-start: 1px solid var(--hairline-void);
+  gap: clamp(18px, 3vw, 44px);
+  padding-top: clamp(16px, 2.5vh, 24px);
+  border-top: 1px solid var(--line);
 }
-
 .meta > div {
   display: grid;
   gap: 5px;
 }
-
 .meta dt {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: rgba(246, 244, 240, 0.55);
+  font-size: 13px;
+  color: var(--muted);
 }
-
 .meta dd {
   margin: 0;
-  font-size: var(--fs-body-2);
-  color: var(--paper);
+  font-size: 15px;
+  color: var(--ink);
 }
 
-.header :global(.eyebrow) {
-  color: var(--amber-bright);
+.mediaWrap {
+  margin-top: clamp(40px, 6vh, 72px);
 }
-
-@media (max-width: 900px) {
-  .header {
-    min-block-size: clamp(260px, 40vh, 360px);
-  }
-  .meta {
-    gap: 16px 26px;
-  }
+.media {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--r-hero-img);
+  height: var(--img-h);
+}
+.img {
+  object-fit: cover;
+}
+.imgCaption {
+  margin: 14px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+  font-size: 13px;
+  color: var(--muted);
 }

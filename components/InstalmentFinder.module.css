@@ -1,0 +1,147 @@
+.section {
+  position: relative;
+  padding: clamp(80px, 14vh, 160px) var(--page-pad);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  gap: clamp(40px, 6vw, 96px);
+  align-items: start;
+}
+
+.left {
+  display: grid;
+  gap: 36px;
+}
+.h2 {
+  margin: 0;
+  font-size: clamp(40px, 5vw, 80px);
+  line-height: 1.08;
+  color: var(--ink);
+}
+.lede {
+  margin: 18px 0 0;
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--muted);
+  max-width: 44ch;
+}
+
+.panel {
+  display: grid;
+  gap: 26px;
+  padding: 28px;
+  border-radius: var(--r-card);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: 0 20px 50px rgba(27, 26, 23, 0.08);
+}
+.hr {
+  height: 1px;
+  background: var(--line);
+  border: 0;
+  margin: 0;
+}
+
+.resultLine {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+.count {
+  font-family: var(--display);
+  font-size: clamp(64px, 7vw, 110px);
+  line-height: 1;
+  color: var(--bronze);
+  direction: ltr;
+}
+.countLabel {
+  font-size: 18px;
+  color: var(--ink-2);
+}
+
+.list {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr);
+  gap: 18px;
+  align-items: center;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-tile);
+  background: var(--surface);
+  box-shadow: 0 10px 30px rgba(27, 26, 23, 0.06);
+  color: var(--ink);
+  transition: box-shadow 0.3s;
+}
+.card:hover {
+  box-shadow: var(--shadow-card-hover);
+  color: var(--ink);
+}
+
+.thumb {
+  width: 84px;
+  height: 84px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex: 0 0 auto;
+}
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.info {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.title {
+  font-family: var(--display);
+  font-size: 20px;
+  color: var(--ink);
+}
+.code {
+  font-size: 12px;
+  color: var(--muted);
+  direction: ltr;
+}
+.figures {
+  display: flex;
+  gap: 8px 20px;
+  flex-wrap: wrap;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+.figVal {
+  color: var(--ink);
+}
+.figBronze {
+  color: var(--bronze);
+}
+.legal {
+  font-size: 12px;
+  color: var(--faint);
+}
+
+.empty {
+  padding: 40px 28px;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--r-tile);
+  font-size: 17px;
+  line-height: 1.8;
+  color: var(--ink-2);
+}

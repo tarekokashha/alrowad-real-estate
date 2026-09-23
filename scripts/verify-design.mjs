@@ -207,14 +207,18 @@ async function checkContrast() {
   };
 
   const pairs = [
-    ["ink", "paper", 4.5, "body text on paper"],
-    ["paper", "void", 4.5, "text on the dark ground"],
-    // Three accent values exist precisely because of the next two rows. Amber
-    // on paper is 2.55:1 and amber-deep on amber is 1.95:1 — the palette is
-    // only safe if each value is used where its name says.
-    ["ink", "amber", 4.5, "text on an amber fill"],
-    ["amber-deep", "paper", 4.5, "accent text and links on paper"],
-    ["amber", "void", 4.5, "accent text on the dark ground"],
+    ["ink", "bg", 4.5, "body text on limestone"],
+    ["night-text", "night", 4.5, "text on the dark ground"],
+    ["bronze", "bg", 4.5, "accent text and links on limestone"],
+    ["gold", "night", 4.5, "accent text and labels on the dark ground"],
+    // bronze-fill is the one accent value meant to sit *behind* text rather
+    // than read as text itself (slider fill, marquee band, CTA fill) — every
+    // live use pairs it with large or bold type (a pill button, a 26px+
+    // marquee headline), so it only has to clear the WCAG large-text floor,
+    // not the 4.5 body-text one. Mixing it up with --bronze, which does have
+    // to clear 4.5 as running text, is exactly the mistake the three-value
+    // split in globals.css exists to prevent.
+    ["bg", "bronze-fill", 3, "limestone text on a bronze fill (large/bold only)"],
   ];
 
   for (const [a, b, floor, label] of pairs) {
@@ -231,13 +235,26 @@ async function checkContrast() {
 }
 
 async function checkDeadTokens() {
-  head(6, "The old palette and the serifs are gone");
+  head(6, "The Charcoal & Amber palette is gone");
 
+  // --bronze is not in this list: it is the current system's own accent
+  // token (globals.css), not a leftover. What belongs here is the *previous*
+  // generation's names — the ones a find-and-replace could plausibly miss
+  // because they read like prose ("paper", "void", "structure") rather than
+  // an obviously dead identifier. Each entry below also catches its own
+  // variants as a substring: --paper catches --paper-2/--paper-on-void/
+  // --paper-deep/--paper-on-night, --amber catches --amber-bright/
+  // --amber-deep, --hairline catches --hairline-void.
   const dead = [
-    "--bronze",
+    "--paper",
+    "--void",
+    "--amber",
+    "--structure",
+    "--hairline",
+    "--ar-display",
+    "--radius",
+    "--gap-col",
     "--action",
-    "--paper-deep",
-    "--paper-on-night",
     "Amiri",
     "Newsreader",
   ];

@@ -1,146 +1,124 @@
 .footer {
-  position: relative;
-  overflow: hidden;
-  background: var(--void);
-  color: var(--paper-on-void);
-  padding-block: clamp(48px, 8vh, 88px) 34px;
-  font-size: 14px;
+  background: var(--night);
+  color: var(--night-text);
+  padding: clamp(64px, 10vh, 110px) var(--page-pad) 32px;
+  font-family: var(--text);
 }
-.footer a { color: var(--paper-on-void); }
-.footer a:hover { color: var(--paper); }
+.footer a {
+  color: var(--night-text);
+}
+.footer a:hover {
+  color: var(--gold);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 48px;
+}
 
 .brand {
-  grid-column: 1 / span 4;
   display: grid;
-  gap: 6px;
+  gap: 16px;
   align-content: start;
 }
 .wordmark {
-  font-family: var(--ar-display);
-  font-weight: 800;
-  font-size: 28px;
-  color: var(--paper);
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 44px;
   line-height: 1;
-  margin-block-end: 10px;
 }
-.phone { margin-block-start: 12px; font-size: 15px; }
-
-.col { grid-column: span 2; }
-.colTitle {
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 400;
-  color: rgba(246, 244, 240, 0.45);
-  margin-block-end: 14px;
-}
-.col ul {
-  list-style: none;
+.tagline {
   margin: 0;
-  padding: 0;
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--night-muted);
+  max-width: 34ch;
+}
+.ctas {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-block-start: 6px;
+}
+.wa {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 24px;
+  border-radius: var(--r-pill);
+  background: var(--gold);
+  color: var(--night);
+  font-size: 15px;
+  font-weight: 600;
+}
+.wa:hover {
+  color: var(--night);
+  opacity: 0.9;
+}
+.callPhone {
+  display: inline-flex;
+  align-items: center;
+  padding: 14px 24px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--line-night-strong);
+  color: var(--night-text);
+  font-size: 15px;
+}
+
+.col {
   display: grid;
-  gap: 9px;
+  gap: 12px;
+  align-content: start;
+  font-size: 15px;
+}
+.colTitle {
+  font-size: 13px;
+  color: var(--gold);
+}
+.colLink,
+.colText,
+.colMuted {
+  display: block;
+}
+.colMuted {
+  color: var(--night-muted);
 }
 
-.rule {
-  border-top-color: var(--hairline-void);
-  margin-block: clamp(34px, 5vh, 56px) 20px;
+.reg {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--line-night);
+  padding-block-end: 10px;
+  font-size: 14px;
+}
+.regLast {
+  border-bottom: 0;
+  padding-block-end: 0;
+}
+.regLabel {
+  color: var(--night-muted);
 }
 
-.registry {
+.bottom {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 26px;
-  font-size: 11px;
-  color: rgba(246, 244, 240, 0.42);
+  justify-content: space-between;
+  gap: 12px;
+  margin-block-start: 56px;
+  padding-block-start: 22px;
+  border-top: 1px solid var(--line-night);
+  font-size: 13px;
+  color: var(--night-muted);
 }
-.copyright { margin-inline-start: auto; }
 
 @media (max-width: 900px) {
-  /* The global .grid12 rule drops every child to full width. For most of the
-     site that is right; for the footer it stacked four short link lists into
-     one endless column — twelve 44px rows with the registry line somewhere
-     past the horizon.
-     These lists are three or four items each and belong beside one another.
-     Two columns halves the height and, more to the point, gives the eye a
-     shape to read instead of an undifferentiated ribbon. */
-  .footer :global(.grid12) {
+  .grid {
     grid-template-columns: 1fr 1fr;
-    gap: 30px var(--gap-col);
+    gap: 30px 32px;
   }
-  /* The address block stays full width — it is prose, not a list. */
-  .footer .brand {
-    grid-column: 1 / -1 !important;
-  }
-  .footer .col {
-    grid-column: span 1 !important;
-  }
-
-  .registry { gap: 8px 18px; }
-  .copyright { margin-inline-start: 0; }
-
-  /* Footer navigation is a list of destinations, not prose, and each entry sat
-     at 21px — about half a fingertip. inline-flex grows the target without
-     stretching the underline across the whole row. */
-  .footer li a,
-  .footer .brand a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-  }
-
-  /* Each row already carries 44px of its own height, so the 9px list gap is
-     spacing on top of spacing — it added about 70px of nothing to the footer. */
-  .col ul {
-    gap: 0;
-  }
-
-  /* Column headings and the copyright line were 11px on a dark ground, which
-     is the hardest combination to read on a phone outdoors. */
-  .colTitle,
-  .copyright {
-    font-size: 12.5px;
-  }
-}
-
-/* ---- The bottom-edge wordmark ----------------------------------------------
-   Outlined rather than filled, and cropped by the footer's own bottom edge —
-   the reference lets its mark run off the page, and a mark that fits neatly
-   inside its box reads as a logo rather than as a watermark.
-
-   `-webkit-text-stroke` has no standard equivalent. Where it is missing the
-   fallback must not be transparent text on a black ground, so the floor is a
-   very dim filled version of the same word: still decorative, still quiet,
-   never invisible-but-present. */
-
-.bigmarkWrap {
-  margin-block-start: clamp(28px, 5vh, 60px);
-  /* The descender sits below the footer's edge on purpose. */
-  margin-block-end: clamp(-64px, -5vw, -18px);
-  line-height: 0.78;
-  text-align: center;
-  pointer-events: none;
-  user-select: none;
-}
-
-.bigmark {
-  display: block;
-  font-family: var(--ar-display);
-  font-weight: 800;
-  font-size: clamp(5rem, 26vw, 22rem);
-  line-height: 0.78;
-  white-space: nowrap;
-  color: rgba(246, 244, 240, 0.05);
-}
-
-@supports (-webkit-text-stroke: 1px black) {
-  .bigmark {
-    color: transparent;
-    -webkit-text-stroke: 1px var(--hairline-void);
-  }
-}
-
-@media (max-width: 900px) {
-  .bigmarkWrap {
-    margin-block-end: clamp(-30px, -6vw, -10px);
+  .brand {
+    grid-column: 1 / -1;
   }
 }

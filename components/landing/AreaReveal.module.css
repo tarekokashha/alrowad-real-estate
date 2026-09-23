@@ -1,0 +1,113 @@
+.section {
+  position: relative;
+  height: 340vh;
+  background: var(--night);
+}
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--night);
+}
+
+.clip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  clip-path: inset(24% 32% round 24px);
+  will-change: clip-path;
+}
+.img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.35);
+  will-change: transform;
+}
+.veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(13, 11, 9, 0.85), rgba(13, 11, 9, 0.05) 60%);
+}
+
+.words {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2vw;
+  pointer-events: none;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(64px, 13vw, 230px);
+  line-height: 1;
+}
+.w1 {
+  display: block;
+  color: #fff8ee;
+  text-shadow: 0 6px 40px rgba(0, 0, 0, 0.45);
+  will-change: transform;
+}
+.w2 {
+  display: block;
+  color: #f2c68c;
+  text-shadow: 0 6px 40px rgba(0, 0, 0, 0.45);
+  will-change: transform;
+}
+
+.caption {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 0 var(--page-pad) clamp(40px, 8vh, 90px);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 32px;
+  opacity: 0;
+}
+.captionText {
+  max-width: 620px;
+}
+.eyebrow {
+  display: block;
+  font-size: 13px;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+.h2 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(34px, 4.4vw, 68px);
+  line-height: 1.1;
+  color: var(--night-text);
+}
+.sub {
+  margin-top: 14px;
+  font-size: 16px;
+  color: var(--night-muted-2);
+}
+.stats {
+  display: flex;
+  gap: clamp(24px, 4vw, 56px);
+}
+.stat {
+  font-family: var(--display);
+  font-size: clamp(40px, 4vw, 64px);
+  line-height: 1;
+  direction: ltr;
+  text-align: right;
+  color: var(--night-text);
+}
+.gold {
+  color: var(--gold);
+}
+.statLabel {
+  font-size: 14px;
+  color: var(--night-muted-2);
+  margin-top: 8px;
+}

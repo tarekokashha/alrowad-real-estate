@@ -1,79 +1,154 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { COMPANY, NAV } from "@/lib/content";
-import { PhoneNumber, whatsappHref } from "@/lib/format";
+import { PHONE_E164, PhoneNumber, whatsappHref } from "@/lib/format";
 import s from "./Header.module.css";
 
-/**
- * Absolute over the hero. The logo slot is reserved at its final size from
- * first paint — the wordmark flies into it at t=3.2s, and if the slot were
- * sized on arrival the whole header would jump. That jump is a CLS penalty
- * measured against the ranking goal, not just an aesthetic problem.
- *
- * There is deliberately NO call-to-action button here. A filled pill
- * demanding a phone number above the fold reads as lead-mill and undercuts
- * the entire positioning. The quiet affordances — the number itself and a
- * WhatsApp text link — are the design.
- */
+type NavKey = (typeof NAV)[number]["key"];
+
+/** The landing page's own header swaps «الرئيسية» for an in-page anchor and
+ *  drops the WhatsApp pill for a quieter «كلّمنا» outline button — see
+ *  Alrowad Landing.dc.html. Interior pages use NAV as-is (Site Nav.dc.html). */
+const LANDING_NAV: { key: NavKey | "calc"; labelAr: string; href: string }[] = [
+  { key: "units", labelAr: "الوحدات", href: "/ar/properties" },
+  { key: "calc", labelAr: "اعرف قسطك", href: "#calc" },
+  { key: "sold", labelAr: "سجل البيع", href: "/ar/sold" },
+  { key: "gulf", labelAr: "الشراء من الخليج", href: "/ar/gulf" },
+  { key: "about", labelAr: "من نحن", href: "/ar/about" },
+];
+
 export default function Header({
   locale,
-  variant = "hero",
+  variant = "interior",
+  active,
 }: {
   locale: string;
-  /** "hero" = absolute over the dark entrance. "light" = sticky bar on interior pages. */
-  variant?: "hero" | "light";
+  /** "landing" = the homepage's transparent-to-blur header with «كلّمنا».
+   *  "interior" = the sticky Site Nav used on every other page. */
+  variant?: "landing" | "interior";
+  active?: NavKey;
 }) {
-  const ar = locale === "ar";
+  const [navOpen, setNavOpen] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.style.overflow = navOpen ? "hidden" : "";
+    return () => {
+      document.documentElement.style.overflow = "";
+    };
+  }, [navOpen]);
+
+  const hrefFor = (h: string) => {
+    if (h.startsWith("#")) return h;
+    return h === "/ar" ? `/${locale}` : h.replace("/ar/", `/${locale}/`);
+  };
+
+  const items = variant === "landing" ? LANDING_NAV : NAV;
+  const waMessage = "السلام عليكم، حابب أستفسر عن الوحدات المتاحة في حدائق أكتوبر";
 
   return (
-    <header className={`${s.header} ${variant === "light" ? s.light : ""}`}>
-      <Link href={`/${locale}`} className={s.brand} aria-label={COMPANY.nameAr}>
-        <svg
-          width="30"
-          height="30"
-          viewBox="0 0 32 32"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.2"
-          aria-hidden="true"
-        >
-          {/* The survey benchmark: corner brackets, a reticle, and one
-              horizontal datum line. Monoline, single weight, no gradient. */}
-          <path d="M4 4h5M4 4v5M28 4h-5M28 4v5M4 28h5M4 28v-5M28 28h-5M28 28v-5" />
-          <circle cx="16" cy="16" r="6.2" />
-          <path d="M16 6.6v18.8M6.6 16h18.8" />
-          <path d="M2 21.6h28" strokeWidth="1.6" />
-        </svg>
-        <span className={s.wordmark}>{COMPANY.shortAr}</span>
-      </Link>
+    <>
+      <header data-hdr data-variant={variant} className={s.header}>
+        <Link href={`/${locale}`} className={s.brand}>
+          <span className={s.wordmark}>{COMPANY.shortAr}</span>
+          <span className={s.sub}>للتطوير العقاري</span>
+        </Link>
 
-      <nav className={s.nav} aria-label={ar ? "التنقل الرئيسي" : "Main"}>
-        {NAV.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href.replace("/ar/", `/${locale}/`)}
-            className={s.link}
-          >
-            {item.labelAr}
-          </Link>
-        ))}
-
-        <span className={s.divider} aria-hidden="true" />
-
-        <PhoneNumber className={s.phone} />
-
-        <a
-          href={whatsappHref(
-            ar
-              ? "السلام عليكم، حابب أستفسر عن الوحدات المتاحة في حدائق أكتوبر"
-              : "Hello, I would like to ask about available units in Hadayek October",
+        <nav className={s.nav} aria-label="التنقل الرئيسي">
+          {items.map((item) =>
+            item.href.startsWith("#") ? (
+              <a key={item.key} href={item.href} className={s.link}>
+                {item.labelAr}
+              </a>
+            ) : (
+              <Link key={item.key} href={hrefFor(item.href)} className={s.link}>
+                {item.labelAr}
+                {active === item.key && <span className={s.dot} aria-hidden="true" />}
+              </Link>
+            ),
           )}
-          className={s.whatsapp}
-          rel="noopener"
-        >
-          {ar ? "واتساب" : "WhatsApp"}
-        </a>
+        </nav>
 
-      </nav>
-    </header>
+        {variant === "landing" ? (
+          <a href="#contact" data-anim="magnet" className={`${s.cta} ${s.call}`}>
+            كلّمنا<span className={s.callDot} aria-hidden="true" />
+          </a>
+        ) : (
+          <a
+            href={whatsappHref(waMessage)}
+            className={`${s.cta} ${s.whatsapp}`}
+            target="_blank"
+            rel="noopener"
+          >
+            واتساب<span className={s.waDot} aria-hidden="true" />
+          </a>
+        )}
+
+        <button
+          onClick={() => setNavOpen(true)}
+          aria-label="افتح القائمة"
+          className={s.burger}
+        >
+          <span />
+          <span />
+        </button>
+      </header>
+
+      {navOpen && (
+        <div dir="rtl" className={s.sheet}>
+          <div className={s.sheetHead}>
+            <span className={s.sheetWordmark}>{COMPANY.shortAr}</span>
+            <button
+              onClick={() => setNavOpen(false)}
+              aria-label="إغلاق القائمة"
+              className={s.close}
+            >
+              ×
+            </button>
+          </div>
+
+          <nav className={s.sheetNav}>
+            {(variant === "landing" ? LANDING_NAV : NAV).map((item) =>
+              item.href.startsWith("#") ? (
+                <a
+                  key={item.key}
+                  href={item.href}
+                  onClick={() => setNavOpen(false)}
+                  className={s.sheetLink}
+                >
+                  {item.labelAr}
+                  <span aria-hidden="true">←</span>
+                </a>
+              ) : (
+                <Link
+                  key={item.key}
+                  href={hrefFor(item.href)}
+                  onClick={() => setNavOpen(false)}
+                  className={s.sheetLink}
+                >
+                  {item.labelAr}
+                  <span aria-hidden="true">←</span>
+                </Link>
+              ),
+            )}
+          </nav>
+
+          <div className={s.sheetFoot}>
+            <a
+              href={whatsappHref(waMessage)}
+              target="_blank"
+              rel="noopener"
+              className={s.sheetWa}
+            >
+              واتساب
+            </a>
+            <a href={`tel:${PHONE_E164}`} className={s.sheetPhone}>
+              <PhoneNumber link={false} className="mono" />
+            </a>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

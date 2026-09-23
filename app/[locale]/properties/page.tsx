@@ -3,8 +3,9 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageHeader from "@/components/PageHeader";
 import Catalogue from "@/components/Catalogue";
-import { COMPANY } from "@/lib/content";
+import { TOTAL_LISTED } from "@/lib/content";
 import { CATALOGUE_REVIEWED_AR } from "@/lib/units";
+import { toEasternDigits } from "@/lib/format";
 import { getUnits } from "@/lib/cms";
 
 /**
@@ -65,19 +66,27 @@ export default async function PropertiesPage({
 
   return (
     <>
-      <Header locale={locale} variant="light" />
+      <Header locale={locale} variant="interior" active="units" />
 
       <main id="main">
         <PageHeader
           eyebrow="المعروض الآن"
-          title="وحدات معروضة في حدائق أكتوبر"
+          title={
+            <>
+              وحدات معروضة في حدائق <span style={{ color: "var(--bronze)" }}>أكتوبر</span>
+            </>
+          }
           lede="كل وحدة هنا شفناها بأنفسنا وقرأنا أوراقها. الحالة القانونية مكتوبة على الكارت نفسه، مش جوه الصفحة."
           meta={[
             { label: "آخر مراجعة للقائمة", value: CATALOGUE_REVIEWED_AR },
-            { label: "مرجع النطاق", value: COMPANY.surveyRef },
+            {
+              label: "المعروض على الموقع",
+              value: `${toEasternDigits(units.length)} من ${toEasternDigits(TOTAL_LISTED)} وحدة`,
+            },
           ]}
-          image="/img/area-street.webp"
-          imageAlt="شارع سكني في حدائق أكتوبر"
+          image="/img/area-aerial.webp"
+          imageAlt="منظر جوي لحدائق أكتوبر"
+          imageHeight="clamp(260px, 48vh, 540px)"
         />
 
         <Catalogue locale={locale} units={units} />
