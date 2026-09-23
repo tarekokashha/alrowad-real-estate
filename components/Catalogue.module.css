@@ -88,6 +88,24 @@
   color: var(--ink);
 }
 
+/* Four sort labels don't fit one line at phone width, and wrapping inside
+   this fully-rounded track leaves an orphaned chip in an oddly tall blob.
+   Scroll horizontally instead, so the capsule shape holds. */
+@media (max-width: 640px) {
+  .sortTrack {
+    flex-wrap: nowrap;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .sortTrack::-webkit-scrollbar {
+    display: none;
+  }
+  .sortChip {
+    flex: none;
+  }
+}
+
 .affordToggle {
   display: inline-flex;
   align-items: center;
@@ -186,4 +204,21 @@
   line-height: 1.8;
   color: var(--ink-2);
   text-align: center;
+}
+
+/* Below ~640px the fixed label column leaves the chips column too narrow
+   to wrap more than one pill per line — a filter group turns into a
+   page-length single-file list. Stack the label above its chips instead,
+   so the chips get the panel's full width to wrap in. */
+@media (max-width: 640px) {
+  .filterGrid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .filterLabel {
+    padding-top: 0;
+  }
+  .filterLabel:not(:first-child) {
+    margin-top: 10px;
+  }
 }
