@@ -8,6 +8,8 @@ import {
   GULF_SUMMARY,
   GULF_STEPS,
   GULF_DOCS,
+  GULF_COSTS,
+  GULF_COST_TOTAL_AR,
   GULF_YIELDS,
   GULF_HOURS,
 } from "@/lib/gulf";
@@ -125,6 +127,30 @@ export default async function GulfPage({
                 التصرف في الوحدة بالبيع قبل مضي خمس سنوات على تاريخ الشراء
                 يستلزم موافقة مسبقة من رئاسة مجلس الوزراء في بعض الحالات. نراجع
                 هذا البند مع محاميك قبل التعاقد، ونكتب لك رأيه.
+              </p>
+              <p className={s.lawNote}>
+                هذه الصفحة استرشادية ومحدَّثة في سبتمبر ٢٠٢٦. أحكام تملك
+                الأجانب تُعدَّل من وقت لآخر — استشر محاميك قبل أي التزام.
+              </p>
+
+              <h3 className={`${s.h3} ${s.h3Spaced}`}>
+                التكلفة الكاملة على وحدة بـ <bdi className="mono">2,000,000</bdi> ج.م
+              </h3>
+              <div className={s.costs}>
+                {GULF_COSTS.map((c) => (
+                  <div key={c.labelAr} className={s.costRow}>
+                    <span>{c.labelAr}</span>
+                    <bdi className="mono">{c.valueAr}</bdi>
+                  </div>
+                ))}
+                <div className={`${s.costRow} ${s.costTotal}`}>
+                  <span>الإجمالي التقديري</span>
+                  <bdi className="mono">{GULF_COST_TOTAL_AR}</bdi>
+                </div>
+              </div>
+              <p className={s.footnote}>
+                لا توجد رسوم خفية ولا «مصاريف إدارية» عندنا. العمولة تُدفع عند
+                التعاقد فقط.
               </p>
             </div>
           </div>

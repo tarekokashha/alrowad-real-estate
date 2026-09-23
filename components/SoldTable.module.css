@@ -26,25 +26,6 @@
   font-size: 14px;
   cursor: pointer;
 }
-
-/* Enough years accumulate that the segmented control no longer fits one
-   line at phone width — wrapped inside a fully-rounded pill, the overflow
-   chip ends up orphaned in an oddly tall blob. Scroll it horizontally
-   instead, so the capsule shape holds and the rest is a swipe away. */
-@media (max-width: 640px) {
-  .yearTrack {
-    flex-wrap: nowrap;
-    min-width: 0;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .yearTrack::-webkit-scrollbar {
-    display: none;
-  }
-  .yearChip {
-    flex: none;
-  }
-}
 .yearChipOn {
   background: var(--ink);
   color: var(--bg);
