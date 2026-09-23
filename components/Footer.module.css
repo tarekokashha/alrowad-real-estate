@@ -85,22 +85,6 @@
   color: var(--night-muted);
 }
 
-.reg {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  border-bottom: 1px solid var(--line-night);
-  padding-block-end: 10px;
-  font-size: 14px;
-}
-.regLast {
-  border-bottom: 0;
-  padding-block-end: 0;
-}
-.regLabel {
-  color: var(--night-muted);
-}
-
 .bottom {
   display: flex;
   flex-wrap: wrap;
