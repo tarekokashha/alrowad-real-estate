@@ -173,42 +173,7 @@
   line-height: 1.9;
   color: var(--ink-2);
 }
-.lawNote {
-  margin: 0;
-  padding: 14px 16px;
-  border-radius: 10px;
-  background: rgba(138, 90, 46, 0.1);
-  font-size: 14px;
-  line-height: 1.8;
-  color: var(--bronze-deep);
-}
 
-.costs {
-  border-radius: var(--r-card);
-  background: var(--surface);
-  padding: 6px 22px;
-}
-.costRow {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--line-soft);
-  color: var(--ink-2);
-}
-.costRow:last-child {
-  border-bottom: 0;
-}
-.costTotal {
-  border-bottom: 0;
-  border-top: 1px solid var(--line-strong);
-  padding: 16px 0;
-  font-weight: 600;
-  color: var(--ink);
-}
-.costTotal bdi {
-  color: var(--bronze);
-}
 .footnote {
   margin: 0;
   font-size: 14px;
