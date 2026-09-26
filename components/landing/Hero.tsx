@@ -10,8 +10,7 @@ import s from "./Hero.module.css";
 gsap.registerPlugin(ScrollTrigger);
 
 const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
-const remap = (v: number, a: number, b: number, c: number, d: number) =>
-  c + clamp((v - a) / (b - a)) * (d - c);
+const easeInOutCubic = (k: number) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
 
 type Card = {
   img: string;
@@ -38,110 +37,179 @@ const CARDS: Card[] = [
   { img: "/img/unit-02-reception.webp", x: -29, y: -16, z: -4700, ry: 12, w: "22vw", ratio: "4/5", dur: 21, delay: -13 },
 ];
 
+/** The stat card and the headline are ordinary participants in the same
+ *  camera-through-space system as the photo cards below — not a pair with
+ *  their own bespoke crossfade. Depths from the handoff. */
+const STAT_Z = -2600;
+const HEADLINE_Z = 0;
+const DEST_Z = -5400;
+
+const DUST_COUNT = 80;
+type Dust = { x: number; y: number; z: number; size: number; seed: number };
+
+/** Deterministic PRNG (mulberry32) so the dust field's random depths are
+ *  identical on server and client — Math.random() here would desync SSR
+ *  and hydration. */
+function mulberry32(seed: number) {
+  let a = seed;
+  return () => {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const dustRandom = mulberry32(20260926);
+const DUST: Dust[] = Array.from({ length: DUST_COUNT }, (_, i) => ({
+  x: dustRandom() * 150 - 75,
+  y: dustRandom() * 120 - 60,
+  z: -dustRandom() * 5200,
+  size: 1 + dustRandom() * 3,
+  seed: i,
+}));
+
 export default function Hero() {
   const [introPlayed, setIntroPlayed] = useState(false);
   const rootRef = useRef<HTMLElement>(null);
+  const camRef = useRef<HTMLDivElement>(null);
+  const worldRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const dustRefs = useRef<(HTMLDivElement | null)[]>([]);
   const statRef = useRef<HTMLDivElement>(null);
   const destRef = useRef<HTMLDivElement>(null);
   const headWrapRef = useRef<HTMLDivElement>(null);
   const scrimRef = useRef<HTMLDivElement>(null);
   const hintRef = useRef<HTMLDivElement>(null);
+  const hintLineRef = useRef<HTMLDivElement>(null);
   const depthWrapRef = useRef<HTMLDivElement>(null);
   const depthNumRef = useRef<HTMLSpanElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
+  const cmx = useRef(0);
+  const cmy = useRef(0);
+  const mx = useRef(0);
+  const my = useRef(0);
 
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
 
+    const onMove = (e: PointerEvent) => {
+      mx.current = (e.clientX / window.innerWidth) * 2 - 1;
+      my.current = (e.clientY / window.innerHeight) * 2 - 1;
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+
     const mm = gsap.matchMedia();
     mm.add("(prefers-reduced-motion: no-preference)", () => {
       const cards = cardRefs.current.filter(Boolean) as HTMLDivElement[];
-      const N = cards.length;
+      const dusts = dustRefs.current.filter(Boolean) as HTMLDivElement[];
 
-      const applyFrame = (p: number) => {
-        cards.forEach((el, i) => {
-          const t0 = 0.03 + (i / N) * 0.6;
-          const finEnd = t0 + 0.05;
-          const foutStart = t0 + 0.1;
-          const foutEnd = t0 + 0.17;
-          let op = 0;
-          let dz = -260;
-          if (p < t0) {
-            op = 0;
-            dz = -260;
-          } else if (p < finEnd) {
-            op = remap(p, t0, finEnd, 0, 1);
-            dz = remap(p, t0, finEnd, -260, 0);
-          } else if (p < foutStart) {
-            op = 1;
-            dz = 0;
-          } else if (p < foutEnd) {
-            op = remap(p, foutStart, foutEnd, 1, 0);
-            dz = remap(p, foutStart, foutEnd, 0, 320);
-          } else {
-            op = 0;
-            dz = 320;
+      /* One camera depth (camZ), one opacity rule per item based on its
+       * distance from the camera (rel = camZ + item.z) — the same system
+       * driving every item at once, so nothing has its own bespoke fade
+       * window to fall out of sync with another item's. Ported from
+       * Alrowad Landing.dc.html's `frame()`. */
+      const paint = (t: number) => {
+        const scrollTrigger = ScrollTrigger.getById("hero-fly");
+        const hp = scrollTrigger ? scrollTrigger.progress : 0;
+        const cp = easeInOutCubic(clamp(hp / 0.84)) * 0.25 + clamp(hp / 0.84) * 0.75;
+        const camZ = cp * 5400 + clamp((hp - 0.84) / 0.16) * 240;
+
+        if (camRef.current) {
+          camRef.current.style.transform = `rotateX(${(-cmy.current * 2.2).toFixed(3)}deg) rotateY(${(cmx.current * 3.2).toFixed(3)}deg)`;
+        }
+        if (worldRef.current) {
+          worldRef.current.style.transform = `translateZ(${camZ.toFixed(1)}px)`;
+        }
+
+        const paintItem = (
+          el: HTMLElement,
+          x: number,
+          y: number,
+          z: number,
+          ry: number,
+          i: number,
+          opts?: { keep?: boolean; dust?: boolean },
+        ) => {
+          const rel = camZ + z;
+          let o = 1;
+          if (!opts?.keep) {
+            if (rel < -4300 || rel > 760) o = 0;
+            else if (rel < -3100) o = (rel + 4300) / 1200;
+            else if (rel > 260) o = 1 - (rel - 260) / 500;
           }
-          el.style.opacity = String(op);
-          el.style.setProperty("--dz", `${dz}px`);
+          if (opts?.dust) o *= 0.5 + 0.5 * Math.sin(t * 2 + i);
+          else if (opts?.keep) o = clamp((camZ - 250) / 1700);
+          else if (z < -100) o *= clamp((camZ - 40) / 380);
+
+          el.style.opacity = o.toFixed(3);
+          el.style.visibility = o <= 0.002 ? "hidden" : "visible";
+          if (o > 0.002 || opts?.keep) {
+            const bob = opts?.keep ? 0 : Math.sin(t * 0.8 + i * 1.7) * 12;
+            const xScale = window.innerWidth < 700 ? 1.45 : 1;
+            el.style.transform = `translate(-50%, -50%) translate3d(${((x * window.innerWidth) / 100 * xScale).toFixed(1)}px, ${((y * window.innerHeight) / 100 + bob).toFixed(1)}px, ${z}px) rotateY(${ry}deg)`;
+          }
+        };
+
+        cards.forEach((el, i) => {
+          const c = CARDS[i];
+          if (!c) return;
+          paintItem(el, c.x, c.y, c.z, c.ry, i);
+        });
+        if (statRef.current) paintItem(statRef.current, 0, 0, STAT_Z, 0, CARDS.length);
+        if (headWrapRef.current) paintItem(headWrapRef.current, 0, 0, HEADLINE_Z, 0, CARDS.length + 1);
+        if (destRef.current) paintItem(destRef.current, 0, 0, DEST_Z, 0, CARDS.length + 2, { keep: true });
+        dusts.forEach((el, i) => {
+          const d = DUST[i];
+          if (!d) return;
+          paintItem(el, d.x, d.y, d.z, 0, d.seed, { dust: true });
         });
 
-        if (statRef.current) {
-          const op = p < 0.34 ? 0 : p < 0.4 ? remap(p, 0.34, 0.4, 0, 1) : p < 0.5 ? 1 : p < 0.57 ? remap(p, 0.5, 0.57, 1, 0) : 0;
-          statRef.current.style.opacity = String(op);
+        if (hintRef.current) hintRef.current.style.opacity = String(1 - clamp(hp * 14));
+        if (hintLineRef.current) {
+          hintLineRef.current.style.transform = `translateY(${((t * 0.7) % 1) * 200 - 100}%)`;
         }
-        if (destRef.current) {
-          const op = remap(p, 0.42, 0.62, 0, 1);
-          destRef.current.style.opacity = String(op);
-          destRef.current.style.transform = `translate(-50%, -50%) scale(${remap(p, 0.42, 0.9, 1.12, 1.02)})`;
-        }
-        if (headWrapRef.current) {
-          const op = 1 - remap(p, 0.58, 0.68, 0, 1);
-          headWrapRef.current.style.opacity = String(op);
-          headWrapRef.current.style.transform = `translate(-50%, calc(-50% + ${remap(p, 0.58, 0.68, 0, -40)}px))`;
-        }
-        if (hintRef.current) {
-          hintRef.current.style.opacity = String(1 - remap(p, 0.02, 0.06, 0, 1));
-        }
-        if (depthWrapRef.current) {
-          depthWrapRef.current.style.opacity = String(1 - remap(p, 0.68, 0.78, 0, 1));
-        }
-        if (depthNumRef.current) {
-          depthNumRef.current.textContent = String(Math.round(clamp(p / 0.84) * 100)).padStart(3, "0");
-        }
-        if (scrimRef.current) {
-          scrimRef.current.style.opacity = String(remap(p, 0.78, 0.88, 0, 1));
-        }
+        if (depthNumRef.current) depthNumRef.current.textContent = String(Math.round(cp * 100)).padStart(3, "0");
+        const sk = clamp((hp - 0.8) / 0.1);
+        if (scrimRef.current) scrimRef.current.style.opacity = sk.toFixed(3);
+        if (depthWrapRef.current) depthWrapRef.current.style.opacity = (1 - sk).toFixed(3);
         if (endRef.current) {
-          const op = remap(p, 0.84, 0.93, 0, 1);
-          endRef.current.style.opacity = String(op);
-          endRef.current.style.transform = `translateY(${remap(p, 0.84, 0.93, 40, 0)}px)`;
-          endRef.current.style.pointerEvents = op > 0.6 ? "auto" : "none";
+          const k = clamp((hp - 0.86) / 0.09);
+          endRef.current.style.opacity = String(k);
+          endRef.current.style.transform = `translateY(${(1 - k) * 60}px)`;
+          endRef.current.style.pointerEvents = k > 0.6 ? "auto" : "none";
         }
       };
 
-      applyFrame(0);
-      const st = ScrollTrigger.create({
-        trigger: root,
-        start: "top top",
-        end: "bottom bottom",
-        scrub: 0.4,
-        onUpdate: (self) => applyFrame(self.progress),
-      });
+      let smoothedY = window.scrollY;
+      const tick = () => {
+        smoothedY += (window.scrollY - smoothedY) * 0.1;
+        cmx.current += (mx.current - cmx.current) * 0.05;
+        cmy.current += (my.current - cmy.current) * 0.05;
+        paint(performance.now() / 1000);
+      };
+      gsap.ticker.add(tick);
 
-      return () => st.kill();
+      const st = ScrollTrigger.create({ id: "hero-fly", trigger: root, start: "top top", end: "bottom bottom" });
+
+      return () => {
+        gsap.ticker.remove(tick);
+        st.kill();
+      };
     });
 
-    return () => mm.revert();
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      mm.revert();
+    };
   }, []);
 
   return (
     <section ref={rootRef} id="top" className={s.hero}>
       <div className={s.stage}>
-        <div className={s.cam} data-anim="tilt" data-tilt="2.5">
-          <div className={s.world}>
+        <div ref={camRef} className={s.cam}>
+          <div ref={worldRef} className={s.world}>
             <div ref={destRef} className={s.dest}>
               <Image
                 src="/img/hero-final.png"
@@ -154,6 +222,19 @@ export default function Hero() {
               />
             </div>
 
+            <div className={s.dust} aria-hidden="true">
+              {DUST.map((d, i) => (
+                <div
+                  key={i}
+                  ref={(el) => {
+                    dustRefs.current[i] = el;
+                  }}
+                  className={s.speck}
+                  style={{ width: d.size, height: d.size } as CSSProperties}
+                />
+              ))}
+            </div>
+
             {CARDS.map((c, i) => (
               <div
                 key={c.img + i}
@@ -161,16 +242,7 @@ export default function Hero() {
                   cardRefs.current[i] = el;
                 }}
                 className={s.card}
-                style={
-                  {
-                    "--x": c.x,
-                    "--y": c.y,
-                    "--z": c.z,
-                    "--ry": c.ry,
-                    width: c.w,
-                    aspectRatio: c.ratio,
-                  } as CSSProperties
-                }
+                style={{ width: c.w, aspectRatio: c.ratio } as CSSProperties}
               >
                 <img
                   src={c.img}
@@ -223,7 +295,7 @@ export default function Hero() {
         <div ref={hintRef} className={s.hint}>
           <span>اسحب لتحت وادخل</span>
           <div className={s.hintTrack}>
-            <div className={s.hintFill} />
+            <div ref={hintLineRef} className={s.hintFill} />
           </div>
         </div>
 
