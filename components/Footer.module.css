@@ -121,12 +121,4 @@
   .brand {
     grid-column: 1 / -1;
   }
-  /* At two-up column width (~160px), label and mono value side by side
-     leave no room for the value — it wraps mid-number ("644-312-" /
-     "890"). Stack them instead of squeezing them onto one line. */
-  .reg {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-  }
 }
