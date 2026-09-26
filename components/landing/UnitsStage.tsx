@@ -132,7 +132,12 @@ export default function UnitsStage({
               textTop.style.transform = `translateY(${(1 - j) * 105}%)`;
               textTop.style.opacity = String(j);
             } else {
-              const j = ei(outP / 0.4);
+              // The next slide's textTop starts fading in at inP=0.3 (its own
+              // outP === this slide's inP, since they share the same scroll
+              // position) — this one has to be fully transparent before
+              // then, or the two slides' price lines print on top of each
+              // other and merge into one illegible number.
+              const j = ei(outP / 0.26);
               textTop.style.transform = `translateY(${-j * 105}%)`;
               textTop.style.opacity = String(1 - j);
             }
@@ -144,7 +149,9 @@ export default function UnitsStage({
               textBottom.style.transform = `translateY(${(1 - j) * 105}%)`;
               textBottom.style.opacity = String(j);
             } else {
-              const j = ei((outP - 0.05) / 0.4);
+              // Same handoff fix as textTop, against the next slide's own
+              // textBottom fade-in starting at inP=0.37.
+              const j = ei((outP - 0.05) / 0.26);
               textBottom.style.transform = `translateY(${-j * 105}%)`;
               textBottom.style.opacity = String(1 - j);
             }

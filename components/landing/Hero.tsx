@@ -98,9 +98,16 @@ export default function Hero() {
           destRef.current.style.transform = `translate(-50%, -50%) scale(${remap(p, 0.42, 0.9, 1.12, 1.02)})`;
         }
         if (headWrapRef.current) {
-          const op = 1 - remap(p, 0.58, 0.68, 0, 1);
+          // Both this headline and the «148» stat card below sit dead-center
+          // on top of each other by design (a crossfade handoff, not a
+          // composited pair like the stat card and the dest photo — the
+          // stat card's own text-shadow glow is tuned to sit *over a photo*,
+          // not over another block of foreground type). The stat card is
+          // fully opaque for p in [0.4, 0.5], so the headline has to be
+          // fully gone before p=0.34, when the stat card starts fading in.
+          const op = 1 - remap(p, 0.24, 0.32, 0, 1);
           headWrapRef.current.style.opacity = String(op);
-          headWrapRef.current.style.transform = `translate(-50%, calc(-50% + ${remap(p, 0.58, 0.68, 0, -40)}px))`;
+          headWrapRef.current.style.transform = `translate(-50%, calc(-50% + ${remap(p, 0.24, 0.32, 0, -40)}px))`;
         }
         if (hintRef.current) {
           hintRef.current.style.opacity = String(1 - remap(p, 0.02, 0.06, 0, 1));
