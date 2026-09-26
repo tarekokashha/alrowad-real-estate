@@ -48,11 +48,35 @@
   overflow: hidden;
   box-shadow: 0 30px 80px rgba(60, 40, 20, 0.25);
   opacity: 0;
-  transform: translate(-50%, -50%)
-    translate3d(calc(var(--x) * 1vw), calc(var(--y) * 1vh), calc(var(--z) * 1px + var(--dz, 0px)))
-    rotateY(calc(var(--ry) * 1deg));
+  transform: translate(-50%, -50%);
   min-width: 180px;
   will-change: transform, opacity;
+}
+
+/* Faint drifting specks along the camera's flight path — matches the
+   handoff's dust field (80 particles at random depths, twinkling via a
+   sine wave rather than fading with the camera). */
+.dust {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+.speck {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 50%;
+  background: #b8864e;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.speck::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: rgba(184, 134, 78, 0.35);
+  filter: blur(2px);
 }
 .cardImg {
   width: 100%;
@@ -252,15 +276,6 @@
   font-size: 16px;
 }
 
-@media (max-width: 860px) {
-  .card {
-    /* Mobile hero: cards spread wider so they clear the headline. */
-    transform: translate(-50%, -50%)
-      translate3d(calc(var(--x) * 1.45vw), calc(var(--y) * 1vh), calc(var(--z) * 1px + var(--dz, 0px)))
-      rotateY(calc(var(--ry) * 1deg));
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .hero {
     height: auto;
@@ -272,6 +287,7 @@
   }
   .card,
   .statCard,
+  .dust,
   .scrim,
   .hint,
   .depthWrap,
