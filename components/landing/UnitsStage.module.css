@@ -74,6 +74,7 @@
   overflow: hidden;
   background: var(--bg-alt);
   box-shadow: 0 40px 110px rgba(60, 40, 20, 0.22);
+  clip-path: inset(100% 0 0 0 round 22px);
   will-change: clip-path;
 }
 .photo {
@@ -136,11 +137,13 @@
   flex-direction: column;
   gap: clamp(6px, 1.5vh, 16px);
 }
-.textTop,
-.textBottom {
-  display: grid;
-  gap: clamp(6px, 1.5vh, 16px);
-  will-change: transform, opacity;
+.lineWrap {
+  overflow: hidden;
+  padding-bottom: 0.1em;
+}
+.sl {
+  transform: translateY(105%);
+  will-change: transform;
 }
 
 .chips {
@@ -281,7 +284,16 @@
   .thumbB {
     display: none;
   }
+}
+
+@media (max-width: 799px), (max-height: 699px) {
   .checked {
+    display: none;
+  }
+}
+
+@media (max-width: 699px) {
+  .indexName {
     display: none;
   }
 }
@@ -294,6 +306,12 @@
   .slides {
     display: grid;
     gap: clamp(24px, 6vw, 80px);
+  }
+  .frame {
+    clip-path: none !important;
+  }
+  .sl {
+    transform: none !important;
   }
   .section {
     height: auto;
